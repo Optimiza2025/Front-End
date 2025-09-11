@@ -105,7 +105,7 @@ body {
     color: #1a365d;
     transition: border-color 0.2s, box-shadow 0.2s;
     box-sizing: border-box;
-    margin-bottom: 1.5rem; /* Espaçamento aumentado e responsivo */
+    margin-bottom: 1.5rem; 
 }
 
 .register-group input:focus {

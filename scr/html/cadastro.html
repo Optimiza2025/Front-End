@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro - Optimiza</title>
     <link rel="stylesheet" href="../css/cadastro.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <div class="register-header">
@@ -46,9 +47,6 @@
                 <div class="register-group">
                     <label for="area">Área</label>
                     <select id="area" name="area" required class="register-select">
-                        <option value="" disabled selected>Selecione uma área</option>
-                        <option value="Gestores e Avaliadores">Gestores e Avaliadores</option>
-                        <option value="Analista de Recursos Humanos">Analista de Recursos Humanos</option>
                     </select>
                 </div>
             </div>
@@ -66,5 +64,76 @@
     <div class="brand-footer">
         <h1 class="brand-name">Optimiza</h1>
     </div>
+    <script>
+        // Buscar áreas do backend e preencher o select
+        async function carregarAreas() {
+            try {
+                const resposta = await fetch('http://localhost:8080/optimiza/usuarios/areas');
+                if (resposta.ok) {
+                    const areas = await resposta.json();
+                    const selectArea = document.getElementById('area');
+                    selectArea.innerHTML = '<option value="" disabled selected>Selecione uma área</option>';
+                    areas.forEach(area => {
+                        selectArea.innerHTML += `<option value="${area.id}">${area.nome}</option>`;
+                    });
+                }
+            } catch (err) {
+                console.error('Erro ao carregar áreas:', err);
+            }
+        }
+        carregarAreas();
+
+        // Cadastro do usuário
+        document.querySelector('.register-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const nome = document.getElementById('nome').value;
+            const email = document.getElementById('email').value;
+            const cpf = document.getElementById('cpf').value;
+            const senha = document.getElementById('senha').value;
+            const telefone = document.getElementById('telefone').value;
+            const idArea = document.getElementById('area').value;
+
+            try {
+                const resposta = await fetch('http://localhost:8080/optimiza/usuarios/cadastro', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        nome,
+                        email,
+                        senha,
+                        telefone,
+                        cpf,
+                        idArea
+                    })
+                });
+                if (resposta.ok) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Cadastro realizado!',
+                        text: 'Redirecionando para o login...',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        window.location.href = 'Index.html';
+                    });
+                } else {
+                    const erro = await resposta.json();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Erro no cadastro',
+                        text: erro.menssage || 'Erro ao cadastrar usuário.'
+                    });
+                }
+            } catch (err) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro no cadastro',
+                    text: 'Erro ao conectar ao servidor.'
+                });
+            }
+        });
+    </script>
 </body>
 </html>

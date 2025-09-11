@@ -114,17 +114,20 @@ body {
 
 .input-group input {
     width: 100%;
-    padding: 16px 20px;
-    border: 2px solid #d1d5db;
-    border-radius: 12px;
+    padding: 0.9375rem 0.9375rem 0.9375rem 1.25rem;
+    border: 0.125rem solid #1a365d;
+    border-radius: 0.75rem;
     font-size: 1.1rem;
-    transition: all 0.3s ease;
-    background-color: white;
+    background: #f8f9fa;
+    color: #1a365d;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-sizing: border-box;
 }
 
 .input-group input:focus {
     outline: none;
     border-color: #6366f1;
+    background: #fff;
     box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
 }
 

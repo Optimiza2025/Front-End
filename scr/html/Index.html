@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Optimiza</title>
     <link rel="stylesheet" href="../css/Index.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <div class="login-container">
@@ -52,19 +53,66 @@
     </div>
 
     <script>
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            
+
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            
-            // Aqui você pode adicionar a lógica de autenticação
-            console.log('Email:', email);
-            console.log('Password:', password);
-            
-            // Exemplo de validação simples
-            if (email && password) {
-                alert('Login realizado com sucesso!');
+
+            try {
+                const respostaLogin = await fetch('http://localhost:8080/optimiza/usuarios/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        senha: password
+                    })
+                });
+
+                if (respostaLogin.ok) {
+                    const json = await respostaLogin.json();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Login bem-sucedido!',
+                        text: 'Redirecionando para a área do colaborador...',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        // Verificação de permissão e redirecionamento
+                        if (json.permissao && (json.permissao.nome === "Admin" || json.permissao.nome === "Supervisor")) {
+                            window.location.href = "../AfterLogin/Html/homePosLoginAdm.html";
+                        } else if (json.permissao && json.permissao.nome === "Médico") {
+                            window.location.href = "../AfterLogin/Html/homePosLoginMedico.html";
+                        } else {
+                            window.location.href = "../html/home.html";
+                        }
+                    });
+                } else {
+                    let mensagemErro;
+                    switch (respostaLogin.status) {
+                        case 401:
+                            mensagemErro = "Credenciais inválidas. Por favor, tente novamente.";
+                            break;
+                        case 404:
+                            mensagemErro = "Usuário não encontrado.";
+                            break;
+                        default:
+                            mensagemErro = `Erro inesperado: ${respostaLogin.status}`;
+                    }
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Erro no login',
+                        text: mensagemErro
+                    });
+                }
+            } catch (err) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro no login',
+                    text: 'Erro ao conectar ao servidor.'
+                });
             }
         });
     </script>
