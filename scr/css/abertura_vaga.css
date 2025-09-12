@@ -10,8 +10,85 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background: #fff;
 }
+
+/* MENU */
+
+.header{
+    background-color: #fff;
+    height: 12vh;
+    width: 100%;
+    font-size: larger;
+    display: flex;
+    align-items: center;
+}
+
+.container {
+  display: flex;
+  width: 90%;
+  margin: auto;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex: 1;
+}
+
+.optimiza-inicial {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: bold;
+    font-size: 3.5vh ;
+    color: #032656;
+}
+
+.header-center{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    width: 70%;
+}
+
+.menu-text{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 10vw;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2.2vh ;
+    color: #032656;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex: 1;
+}
+
+.icon-profile {
+    width: 7vh;
+    height: auto;
+}
+
+.menu-profile{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 7vw;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2.2vh ;
+    color: #032656;
+}
+
+.register-logo {
+    width: 10vh;
+    height: auto;
+}
+
+ /* form vaga */
 
 .form-container {
     padding-left: 5rem;
