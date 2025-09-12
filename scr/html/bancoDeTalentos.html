@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="Assets/Logo fundo branco.png" type="image/x-icon">
+    <title>Banco de Talentos - Optimiza</title>
+    <link rel="stylesheet" href="../css/bancoDeTalentos.css">
+</head>
+<body>
+
+    <!-- Menu -->
+  <div class="header">
+    <div class="container">
+        <div class="header-left">
+            <img src="../Assets/Logo fundo branco.png" alt="Optimiza" class="register-logo">
+            <div class="optimiza-inicial"> 
+                Optimiza 
+            </div>
+        </div>
+        <div class="header-center">
+            <div class="menu-text">
+                Home
+            </div>
+            <div class="menu-text">
+                Vagas
+            </div>
+            <div class="menu-text">
+                Banco de Talentos
+            </div>
+            <div class="menu-text">
+                Analítico
+            </div>
+            <div class="menu-text">
+                Ajuda
+            </div>
+        </div>
+        <div class="header-right">
+            <img src="../Assets/profile.png" class="icon-profile" alt="">
+            <div class="menu-profile" id="profile-name">
+                Perfil
+            </div>
+        </div>
+    </div>
+  </div>
+
+        <!-- Conteúdo principal Banco de Talentos -->
+    <div class="talentos-container">
+        <h2 class="talentos-title">Banco de Talentos</h2>
+        <div class="talentos-actions">
+            <input type="text" placeholder="Buscar" class="talentos-search">
+            <button class="talentos-btn talentos-btn-search">Buscar</button>
+            <button class="talentos-btn talentos-btn-filter">Filtrar</button>
+            <button class="talentos-btn talentos-btn-import">Importar Currículo</button>
+        </div>
+        <div class="talentos-list-scroll">
+            <table class="talentos-table">
+                <tbody id="talentos-list">
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Modal para detalhes do candidato -->
+        <div id="modal-candidato" class="modal-candidato" style="display:none;">
+            <div class="modal-content">
+                <span class="modal-close" id="modal-close">&times;</span>
+                <h3 id="modal-nome"></h3>
+                <p><strong>Nível de Formação:</strong> <span id="modal-nivel"></span></p>
+                <p><strong>Curso:</strong> <span id="modal-curso"></span></p>
+                <p><strong>Status:</strong> <span id="modal-status"></span></p>
+            </div>
+        </div>
+        </div>
+    </div>
+</body>
+
+<script>
+async function carregarCandidatos() {
+    try {
+        const response = await fetch('http://localhost:8080/optimiza/candidatos');
+        const candidatos = await response.json();
+
+        const tbody = document.getElementById('talentos-list');
+        tbody.innerHTML = '';
+
+        candidatos.forEach((candidato, idx) => {
+            const rowClass = idx % 2 === 0 ? 'talentos-row talentos-row-alt' : 'talentos-row talentos-row-normal';
+            const tr = document.createElement('tr');
+            tr.className = rowClass;
+            tr.innerHTML = `
+                <td class="talentos-nome">
+                    <strong>${candidato.nome}</strong>
+                </td>
+                <td class="talentos-vermais">
+                    <a href="#" class="talentos-link" data-nome="${candidato.nome}" data-nivel="${candidato.nivelFormacao}" data-curso="${candidato.curso || ''}" data-status="${candidato.status}">Ver Mais</a>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    } catch (error) {
+        console.error('Erro ao carregar candidatos:', error);
+    }
+}
+
+window.onload = function() {
+    carregarCandidatos();
+    document.getElementById('talentos-list').addEventListener('click', function(e) {
+        if (e.target.classList.contains('talentos-link')) {
+            e.preventDefault();
+            document.getElementById('modal-nome').textContent = e.target.getAttribute('data-nome');
+            document.getElementById('modal-nivel').textContent = e.target.getAttribute('data-nivel');
+            document.getElementById('modal-curso').textContent = e.target.getAttribute('data-curso');
+            document.getElementById('modal-status').textContent = e.target.getAttribute('data-status');
+            document.getElementById('modal-candidato').style.display = 'flex';
+        }
+    });
+    document.getElementById('modal-close').onclick = function() {
+        document.getElementById('modal-candidato').style.display = 'none';
+    };
+    window.onclick = function(event) {
+        if (event.target === document.getElementById('modal-candidato')) {
+            document.getElementById('modal-candidato').style.display = 'none';
+        }
+    };
+};
+</script>
+
+</html>
