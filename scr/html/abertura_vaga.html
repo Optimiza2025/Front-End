@@ -1,39 +1,45 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="Assets/Logo fundo branco.png" type="image/x-icon">
+    <link rel="shortcut icon" href="../Assets/Logo fundo branco.png" type="image/x-icon">
     <title>Abertura de Vaga - Optimiza</title>
     <link rel="stylesheet" href="../css/abertura_vaga.css">
     <link rel="stylesheet" href="../css/menu.css">
 
 </head>
+
 <body>
     <!-- Menu -->
     <div class="header">
         <div class="container">
             <div class="header-left">
                 <img src="../Assets/Logo fundo branco.png" alt="Optimiza" class="register-logo">
-                <div class="optimiza-inicial"> 
-                    Optimiza 
+                <div class="optimiza-inicial">
+                    Optimiza
                 </div>
             </div>
             <div class="header-center">
                 <div class="menu-text">
-                    Home
+                    <a href="home.html">Home</a>
+                </div>
+                <div class="menu-container">
+                    <button class="menu-btn menu-text pag">Vagas</button>
+                    <div class="dropdown-content">
+                        <a href="abertura_vaga.html">Abrir Vaga</a>
+                        <a href="vagas_abertas.html">Vagas Abertas</a>
+                    </div>
                 </div>
                 <div class="menu-text">
-                    Vagas
+                    <a href="bancoDeTalentos.html">Banco de Talentos</a>
                 </div>
                 <div class="menu-text">
-                    Banco de Talentos
+                    <a href="painel.html">Analítico</a>
                 </div>
                 <div class="menu-text">
-                    Analítico
-                </div>
-                <div class="menu-text">
-                    Ajuda
+                    <a href="poc.html">Ajuda</a>
                 </div>
             </div>
             <div class="header-right">
@@ -98,80 +104,28 @@
                     </div>
                 </div>
                 <div class="form-right">
-                        <div class="form-group">
-                            <label for="age">Idade</label>
-                            <input type="number" id="age" ">
+                    <div class="form-group">
+                        <label for="age">Idade</label>
+                        <input type="number" id="age" ">
                         </div>
                 
-                        <div class="form-group">
-                            <label for="diversity">Diversidade</label>
-                            <input type="text" id="diversity">
-                        </div>
-                        <div class="form-group">
-                            <label for="keywords">Palavras-Chave</label>
-                            <textarea id="keywords"></textarea>
-                        </div>
-                        <div class="form-button">
-                            <button class="btn-submit" type="submit">Buscar Candidatos</button>
-                        </div>
+                        <div class=" form-group">
+                        <label for="diversity">Diversidade</label>
+                        <input type="text" id="diversity">
+                    </div>
+                    <div class="form-group">
+                        <label for="keywords">Palavras-Chave</label>
+                        <textarea id="keywords"></textarea>
+                    </div>
+                    <div class="form-button">
+                        <button class="btn-submit" type="submit">Buscar Candidatos</button>
+                    </div>
                 </div>
             </div>
 
         </form>
     </div>
     <!-- Fim forms -->
-
-    <!-- <div class="register-wrapper">
-        <h2 class="register-title">Cadastre-se</h2>
-        <form class="register-form">
-            <div class="register-row">
-                <div class="register-group">
-                    <label for="nome">Nome Completo</label>
-                    <input type="text" id="nome" name="nome" required>
-                </div>
-                <div class="register-group">
-                    <label for="email">E-mail</label>
-                    <input type="email" id="email" name="email" required>
-                </div>
-            </div>
-            <div class="register-row">
-                <div class="register-group">
-                    <label for="cpf">CPF</label>
-                    <input type="text" id="cpf" name="cpf" required>
-                </div>
-                <div class="register-group">
-                    <label for="senha">Senha</label>
-                    <input type="password" id="senha" name="senha" required>
-                </div>
-            </div>
-            <div class="register-row">
-                <div class="register-group">
-                    <label for="telefone">Telefone</label>
-                    <input type="text" id="telefone" name="telefone" required>
-                </div>
-                <div class="register-group">
-                    <label for="area">Área</label>
-                    <select id="area" name="area" required class="register-select">
-                        <option value="" disabled selected>Selecione uma área</option>
-                        <option value="Gestores e Avaliadores">Gestores e Avaliadores</option>
-                        <option value="Analista de Recursos Humanos">Analista de Recursos Humanos</option>
-                    </select>
-                </div>
-            </div>
-            <div class="register-row">
-                <div class="register-group"></div>
-                <div class="register-group">
-                    <button type="submit" class="register-btn">Cadastrar</button>
-                </div>
-            </div>
-        </form>
-        <div class="register-footer">
-            <span>Já tem uma conta? <a href="Index.html" class="register-footer-link">Faça o seu login</a></span>
-        </div>
-    </div>
-    <div class="brand-footer">
-        <h1 class="brand-name">Optimiza</h1>
-    </div> -->
 
 </body>
 </html>
