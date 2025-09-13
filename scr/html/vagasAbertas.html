@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="Assets/Logo fundo branco.png" type="image/x-icon">
+    <title>Banco de Talentos - Optimiza</title>
+    <link rel="stylesheet" href="../css/vagasAbertas.css">
+    <link rel="stylesheet" href="../css/menu.css">
+</head>
+
+<body>
+
+    <!-- Menu -->
+    <div class="header">
+        <div class="container">
+            <div class="header-left">
+                <img src="../Assets/Logo fundo branco.png" alt="Optimiza" class="register-logo">
+                <div class="optimiza-inicial">
+                    Optimiza
+                </div>
+            </div>
+            <div class="header-center">
+                <div class="menu-text">
+                    <a href="home.html">Home</a>
+                </div>
+                <div class="menu-container">
+                    <button class="menu-btn menu-text">Vagas</button>
+                    <div class="dropdown-content">
+                        <a href="abertura_vaga.html">Abrir Vaga</a>
+                        <a href="vagas_abertas.html">Vagas Abertas</a>
+                    </div>
+                </div>
+                <div class="menu-text pag">
+                    <a href="bancoDeTalentos.html">Banco de Talentos</a>
+                </div>
+                <div class="menu-text">
+                    <a href="painel.html">Analítico</a>
+                </div>
+                <div class="menu-text">
+                    <a href="poc.html">Ajuda</a>
+                </div>
+            </div>
+            <div class="header-right">
+                <img src="../Assets/profile.png" class="icon-profile" alt="">
+                <div class="menu-profile" id="profile-name">
+                    Perfil
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Conteúdo principal Listagem de vagas abertas -->
+    <div class="talentos-container">
+        <h2 class="talentos-title">Vagas Abertas</h2>
+        <div class="talentos-actions">
+            <input type="text" placeholder="Buscar" class="talentos-search">
+            <button class="talentos-btn talentos-btn-search">Buscar</button>
+            <button class="talentos-btn talentos-btn-filter">Filtrar</button>
+        </div>
+        <div class="description-table-jobs">
+            <table class="table-description">
+                <tbody class="description">
+                    <td class="description-names">
+                        <strong>Avaliação Currículos</strong>
+                    </td>
+                    <td class="description-names">
+                        <strong>Título da Vaga</strong>
+                    </td>
+                    <td class="description-names">
+                        <strong></strong>
+                    </td>
+                    <td class="description-names">
+                        <strong>Cargo</strong>
+                    </td>
+                    <td class="description-names">
+                        <strong>Área de Conhecimento</strong>
+                    </td>
+                    
+                </tbody>
+            </table>
+        </div>
+
+        <div class="talentos-list-scroll">
+            <table class="talentos-table">
+                <tbody id="talentos-list">
+                    <td class="talentos-nome">
+                        <strong>Avaliação Currículos</strong>
+                    </td>
+                    <td class="talentos-nome">
+                        <strong>Desenvolvedor Front-End</strong>
+                    </td>
+                    <td class="talentos-nome">
+                        <strong>Analista Junior</strong>
+                    </td>
+                    <td class="talentos-nome">
+                        <strong>Canais de TI</strong>
+                    </td>
+                    <td class="talentos-vermais">
+                        <a href="#" class="talentos-link" data-nome="${candidato.nome}"
+                            data-nivel="${candidato.nivelFormacao}" data-curso="${candidato.curso || ''}"
+                            data-status="${candidato.status}">Ver Mais</a>
+                    </td>
+                </tbody>
+                <tbody id="talentos-list">
+                    <td class="talentos-nome">
+                        <strong>Avaliação Currículos</strong>
+                    </td>
+                    <td class="talentos-nome">
+                        <strong>Analista de Processos de recrutamento e seleção</strong>
+                    </td>
+                    <td class="talentos-nome">
+                        <strong>Analista Senior</strong>
+                    </td>
+                    <td class="talentos-nome">
+                        <strong>Recursos Humanos</strong>
+                    </td>
+                    <td class="talentos-vermais">
+                        <a href="#" class="talentos-link" data-nome="${candidato.nome}"
+                            data-nivel="${candidato.nivelFormacao}" data-curso="${candidato.curso || ''}"
+                            data-status="${candidato.status}">Ver Mais</a>
+                    </td>
+                </tbody>
+                <tbody id="talentos-list">
+                    <td class="talentos-nome">
+                        <strong>Avaliação Currículos</strong>
+                    </td>
+                    <td class="talentos-nome">
+                        <strong>Gestor de Projetos</strong>
+                    </td>
+                    <td class="talentos-nome">
+                        <strong>Gerente</strong>
+                    </td>
+                    <td class="talentos-nome">
+                        <strong>Projetos de tecnologia</strong>
+                    </td>
+                    <td class="talentos-vermais">
+                        <a href="#" class="talentos-link" data-nome="${candidato.nome}"
+                            data-nivel="${candidato.nivelFormacao}" data-curso="${candidato.curso || ''}"
+                            data-status="${candidato.status}">Ver Mais</a>
+                    </td>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Modal para detalhes do candidato -->
+        <div id="modal-candidato" class="modal-candidato" style="display:none;">
+            <div class="modal-content">
+                <span class="modal-close" id="modal-close">&times;</span>
+                <h3 id="modal-nome"></h3>
+                <p><strong>Nível de Formação:</strong> <span id="modal-nivel"></span></p>
+                <p><strong>Curso:</strong> <span id="modal-curso"></span></p>
+                <p><strong>Status:</strong> <span id="modal-status"></span></p>
+            </div>
+        </div>
+    </div>
+    </div>
+</body>
+
+<script>
+    async function carregarCandidatos() {
+        try {
+            const response = await fetch('http://localhost:8080/optimiza/vagas ');
+            const candidatos = await response.json();
+
+            const tbody = document.getElementById('talentos-list');
+            tbody.innerHTML = '';
+
+            candidatos.forEach((candidato, idx) => {
+                const rowClass = idx % 2 === 0 ? 'talentos-row talentos-row-alt' : 'talentos-row talentos-row-normal';
+                const tr = document.createElement('tr');
+                tr.className = rowClass;
+                tr.innerHTML = `
+                <td class="talentos-nome">
+                    <strong>${candidato.nome}</strong>
+                </td>
+                <td class="talentos-vermais">
+                    <a href="#" class="talentos-link" data-nome="${candidato.nome}" data-nivel="${candidato.nivelFormacao}" data-curso="${candidato.curso || ''}" data-status="${candidato.status}">Ver Mais</a>
+                </td>
+            `;
+                tbody.appendChild(tr);
+            });
+        } catch (error) {
+            console.error('Erro ao carregar candidatos:', error);
+        }
+    }
+
+    window.onload = function () {
+        carregarCandidatos();
+        document.getElementById('talentos-list').addEventListener('click', function (e) {
+            if (e.target.classList.contains('talentos-link')) {
+                e.preventDefault();
+                document.getElementById('modal-nome').textContent = e.target.getAttribute('data-nome');
+                document.getElementById('modal-nivel').textContent = e.target.getAttribute('data-nivel');
+                document.getElementById('modal-curso').textContent = e.target.getAttribute('data-curso');
+                document.getElementById('modal-status').textContent = e.target.getAttribute('data-status');
+                document.getElementById('modal-candidato').style.display = 'flex';
+            }
+        });
+        document.getElementById('modal-close').onclick = function () {
+            document.getElementById('modal-candidato').style.display = 'none';
+        };
+        window.onclick = function (event) {
+            if (event.target === document.getElementById('modal-candidato')) {
+                document.getElementById('modal-candidato').style.display = 'none';
+            }
+        };
+    };
+</script>
+
+</html>
