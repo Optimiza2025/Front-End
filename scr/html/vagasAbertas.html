@@ -25,14 +25,14 @@
                 <div class="menu-text">
                     <a href="home.html">Home</a>
                 </div>
-                <div class="menu-container">
+                <div class="menu-container pag">
                     <button class="menu-btn menu-text">Vagas</button>
                     <div class="dropdown-content">
-                        <a href="abertura_vaga.html">Abrir Vaga</a>
-                        <a href="vagas_abertas.html">Vagas Abertas</a>
+                        <a href="aberturaVaga.html">Abrir Vaga</a>
+                        <a href="vagasAbertas.html">Vagas Abertas</a>
                     </div>
                 </div>
-                <div class="menu-text pag">
+                <div class="menu-text">
                     <a href="bancoDeTalentos.html">Banco de Talentos</a>
                 </div>
                 <div class="menu-text">
@@ -85,61 +85,6 @@
         <div class="talentos-list-scroll">
             <table class="talentos-table">
                 <tbody id="talentos-list">
-                    <td class="talentos-nome">
-                        <strong>Avaliação Currículos</strong>
-                    </td>
-                    <td class="talentos-nome">
-                        <strong>Desenvolvedor Front-End</strong>
-                    </td>
-                    <td class="talentos-nome">
-                        <strong>Analista Junior</strong>
-                    </td>
-                    <td class="talentos-nome">
-                        <strong>Canais de TI</strong>
-                    </td>
-                    <td class="talentos-vermais">
-                        <a href="#" class="talentos-link" data-nome="${candidato.nome}"
-                            data-nivel="${candidato.nivelFormacao}" data-curso="${candidato.curso || ''}"
-                            data-status="${candidato.status}">Ver Mais</a>
-                    </td>
-                </tbody>
-                <tbody id="talentos-list">
-                    <td class="talentos-nome">
-                        <strong>Avaliação Currículos</strong>
-                    </td>
-                    <td class="talentos-nome">
-                        <strong>Analista de Processos de recrutamento e seleção</strong>
-                    </td>
-                    <td class="talentos-nome">
-                        <strong>Analista Senior</strong>
-                    </td>
-                    <td class="talentos-nome">
-                        <strong>Recursos Humanos</strong>
-                    </td>
-                    <td class="talentos-vermais">
-                        <a href="#" class="talentos-link" data-nome="${candidato.nome}"
-                            data-nivel="${candidato.nivelFormacao}" data-curso="${candidato.curso || ''}"
-                            data-status="${candidato.status}">Ver Mais</a>
-                    </td>
-                </tbody>
-                <tbody id="talentos-list">
-                    <td class="talentos-nome">
-                        <strong>Avaliação Currículos</strong>
-                    </td>
-                    <td class="talentos-nome">
-                        <strong>Gestor de Projetos</strong>
-                    </td>
-                    <td class="talentos-nome">
-                        <strong>Gerente</strong>
-                    </td>
-                    <td class="talentos-nome">
-                        <strong>Projetos de tecnologia</strong>
-                    </td>
-                    <td class="talentos-vermais">
-                        <a href="#" class="talentos-link" data-nome="${candidato.nome}"
-                            data-nivel="${candidato.nivelFormacao}" data-curso="${candidato.curso || ''}"
-                            data-status="${candidato.status}">Ver Mais</a>
-                    </td>
                 </tbody>
             </table>
         </div>
@@ -159,42 +104,41 @@
 </body>
 
 <script>
-    async function carregarCandidatos() {
+    async function carregarVagas() {
         try {
-            const response = await fetch('http://localhost:8080/optimiza/vagas ');
-            const candidatos = await response.json();
+            const response = await fetch('http://localhost:8080/optimiza/vagas');
+            const vagas = await response.json();
 
             const tbody = document.getElementById('talentos-list');
             tbody.innerHTML = '';
 
-            candidatos.forEach((candidato, idx) => {
+            vagas.forEach((vaga, idx) => {
                 const rowClass = idx % 2 === 0 ? 'talentos-row talentos-row-alt' : 'talentos-row talentos-row-normal';
                 const tr = document.createElement('tr');
                 tr.className = rowClass;
                 tr.innerHTML = `
-                <td class="talentos-nome">
-                    <strong>${candidato.nome}</strong>
-                </td>
-                <td class="talentos-vermais">
-                    <a href="#" class="talentos-link" data-nome="${candidato.nome}" data-nivel="${candidato.nivelFormacao}" data-curso="${candidato.curso || ''}" data-status="${candidato.status}">Ver Mais</a>
-                </td>
-            `;
+                    <td class="talentos-nome"><strong>${vaga.titulo}</strong></td>
+                    <td class="talentos-nome"><strong>${vaga.cargo}</strong></td>
+                    <td class="talentos-vermais">
+                        <a href="#" class="talentos-link" data-titulo="${vaga.titulo}" data-cargo="${vaga.cargo}">Ver Mais</a>
+                    </td>
+                `;
                 tbody.appendChild(tr);
             });
         } catch (error) {
-            console.error('Erro ao carregar candidatos:', error);
+            console.error('Erro ao carregar vagas:', error);
         }
     }
 
     window.onload = function () {
-        carregarCandidatos();
+        carregarVagas();
         document.getElementById('talentos-list').addEventListener('click', function (e) {
             if (e.target.classList.contains('talentos-link')) {
                 e.preventDefault();
-                document.getElementById('modal-nome').textContent = e.target.getAttribute('data-nome');
-                document.getElementById('modal-nivel').textContent = e.target.getAttribute('data-nivel');
-                document.getElementById('modal-curso').textContent = e.target.getAttribute('data-curso');
-                document.getElementById('modal-status').textContent = e.target.getAttribute('data-status');
+                document.getElementById('modal-nome').textContent = e.target.getAttribute('data-titulo');
+                document.getElementById('modal-nivel').textContent = '';
+                document.getElementById('modal-curso').textContent = e.target.getAttribute('data-cargo');
+                document.getElementById('modal-status').textContent = '';
                 document.getElementById('modal-candidato').style.display = 'flex';
             }
         });

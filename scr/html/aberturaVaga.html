@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="../Assets/Logo fundo branco.png" type="image/x-icon">
+    <title>Abertura de Vaga - Optimiza</title>
+    <link rel="stylesheet" href="../css/aberturaVaga.css">
+    <link rel="stylesheet" href="../css/menu.css">
+
+</head>
+
+<body>
+    <!-- Menu -->
+    <div class="header">
+        <div class="container">
+            <div class="header-left">
+                <img src="../Assets/Logo fundo branco.png" alt="Optimiza" class="register-logo">
+                <div class="optimiza-inicial">
+                    Optimiza
+                </div>
+            </div>
+            <div class="header-center">
+                <div class="menu-text">
+                    <a href="home.html">Home</a>
+                </div>
+                <div class="menu-container">
+                    <button class="menu-btn menu-text pag">Vagas</button>
+                    <div class="dropdown-content">
+                        <a href="aberturaVaga.html">Abrir Vaga</a>
+                        <a href="vagasAbertas.html">Vagas Abertas</a>
+                    </div>
+                </div>
+                <div class="menu-text">
+                    <a href="bancoDeTalentos.html">Banco de Talentos</a>
+                </div>
+                <div class="menu-text">
+                    <a href="painel.html">Analítico</a>
+                </div>
+                <div class="menu-text">
+                    <a href="http://54.145.158.250:8000/chamado/">Ajuda</a>
+                </div>
+            </div>
+            <div class="header-right">
+                <img src="../Assets/profile.png" class="icon-profile" alt="">
+                <div class="menu-profile" id="profile-name">
+                    Perfil
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Fim do menu -->
+
+    <!-- Inicio forms -->
+    <div class="form-container">
+        <h2 class="form-title">Abertura de Vaga</h2>
+        <form>
+            <div class="form">
+                <div class="form-left">
+                    <div class="form-group">
+                        <label for="jobTitle">Título da Vaga</label>
+                        <input type="text" id="jobTitle">
+                    </div>
+                    <div class="form-group">
+                        <label for="position">Cargo</label>
+                        <select id="position">
+                            <option value=""></option>
+                            <option value="jovem-aprendiz">Jovem Aprendiz</option>
+                            <option value="estagiario">Estagiário</option>
+                            <option value="analista-jr">Analista Júnior</option>
+                            <option value="analista-pl">Analista Pleno</option>
+                            <option value="analista-sr">Analista Sênior</option>
+                            <option value="specialist">Especialista I</option>
+                            <option value="tech-lead">Tech Lead</option>
+                            <option value="manager">Gerente</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="experience">Experiência</label>
+                        <select id="experience">
+                            <option value=""></option>
+                            <option value="none">Nenhuma</option>
+                            <option value="1-3">1-3 anos</option>
+                            <option value="3-5">3-5 anos</option>
+                            <option value="5plus">5+ anos</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="education">Área de Formação</label>
+                        <input type="text" id="education">
+                    </div>
+                    <div class="form-group">
+                        <label for="degree">Nível de Graduação</label>
+                        <input type="text" id="degree">
+                    </div>
+                    <div class="form-group">
+                        <label for="languages">Idiomas</label>
+                        <input type="text" id="languages">
+                    </div>
+                </div>
+                <div class="form-right">
+
+                    <div class="form-group">
+                        <label for="gender">Gênero</label>
+                        <input type="text" id="gender">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="age">Idade</label>
+                        <input type="number" id="age">
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="keywords">Palavras-Chave</label>
+                        <textarea id="keywords"></textarea>
+                    </div>
+                    <div class="form-button">
+                        <button class="btn-submit" type="submit">Buscar Candidatos</button>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+    <!-- Fim forms -->
+
+</body>
+
+<script>
+document.querySelector('form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const data = {
+        titulo: document.getElementById('jobTitle').value,
+        cargo: document.getElementById('position').value,
+        experiencia: document.getElementById('experience').value,
+        nivelFormacao: document.getElementById('degree').value,
+        curso: document.getElementById('education').value,
+        idiomas: document.getElementById('languages').value.split(',').map(s => s.trim()),
+        palavrasChave: document.getElementById('keywords').value.split(',').map(s => s.trim()),
+        idArea: parseInt(document.getElementById('idArea').value)
+    };
+    try {
+        const response = await fetch('http://localhost:8080/optimiza/vagas', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+        if (response.ok) {
+            alert('Vaga aberta com sucesso!');
+            document.querySelector('form').reset();
+        } else {
+            alert('Erro ao abrir vaga.');
+        }
+    } catch (error) {
+        alert('Erro de conexão com o servidor.');
+    }
+});
+</script>
+
+</html>
