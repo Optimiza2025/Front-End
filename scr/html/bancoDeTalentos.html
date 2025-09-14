@@ -37,7 +37,11 @@
                     <a href="painel.html">Analítico</a>
                 </div>
                 <div class="menu-text">
+<<<<<<< HEAD
                     <a href="http://54.145.158.250:8000/chamado/">Ajuda</a>
+=======
+                    <a href="http://34.195.148.77/chamado/">Ajuda</a>
+>>>>>>> 226de995dfb35452f52b0d21cf3298065d2d817a
                 </div>
             </div>
         <div class="header-right">
@@ -82,7 +86,8 @@
 <script>
 async function carregarCandidatos() {
     try {
-        const response = await fetch('http://localhost:8080/optimiza/candidatos');
+        // const response = await fetch('http://localhost:8080/optimiza/candidatos'); --Local
+        const response = await fetch('optimiza/candidatos');
         const candidatos = await response.json();
 
         const tbody = document.getElementById('talentos-list');

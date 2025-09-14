@@ -68,7 +68,8 @@
         // Buscar áreas do backend e preencher o select
         async function carregarAreas() {
             try {
-                const resposta = await fetch('http://localhost:8080/optimiza/usuarios/areas');
+                //const resposta = await fetch('http://localhost:8080/optimiza/usuarios/areas');
+                const resposta = await fetch('/optimiza/usuarios/areas');
                 if (resposta.ok) {
                     const areas = await resposta.json();
                     const selectArea = document.getElementById('area');
@@ -94,7 +95,10 @@
             const idArea = document.getElementById('area').value;
 
             try {
-                const resposta = await fetch('http://localhost:8080/optimiza/usuarios/cadastro', {
+                //const endPointCadastro = 'http://localhost:8080/optimiza/usuarios/cadastro';
+                const endPointCadastro = '/optimiza/usuarios/cadastro';
+
+                const resposta = await fetch(endPointCadastro, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

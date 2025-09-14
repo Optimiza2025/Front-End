@@ -60,7 +60,10 @@
             const password = document.getElementById('password').value;
 
             try {
-                const respostaLogin = await fetch('http://localhost:8080/optimiza/usuarios/login', {
+                const endPointLogin = '/optimiza/usuarios/login';
+                //const endPointLogin = 'http://localhost:8080/optimiza/usuarios/login';
+
+                const respostaLogin = await fetch(endPointLogin, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -86,7 +89,7 @@
                         } else if (json.permissao && json.permissao.nome === "Médico") {
                             window.location.href = "../AfterLogin/Html/homePosLoginMedico.html";
                         } else {
-                            window.location.href = "../html/home.html";
+                            window.location.href = "/home.html";
                         }
                     });
                 } else {
