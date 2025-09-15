@@ -73,4 +73,32 @@ body {
   color: #fff;
 }
 
+.indicadores-section {
+  width: 90%;
+  height: 60vh;
+}
+.indicadores-title {
+  text-align: start;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0d2345;
+  margin-bottom: 24px;
+}
+.indicadores-cards {
+  display: flex;
+  gap: 3rem;
+}
+.indicador-card {
+  background: #dbdbdb;
+  border-radius: 8px;
+  height: 35vh;
+  display: block;
+}
+.indicador-card-large {
+  flex: 2;
+}
+.indicador-card-small {
+  flex: 1;
+}
+
 

@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="Assets/Logo fundo branco.png" type="image/x-icon">
-    <title>Banco de Talentos - Optimiza</title>
+    <link rel="shortcut icon" href="../Assets/Logo fundo branco.png" type="image/x-icon">
+    <title>Vagas Abertas - Optimiza</title>
     <link rel="stylesheet" href="../css/vagasAbertas.css">
     <link rel="stylesheet" href="../css/menu.css">
 </head>
@@ -106,14 +106,9 @@
 <script>
     async function carregarVagas() {
         try {
-<<<<<<< HEAD
-            const response = await fetch('http://localhost:8080/optimiza/vagas');
-            const vagas = await response.json();
-=======
             //const response = await fetch('http://localhost:8080/optimiza/vagas ');
             const response = await fetch('optimiza/vagas');
-            const candidatos = await response.json();
->>>>>>> 226de995dfb35452f52b0d21cf3298065d2d817a
+            const vagas = await response.json();
 
             const tbody = document.getElementById('talentos-list');
             tbody.innerHTML = '';
