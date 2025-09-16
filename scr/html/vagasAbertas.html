@@ -107,7 +107,8 @@
     async function carregarVagas() {
         try {
             var idArea = localStorage.getItem('idAreaUsuario');
-            const url = `http://localhost:8080/optimiza/vagas?idArea=${idArea}`;
+            //const url = `http://localhost:8080/optimiza/vagas?idArea=${idArea}`;
+            const url = `/optimiza/vagas?idArea=${idArea}`;
             const response = await fetch(url);
             const vagas = await response.json();
 

@@ -162,7 +162,7 @@ document.querySelector('form').addEventListener('submit', async function(e) {
         idArea: idAreaUsuario ? parseInt(idAreaUsuario) : null
     };
     try {
-        const response = await fetch('http://localhost:8080/optimiza/vagas', {
+        const response = await fetch('/optimiza/vagas', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
