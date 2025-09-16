@@ -25,12 +25,12 @@
           <a href="home.html">Home</a>
         </div>
         <div class="menu-container">
-                    <button class="menu-btn menu-text">Vagas</button>
-                    <div class="dropdown-content">
-                        <a href="aberturaVaga.html">Abrir Vaga</a>
-                        <a href="vagasAbertas.html">Vagas Abertas</a>
-                    </div>
-                </div>
+          <button class="menu-btn menu-text">Vagas</button>
+          <div class="dropdown-content">
+            <a href="aberturaVaga.html">Abrir Vaga</a>
+            <a href="vagasAbertas.html">Vagas Abertas</a>
+          </div>
+        </div>
         <div class="menu-text">
           <a href="bancoDeTalentos.html">Banco de Talentos</a>
         </div>
@@ -75,6 +75,15 @@
       <div class="indicador-card indicador-card-small"></div>
     </div>
   </div>
+<script>
+  // Exibe o nome do usuário salvo no localStorage ao lado da foto de perfil
+  window.addEventListener('DOMContentLoaded', function() {
+    var nomeUsuario = localStorage.getItem('nomeUsuario');
+    if (nomeUsuario) {
+      document.getElementById('profile-name').textContent = nomeUsuario;
+    }
+  });
+</script>
 </body>
 
 </html>

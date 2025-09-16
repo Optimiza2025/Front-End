@@ -17,28 +17,28 @@ body {
     font-size: 2.5rem;
     font-weight: 700;
     color: #0d2345;
-    margin-bottom: 32px;
+    margin-bottom: 2rem;
 }
 
 .start-section {
     width: 90%;
-    margin: 40px auto;
+    margin: 2.5rem auto;
     text-align: center;
 }
 
 .start-cards {
   display: flex;
   gap: 10rem;
-  margin-top: 16px;
+  margin-top: 1rem;
 }
 
 .start-card {
   display: flex;
   background: #fff;
   border: 2px solid #0A2342;
-  border-radius: 12px;
+  border-radius: 0.75rem;
   width: 100%;
-  padding: 32px 0;
+  padding: 2rem 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -47,30 +47,36 @@ body {
 }
 
 .start-card:hover {
-  box-shadow: 0 24px 24px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 64px rgba(0,0,0,0.08);
+  border-color: #5C5CFF;
+}
+
+.start-card:active {
+  box-shadow: 0 8px 8px rgba(0,0,0,0.10);
+  border-color: #0A2342;
 }
 
 .start-card-icon {
-  font-size: 40px;
+  font-size: 2.5rem;
   color: #0A2342;
-  margin-bottom: 12px;
+  margin-bottom: 0.75rem;
 }
 
 .start-card-text {
   font-weight: 700;
   color: #0A2342;
-  font-size: 18px;
+  font-size: 1.125rem;
   text-align: center;
 }
 
 .start-card-primary {
-  background: #5C5CFF;
-  border: none;
+  background: #fff;
+  border: 2px solid #0A2342;
 }
 
 .start-card-primary .start-card-icon,
 .start-card-primary .start-card-text {
-  color: #fff;
+  color: #0A2342;
 }
 
 .indicadores-section {
@@ -82,7 +88,7 @@ body {
   font-size: 1.5rem;
   font-weight: 700;
   color: #0d2345;
-  margin-bottom: 24px;
+  margin-bottom: 1.5rem;
 }
 .indicadores-cards {
   display: flex;
@@ -90,7 +96,7 @@ body {
 }
 .indicador-card {
   background: #dbdbdb;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   height: 35vh;
   display: block;
 }

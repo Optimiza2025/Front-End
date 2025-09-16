@@ -94,10 +94,10 @@ input:focus, select:focus, textarea:focus {
 textarea {
     resize: none;
     min-height: 20vh;
-    padding: 10px 12px;
+    padding: 0.625rem 0.75rem;
     font-size: 1.8vh;
-    border-radius: 8px;
-    border: 1px solid #cbd1dc;
+    border-radius: 0.5rem;
+    border: 0.0625rem solid #cbd1dc;
     background: #fff;
     color: #2d3436;
     transition: all 0.2s ease-in-out;
@@ -113,7 +113,7 @@ textarea::placeholder {
 /* Efeito ao focar */
 textarea:focus {
   border-color: #4a4df6;
-  box-shadow: 0 0 4px rgba(74, 77, 246, 0.3);
+    box-shadow: 0 0 0.25rem rgba(74, 77, 246, 0.3);
   outline: none;
   background: #f9f9ff;
 }
@@ -122,15 +122,15 @@ textarea:focus {
   grid-column: 1 / span 2;
   display: flex;
   justify-content: center;
-  margin-top: 10px;
+    margin-top: 0.625rem;
 }
 
 .btn-submit {
   background-color: #4a4df6;
   color: white;
   border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
+    padding: 0.625rem 1.25rem;
+    border-radius: 0.375rem;
   cursor: pointer;
   font-weight: 600;
   transition: 0.3s;

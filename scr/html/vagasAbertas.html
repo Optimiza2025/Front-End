@@ -61,24 +61,15 @@
         </div>
         <div class="description-table-jobs">
             <table class="table-description">
-                <tbody class="description">
-                    <td class="description-names">
-                        <strong>Avaliação Currículos</strong>
-                    </td>
-                    <td class="description-names">
-                        <strong>Título da Vaga</strong>
-                    </td>
-                    <td class="description-names">
-                        <strong></strong>
-                    </td>
-                    <td class="description-names">
-                        <strong>Cargo</strong>
-                    </td>
-                    <td class="description-names">
-                        <strong>Área de Conhecimento</strong>
-                    </td>
-                    
-                </tbody>
+                <thead>
+                    <tr>
+                        <th class="description-names"><strong>Título da Vaga</strong></th>
+                        <th class="description-names"><strong>Cargo</strong></th>
+                        <th class="description-names"><strong>Nível de Formação</strong></th>
+                        <th class="description-names"><strong>Idiomas</strong></th>
+                        <th class="description-names"><strong>Área</strong></th>
+                    </tr>
+                </thead>
             </table>
         </div>
 
@@ -101,28 +92,55 @@
         </div>
     </div>
     </div>
+<script>
+    // Exibe o nome do usuário salvo no localStorage ao lado da foto de perfil
+    window.addEventListener('DOMContentLoaded', function() {
+        var nomeUsuario = localStorage.getItem('nomeUsuario');
+        if (nomeUsuario) {
+            document.getElementById('profile-name').textContent = nomeUsuario;
+        }
+    });
+</script>
 </body>
 
 <script>
     async function carregarVagas() {
         try {
-            //const response = await fetch('http://localhost:8080/optimiza/vagas ');
-            const response = await fetch('optimiza/vagas');
+            var idArea = localStorage.getItem('idAreaUsuario');
+            const url = `http://localhost:8080/optimiza/vagas?idArea=${idArea}`;
+            const response = await fetch(url);
             const vagas = await response.json();
 
             const tbody = document.getElementById('talentos-list');
             tbody.innerHTML = '';
 
+            function formatarTexto(texto) {
+                if (!texto) return '';
+                // Substitui hífens e underlines por espaço, coloca cada palavra com inicial maiúscula
+                return texto.replace(/[-_]/g, ' ')
+                    .split(' ')
+                    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                    .join(' ');
+            }
+            function formatarIdiomas(idiomas) {
+                if (!Array.isArray(idiomas)) return '';
+                return idiomas.map(formatarTexto).join(', ');
+            }
             vagas.forEach((vaga, idx) => {
                 const rowClass = idx % 2 === 0 ? 'talentos-row talentos-row-alt' : 'talentos-row talentos-row-normal';
                 const tr = document.createElement('tr');
                 tr.className = rowClass;
+                const tituloFormatado = formatarTexto(vaga.titulo);
+                const cargoFormatado = formatarTexto(vaga.cargo);
+                const nivelFormatado = formatarTexto(vaga.nivelFormacao);
+                const idiomasFormatados = formatarIdiomas(vaga.idiomas);
+                const areaFormatada = formatarTexto(vaga.nomeArea);
                 tr.innerHTML = `
-                    <td class="talentos-nome"><strong>${vaga.titulo}</strong></td>
-                    <td class="talentos-nome"><strong>${vaga.cargo}</strong></td>
-                    <td class="talentos-vermais">
-                        <a href="#" class="talentos-link" data-titulo="${vaga.titulo}" data-cargo="${vaga.cargo}">Ver Mais</a>
-                    </td>
+                    <td class="talentos-nome"><strong>${tituloFormatado}</strong></td>
+                    <td class="talentos-nome"><strong>${cargoFormatado}</strong></td>
+                    <td class="talentos-nome"><strong>${nivelFormatado}</strong></td>
+                    <td class="talentos-nome"><strong>${idiomasFormatados}</strong></td>
+                    <td class="talentos-nome"><strong>${areaFormatada}</strong></td>
                 `;
                 tbody.appendChild(tr);
             });
