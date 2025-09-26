@@ -53,9 +53,20 @@
     <div class="talentos-container">
         <h2 class="talentos-title">Banco de Talentos</h2>
         <div class="talentos-actions">
-            <input type="text" placeholder="Buscar" class="talentos-search">
-            <button class="talentos-btn talentos-btn-search">Buscar</button>
-            <button class="talentos-btn talentos-btn-filter">Filtrar</button>
+            <input type="text" placeholder="Buscar por nome" class="talentos-search" id="filtro-nome">
+            <div class="filtro-dropdown-container" style="display:inline-block; position:relative;">
+                <button class="talentos-btn talentos-btn-filter" id="btn-dropdown">Filtros ▼</button>
+                <div class="filtro-dropdown" id="dropdown-filtros" style="display:none; position:absolute; left:0; top:110%; background:#fff; border:1px solid #ccc; border-radius:0.5rem; padding:1rem; z-index:10; min-width:220px; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+                    <select id="select-filtro" class="filtro-select" style="width:100%; margin-bottom:0.7rem;">
+                        <option value="nivelFormacao">Nível de Formação</option>
+                        <option value="curso">Curso</option>
+                        <option value="status">Status</option>
+                    </select>
+                    <input type="text" id="input-filtro" class="filtro-input" placeholder="Digite o valor" style="width:100%; margin-bottom:0.7rem;">
+                    <button id="btn-aplicar-filtro" class="talentos-btn talentos-btn-search" style="width:100%;">Aplicar</button>
+                </div>
+                <span id="indicadores-filtros" style="margin-left:1rem;"></span>
+            </div>
             <button class="talentos-btn talentos-btn-import">Importar Currículo</button>
         </div>
         <div class="talentos-list-scroll">
@@ -89,53 +100,136 @@
 </body>
 
 <script>
+let filtrosExtras = {};
+let todosCandidatos = [];
+function formatarTexto(texto) {
+    if (!texto) return '';
+    return texto.replace(/[-_]/g, ' ')
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+}
+function renderizarCandidatos(candidatos) {
+    const tbody = document.getElementById('talentos-list');
+    tbody.innerHTML = '';
+    if (candidatos.length === 0) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td colspan="2" style="text-align:center; color:#888; padding:2rem;">Nenhum candidato encontrado.</td>`;
+        tbody.appendChild(tr);
+        return;
+    }
+    candidatos.forEach((candidato, idx) => {
+        const rowClass = idx % 2 === 0 ? 'talentos-row talentos-row-alt' : 'talentos-row talentos-row-normal';
+        const tr = document.createElement('tr');
+        tr.className = rowClass;
+        const nomeFormatado = formatarTexto(candidato.nome);
+        const nivelFormatado = formatarTexto(candidato.nivelFormacao);
+        const cursoFormatado = formatarTexto(candidato.curso || '');
+        const statusFormatado = formatarTexto(candidato.status);
+        tr.innerHTML = `
+            <td class="talentos-nome">
+                <strong>${nomeFormatado}</strong>
+            </td>
+            <td class="talentos-vermais">
+                <a href="#" class="talentos-link" data-nome="${nomeFormatado}" data-nivel="${nivelFormatado}" data-curso="${cursoFormatado}" data-status="${statusFormatado}">Ver Mais</a>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
 async function carregarCandidatos() {
     try {
-        //const response = await fetch('http://localhost:8080/optimiza/candidatos');
-        const response = await fetch('optimiza/candidatos');
-        const candidatos = await response.json();
-
-        const tbody = document.getElementById('talentos-list');
-        tbody.innerHTML = '';
-
-        function formatarTexto(texto) {
-            if (!texto) return '';
-            return texto.split('-')
-                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                .join(' ');
+        // Monta query parameters para filtros
+        const nome = document.getElementById('filtro-nome') ? document.getElementById('filtro-nome').value.trim().toLowerCase() : '';
+        let url = 'http://localhost:8080/optimiza/candidatos';
+        let params = [];
+        if (typeof filtrosExtras !== 'undefined') {
+            Object.keys(filtrosExtras).forEach(key => {
+                if (filtrosExtras[key]) params.push(`${key}=${encodeURIComponent(filtrosExtras[key])}`);
+            });
         }
-        candidatos.forEach((candidato, idx) => {
-            const rowClass = idx % 2 === 0 ? 'talentos-row talentos-row-alt' : 'talentos-row talentos-row-normal';
-            const tr = document.createElement('tr');
-            tr.className = rowClass;
-            const nomeFormatado = formatarTexto(candidato.nome);
-            const nivelFormatado = formatarTexto(candidato.nivelFormacao);
-            const cursoFormatado = formatarTexto(candidato.curso || '');
-            const statusFormatado = formatarTexto(candidato.status);
-            tr.innerHTML = `
-                <td class="talentos-nome">
-                    <strong>${nomeFormatado}</strong>
-                </td>
-                <td class="talentos-vermais">
-                    <a href="#" class="talentos-link" data-nome="${nomeFormatado}" data-nivel="${nivelFormatado}" data-curso="${cursoFormatado}" data-status="${statusFormatado}">Ver Mais</a>
-                </td>
-            `;
-            tbody.appendChild(tr);
-        });
+        if (params.length > 0) {
+            url += '?' + params.join('&');
+        }
+        const response = await fetch(url);
+        let candidatos = await response.json();
+        // Filtra por nome no front
+        if (nome) {
+            candidatos = candidatos.filter(c => c.nome && c.nome.toLowerCase().includes(nome));
+        }
+        todosCandidatos = candidatos;
+        renderizarCandidatos(todosCandidatos);
     } catch (error) {
         console.error('Erro ao carregar candidatos:', error);
     }
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Busca por nome em tempo real
+    document.getElementById('filtro-nome').addEventListener('input', function() {
+        carregarCandidatos();
+    });
+    // Dropdown de filtros extras
+    const btnDropdown = document.getElementById('btn-dropdown');
+    const dropdown = document.getElementById('dropdown-filtros');
+    btnDropdown.addEventListener('click', function(e) {
+        e.stopPropagation();
+        dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+    });
+    document.getElementById('btn-aplicar-filtro').addEventListener('click', function() {
+        const campo = document.getElementById('select-filtro').value;
+        const valor = document.getElementById('input-filtro').value.trim();
+        if (valor) {
+            filtrosExtras[campo] = valor;
+            atualizarIndicadoresFiltros();
+            carregarCandidatos();
+        }
+        dropdown.style.display = 'none';
+        document.getElementById('input-filtro').value = '';
+    });
+    function atualizarIndicadoresFiltros() {
+        const container = document.getElementById('indicadores-filtros');
+        container.innerHTML = '';
+        Object.keys(filtrosExtras).forEach(key => {
+            const span = document.createElement('span');
+            span.className = 'filtro-indicador';
+            span.style.background = '#e9e9f7';
+            span.style.color = '#032656';
+            span.style.padding = '0.3rem 0.7rem';
+            span.style.borderRadius = '1rem';
+            span.style.fontSize = '0.95em';
+            span.style.marginRight = '0.5rem';
+            span.style.display = 'inline-flex';
+            span.style.alignItems = 'center';
+            span.innerHTML = `${key}: ${filtrosExtras[key]} <button class='filtro-remove' data-remove='${key}' style='margin-left:0.5rem; background:none; border:none; color:#6C63FF; font-weight:bold; cursor:pointer; font-size:1em;'>x</button>`;
+            container.appendChild(span);
+        });
+        container.querySelectorAll('button[data-remove]').forEach(btn => {
+            btn.onclick = function() {
+                const campo = btn.getAttribute('data-remove');
+                delete filtrosExtras[campo];
+                atualizarIndicadoresFiltros();
+                carregarCandidatos();
+            };
+        });
+    }
+    // Fecha dropdown ao clicar fora
+    document.addEventListener('click', function(e) {
+        if (!dropdown.contains(e.target) && e.target !== btnDropdown) {
+            dropdown.style.display = 'none';
+        }
+    });
+});
 
 window.onload = function() {
     carregarCandidatos();
     document.getElementById('talentos-list').addEventListener('click', function(e) {
         if (e.target.classList.contains('talentos-link')) {
             e.preventDefault();
-            document.getElementById('modal-nome').textContent = e.target.getAttribute('data-nome');
-            document.getElementById('modal-nivel').textContent = e.target.getAttribute('data-nivel');
-            document.getElementById('modal-curso').textContent = e.target.getAttribute('data-curso');
-            document.getElementById('modal-status').textContent = e.target.getAttribute('data-status');
+            document.getElementById('modal-nome').textContent = formatarTexto(e.target.getAttribute('data-nome'));
+            document.getElementById('modal-nivel').textContent = formatarTexto(e.target.getAttribute('data-nivel'));
+            document.getElementById('modal-curso').textContent = formatarTexto(e.target.getAttribute('data-curso'));
+            document.getElementById('modal-status').textContent = formatarTexto(e.target.getAttribute('data-status'));
             document.getElementById('modal-candidato').style.display = 'flex';
         }
     });

@@ -52,6 +52,11 @@
     </div>
     <!-- Fim do menu -->
 
+    <!-- Botão de sugestão de vaga centralizado abaixo do menu -->
+    <div style="width:90%; display:flex; justify-content:flex-start; margin-top:1.5rem; margin-left:5.5rem;">
+        <button id="btn-sugestao-vaga" class="btn-submit" style="width:13rem;">Sugestão de Vaga</button>
+    </div>
+
     <!-- Inicio forms -->
     <div class="form-container">
         <h2 class="form-title">Abertura de Vaga</h2>
@@ -90,6 +95,10 @@
                         <label for="education">Área de Formação</label>
                         <input type="text" id="education">
                     </div>
+                    
+                </div>
+                <div class="form-right">
+
                     <div class="form-group">
                         <label for="degree">Nível de Graduação</label>
                         <select id="degree">
@@ -104,21 +113,10 @@
                             <option value="Doutorado">Doutorado</option>
                         </select>
                     </div>
+                    
                     <div class="form-group">
                         <label for="languages">Idiomas</label>
                         <input type="text" id="languages">
-                    </div>
-                </div>
-                <div class="form-right">
-
-                    <div class="form-group">
-                        <label for="gender">Gênero</label>
-                        <input type="text" id="gender">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="age">Idade</label>
-                        <input type="number" id="age">
                     </div>
                 
                     <div class="form-group">
@@ -135,7 +133,16 @@
     </div>
     <!-- Fim forms -->
 
-<script>
+    <!-- Modal de sugestão de vaga -->
+    <div id="modal-sugestao-vaga" class="modal-sugestao-vaga" style="display:none;">
+        <div class="modal-sugestao-content">
+            <span id="close-modal-sugestao" class="close-modal-sugestao">&times;</span>
+            <h3 class="modal-sugestao-title">Sugestão de Vagas</h3>
+            <ul id="lista-sugestao-vagas" class="modal-sugestao-list"></ul>
+        </div>
+    </div>
+
+ <script>    
     // Exibe o nome do usuário salvo no localStorage ao lado da foto de perfil
     window.addEventListener('DOMContentLoaded', function() {
         var nomeUsuario = localStorage.getItem('nomeUsuario');
@@ -162,7 +169,7 @@ document.querySelector('form').addEventListener('submit', async function(e) {
         idArea: idAreaUsuario ? parseInt(idAreaUsuario) : null
     };
     try {
-        const response = await fetch('/optimiza/vagas', {
+        const response = await fetch('http://localhost:8080/optimiza/vagas', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -181,12 +188,132 @@ document.querySelector('form').addEventListener('submit', async function(e) {
                 window.location.href = 'vagasAbertas.html';
             });
         } else {
-            alert('Erro ao abrir vaga.');
+            const errorData = await response.json();
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro ao abrir vaga',
+                text:'Erro ao abrir a vaga. Tente novamente.'
+            });
         }
     } catch (error) {
         alert('Erro de conexão com o servidor.');
     }
 });
+
+document.getElementById('btn-sugestao-vaga').onclick = async function() {
+    const modal = document.getElementById('modal-sugestao-vaga');
+    const lista = document.getElementById('lista-sugestao-vagas');
+    lista.innerHTML = '<li style="color:#888;">Carregando...</li>';
+    modal.style.display = 'flex';
+    try {
+        const response = await fetch('http://localhost:8080/optimiza/vagas/layout-vagas');
+        if (response.ok) {
+            const vagas = await response.json();
+            lista.innerHTML = '';
+            vagas.forEach(vaga => {
+                const li = document.createElement('li');
+                li.style.display = 'flex';
+                li.style.alignItems = 'center';
+                li.style.justifyContent = 'space-between';
+                li.style.padding = '0.7rem 0.5rem';
+                li.style.borderBottom = '1px solid #e9e9f7';
+                li.style.color = '#032656';
+                li.style.fontSize = '1.1rem';
+                li.textContent = vaga.titulo;
+                const btnAplicar = document.createElement('button');
+                btnAplicar.textContent = 'Aplicar';
+                btnAplicar.className = 'btn-aplicar-sugestao';
+                btnAplicar.style.marginLeft = '1rem';
+                btnAplicar.style.background = '#6C63FF';
+                btnAplicar.style.color = '#fff';
+                btnAplicar.style.border = 'none';
+                btnAplicar.style.borderRadius = '0.4rem';
+                btnAplicar.style.padding = '0.4rem 1.2rem';
+                btnAplicar.style.cursor = 'pointer';
+                btnAplicar.onclick = async function() {
+                    btnAplicar.disabled = true;
+                    btnAplicar.textContent = 'Aplicando...';
+                    try {
+                        const res = await fetch(`http://localhost:8080/optimiza/vagas/layout-vagas?idLayoutVaga=${vaga.id}`);
+                        if (res.ok) {
+                            const dados = await res.json();
+                            document.getElementById('jobTitle').value = dados.titulo || '';
+                            document.getElementById('position').value = getCargoValue(dados.cargo);
+                            document.getElementById('experience').value = getExperienciaValue(dados.experienciaEsperada);
+                            document.getElementById('degree').value = getFormacaoValue(dados.nivelFormacaoEsperada);
+                            document.getElementById('education').value = dados.cursoEsperado || '';
+                            document.getElementById('languages').value = Object.keys(dados.idiomasEsperados).map(idioma => idioma).join(', ');
+                            document.getElementById('keywords').value = '';
+                            modal.style.display = 'none';
+                        } else {
+                            Swal.fire({ icon: 'error', title: 'Erro', text: 'Não foi possível aplicar a sugestão.' });
+                        }
+                    } catch (err) {
+                        Swal.fire({ icon: 'error', title: 'Erro', text: 'Erro de conexão.' });
+                    } finally {
+                        btnAplicar.disabled = false;
+                        btnAplicar.textContent = 'Aplicar';
+                    }
+                };
+                li.appendChild(btnAplicar);
+                lista.appendChild(li);
+            });
+            if (vagas.length === 0) {
+                lista.innerHTML = '<li style="color:#888;">Nenhuma sugestão encontrada.</li>';
+            }
+        } else {
+            lista.innerHTML = '<li style="color:#d00;">Erro ao buscar sugestões.</li>';
+        }
+    } catch (error) {
+        lista.innerHTML = '<li style="color:#d00;">Erro de conexão.</li>';
+    }
+};
+
+// Funções auxiliares para mapear valores do backend para os selects
+function getCargoValue(cargo) {
+    if (!cargo) return '';
+    cargo = cargo.toLowerCase();
+    if (cargo.includes('jovem aprendiz')) return 'jovem-aprendiz';
+    if (cargo.includes('estagi')) return 'estagiario';
+    if (cargo.includes('júnior')) return 'analista-jr';
+    if (cargo.includes('pleno')) return 'analista-pl';
+    if (cargo.includes('sênior') || cargo.includes('senior')) return 'analista-sr';
+    if (cargo.includes('especialista')) return 'specialist';
+    if (cargo.includes('tech lead')) return 'tech-lead';
+    if (cargo.includes('gerente')) return 'manager';
+    return '';
+}
+function getExperienciaValue(exp) {
+    if (!exp) return '';
+    exp = exp.toLowerCase();
+    if (exp.includes('nenhuma')) return 'none';
+    if (exp.match(/1.*3/)) return '1-3';
+    if (exp.match(/3.*5/)) return '3-5';
+    if (exp.match(/5/)) return '5plus';
+    return '';
+}
+function getFormacaoValue(formacao) {
+    if (!formacao) return '';
+    formacao = formacao.toLowerCase();
+    if (formacao.includes('fundamental')) return 'Ensino_Fundamental_completo';
+    if (formacao.includes('médio incompleto')) return 'Ensino_Medio_incompleto';
+    if (formacao.includes('médio completo')) return 'Ensino_Medio_completo';
+    if (formacao.includes('superior cursando')) return 'Ensino_Superior_cursando';
+    if (formacao.includes('superior completo')) return 'Ensino_Superior_completo';
+    if (formacao.includes('pós')) return 'Pos_graduacao';
+    if (formacao.includes('mestrado')) return 'Mestrado';
+    if (formacao.includes('doutorado')) return 'Doutorado';
+    return '';
+}
+document.getElementById('close-modal-sugestao').onclick = function() {
+    document.getElementById('modal-sugestao-vaga').style.display = 'none';
+};
+window.onclick = function(event) {
+    const modal = document.getElementById('modal-sugestao-vaga');
+    if (event.target === modal) {
+        modal.style.display = 'none';
+    }
+};
 </script>
 
 </html>

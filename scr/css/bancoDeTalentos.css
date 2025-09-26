@@ -168,3 +168,79 @@ body {
     border-bottom: 1px solid #e0e0e0;
 }
 
+/* Dropdown de filtros - Banco de Talentos */
+.filtro-dropdown-container {
+    display: inline-block;
+    position: relative;
+}
+.talentos-btn-filter {
+    background: #6C63FF;
+    color: #fff;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.7rem 1.5rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.talentos-btn-filter:hover {
+    background: #5548c8;
+}
+.filtro-dropdown {
+    background: #fff;
+    border: 1px solid #d1d1d1;
+    border-radius: 0.7rem;
+    box-shadow: 0 4px 16px rgba(32,38,54,0.10);
+    padding: 1.2rem;
+    min-width: 250px;
+    z-index: 10;
+    position: absolute;
+    left: 0;
+    top: 110%;
+    display: none;
+}
+.filtro-select {
+    width: 100%;
+    padding: 0.6rem;
+    border-radius: 0.4rem;
+    border: 1px solid #bfc4d4;
+    font-size: 1rem;
+    margin-bottom: 0.7rem;
+    background: #f8f9fa;
+    color: #032656;
+}
+.filtro-input {
+    width: 90% !important;
+    padding: 0.6rem;
+    border-radius: 0.4rem;
+    border: 1px solid #bfc4d4;
+    font-size: 1rem;
+    margin-bottom: 0.7rem;
+    background: #f8f9fa;
+    color: #032656;
+}
+.filtro-indicador {
+    background: #e9e9f7;
+    color: #032656;
+    padding: 0.3rem 0.7rem;
+    border-radius: 1rem;
+    font-size: 0.95em;
+    margin-right: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(32,38,54,0.07);
+}
+.filtro-remove {
+    margin-left: 0.5rem;
+    background: none;
+    border: none;
+    color: #6C63FF;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 1em;
+    transition: color 0.2s;
+}
+.filtro-remove:hover {
+    color: #5548c8;
+}

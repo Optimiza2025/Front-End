@@ -60,6 +60,62 @@ body {
   padding-bottom: 1rem;
 }
 
+/* Modal de sugestão de vaga */
+.modal-sugestao-vaga {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.25);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-sugestao-vaga[style*="display: flex"] {
+  display: flex !important;
+}
+
+.modal-sugestao-content {
+  background: #fff;
+  border-radius: 1rem;
+  padding: 2rem;
+  width: 60%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 24px rgba(32,38,54,0.18);
+  position: relative;
+}
+
+.close-modal-sugestao {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #6C63FF;
+}
+
+.modal-sugestao-title {
+  margin-bottom: 1.5rem;
+  color: #032656;
+}
+
+.modal-sugestao-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.modal-sugestao-list li {
+  padding: 0.7rem 0.5rem;
+  border-bottom: 1px solid #e9e9f7;
+  color: #032656;
+  font-size: 1.1rem;
+}
+
 label, select {
   margin-bottom: 1vh;
   font-size: 1.8vh;
