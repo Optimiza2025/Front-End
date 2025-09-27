@@ -92,16 +92,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="education">Área de Formação</label>
-                        <input type="text" id="education">
-                    </div>
-                    
-                </div>
-                <div class="form-right">
-
-                    <div class="form-group">
-                        <label for="degree">Nível de Graduação</label>
-                        <select id="degree">
+                        <label for="levelDegree">Nível de Graduação</label>
+                        <select id="levelDegree">
                             <option value=""></option>
                             <option value="Ensino_Fundamental_completo">Ensino Fundamental completo</option>
                             <option value="Ensino_Medio_incompleto">Ensino Médio incompleto</option>
@@ -113,14 +105,39 @@
                             <option value="Doutorado">Doutorado</option>
                         </select>
                     </div>
-                    
                     <div class="form-group">
-                        <label for="languages">Idiomas</label>
-                        <input type="text" id="languages">
+                        <label for="education">Instituição de Ensino</label>
+                        <input type="text" id="education">
                     </div>
-                
                     <div class="form-group">
-                        <label for="keywords">Palavras-Chave</label>
+                        <label for="degree">Formação</label>
+                        <input type="text" id="degree">
+                    </div>                   
+                </div>
+                <div class="form-right">              
+                    <div class="languages-block">
+                        <div class="form-group">
+                            <label for="languages">Idiomas</label>
+                            <input type="text" id="languages">
+                        </div>
+                        <div class="form-group">
+                            <label for="languagesLevel">Nível do Idioma</label>
+                            <select id="languagesLevel">
+                                <option value=""></option>
+                                <option value="A1">A1 - BÁSICO INICIANTE</option>
+                                <option value="A2">A2 - BÁSICO INTERMEDIÁRIO</option>
+                                <option value="B1">B1 - FALANTE INDEPENDENTE BÁSICO</option>
+                                <option value="B2">B2 - FALANTE INDEPENDENTE AVANÇADO</option>
+                                <option value="C1">C1 - PROFICIENTE AVANÇADO</option>
+                                <option value="C2">C2 - DOMÍNIO PLENO</option>
+                            </select>
+                        </div>
+                        <div class="languages-button">
+                            <button class="btn-languages" type="button">+</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="keywords">Palavras-Chave <small>(Separe por vírgula, ponto e vírgula ou quebra de linha)</small></label>
                         <textarea id="keywords"></textarea>
                     </div>
                     <div class="form-button">
@@ -151,7 +168,174 @@
         }
     });
 </script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const addButton = document.querySelector('.btn-languages');
+    const languagesContainer = document.querySelector('.languages-block').parentNode; 
+
+    addButton.addEventListener('click', () => {
+        // cria um novo bloco de idiomas
+        const newBlock = document.createElement('div');
+        newBlock.classList.add('languages-block');
+
+        newBlock.innerHTML = `
+            <div class="form-group">
+                <label>Idiomas</label>
+                <input type="text" name="languages[]">
+            </div>
+            <div class="form-group">
+                <label>Nível do Idioma</label>
+                <select name="languagesLevel[]">
+                    <option value=""></option>
+                    <option value="A1">A1 - BÁSICO INICIANTE</option>
+                    <option value="A2">A2 - BÁSICO INTERMEDIÁRIO</option>
+                    <option value="B1">B1 - FALANTE INDEPENDENTE BÁSICO</option>
+                    <option value="B2">B2 - FALANTE INDEPENDENTE AVANÇADO</option>
+                    <option value="C1">C1 - PROFICIENTE AVANÇADO</option>
+                    <option value="C2">C2 - DOMÍNIO PLENO</option>
+                </select>
+            </div>
+            <div class="languages-button">
+                <button class="btn-remove" type="button">×</button>
+            </div>
+        `;
+
+        // Os inputs têm name="languages[]" e name="languagesLevel[]" para facilitar o envio como arrays no back-end.
+
+        // adiciona o novo bloco antes do botão principal
+        languagesContainer.insertBefore(newBlock, addButton.closest('.languages-block').nextSibling);
+
+        // adiciona evento para remover o bloco se clicar no "x"
+        const removeBtn = newBlock.querySelector('.btn-remove');
+        removeBtn.addEventListener('click', () => {
+            newBlock.remove();
+        });
+    });
+});
+</script>
+
 </body>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.querySelector('form');
+  if (!form) return;
+
+  // helper: encontra ou cria <small class="error"> dentro do mesmo form-group
+  function getErrorEl(field) {
+    if (!field) return null;
+    const parent = field.parentElement || field;
+    let existing = parent.querySelector('small.error');
+    if (existing) return existing;
+
+    if (field.id) {
+      const byId = document.getElementById('error-' + field.id);
+      if (byId) return byId;
+    }
+
+    const small = document.createElement('small');
+    small.className = 'error';
+    small.id = 'error-' + (field.id || Math.random().toString(36).slice(2,7));
+    parent.appendChild(small);
+    return small;
+  }
+
+  function setError(field, message) {
+    if (!field) return;
+    const err = getErrorEl(field);
+    if (!err) return;
+    err.textContent = message;
+    err.style.color = '#d32f2f';
+    err.style.display = 'block';
+    field.classList.add('input-error');
+  }
+
+  function clearError(field) {
+    if (!field) return;
+    const parent = field.parentElement || field;
+    const existing = parent.querySelector('small.error');
+    if (existing) existing.textContent = '';
+    field.classList.remove('input-error');
+  }
+
+  // limpa tudo
+  function clearAllErrors() {
+    form.querySelectorAll('small.error').forEach(s => s.textContent = '');
+    form.querySelectorAll('.input-error').forEach(i => i.classList.remove('input-error'));
+  }
+
+  // adiciona listeners para limpar erro quando o usuário digitar/mudar
+  ['jobTitle','position','experience','levelDegree','education','degree','languages','languagesLevel','keywords'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const event = el.tagName.toLowerCase() === 'select' ? 'change' : 'input';
+    el.addEventListener(event, () => clearError(el));
+  });
+
+  // valida os campos
+  function validate() {
+    clearAllErrors();
+
+    const jobTitle = document.getElementById('jobTitle');
+    const position = document.getElementById('position');
+    const experience = document.getElementById('experience');
+    const levelDegree = document.getElementById('levelDegree');
+    const education = document.getElementById('education'); // não obrigatório
+    const degree = document.getElementById('degree');
+    const languages = document.getElementById('languages');
+    const languagesLevel = document.getElementById('languagesLevel');
+    const keywords = document.getElementById('keywords');
+
+    let valid = true;
+
+    if (!jobTitle.value.trim()) {
+      setError(jobTitle, 'Título da Vaga é obrigatório.');
+      valid = false;
+    }
+
+    if (!position.value.trim()) {
+      setError(position, 'Cargo é obrigatório.');
+      valid = false;
+    }
+
+    if (!experience.value.trim()) {
+      setError(experience, 'Experiência é obrigatória.');
+      valid = false;
+    }
+
+    if (!levelDegree.value.trim()) {
+      setError(levelDegree, 'Nível de Graduação é obrigatório.');
+      valid = false;
+    }
+
+    if (!degree.value.trim()) {
+      setError(degree, 'Formação é obrigatória.');
+      valid = false;
+    }
+
+    if (languages.value.trim() && !languagesLevel.value.trim()) {
+      setError(languagesLevel, 'Se informar um idioma, o nível é obrigatório.');
+      valid = false;
+    }
+
+    if (!keywords.value.trim()) {
+      setError(keywords, 'Palavras-Chave são obrigatórias. Separe por vírgula, ponto e vírgula ou por linha.');
+      valid = false;
+    }
+
+    return valid;
+  }
+
+  window.validateVagaForm = validate;
+
+  form.addEventListener('submit', (e) => {
+    if (!validate()) {
+      e.preventDefault();
+    }
+  });
+});
+</script>
+
 
 <script>
 document.querySelector('form').addEventListener('submit', async function(e) {
