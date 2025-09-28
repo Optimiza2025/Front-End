@@ -342,12 +342,29 @@ document.querySelector('form').addEventListener('submit', async function(e) {
     e.preventDefault();
     // Pega o id da área do usuário do localStorage
     const idAreaUsuario = localStorage.getItem('idAreaUsuario');
+    function formatFormacao(value) {
+        if (!value) return '';
+        value = value.trim().toLowerCase();
+        let result = '';
+        if (value.includes('fundamental')) result = 'Ensino_Fundamental_completo';
+        else if (value.includes('médio incompleto')) result = 'Ensino_Medio_incompleto';
+        else if (value.includes('médio completo')) result = 'Ensino_Medio_completo';
+        else if (value.includes('superior cursando')) result = 'Ensino_Superior_cursando';
+        else if (value.includes('superior completo')) result = 'Ensino_Superior_completo';
+        else if (value.includes('pós')) result = 'Pos_graduacao';
+        else if (value.includes('mestrado')) result = 'Mestrado';
+        else if (value.includes('doutorado')) result = 'Doutorado';
+        else result = value;
+        // Garante primeira letra maiúscula
+        return result.charAt(0).toUpperCase() + result.slice(1);
+    }
     const data = {
         titulo: document.getElementById('jobTitle').value,
         cargo: document.getElementById('position').value,
         experiencia: document.getElementById('experience').value,
-        nivelFormacao: document.getElementById('degree').value,
-        curso: document.getElementById('education').value,
+        nivelFormacao: formatFormacao(document.getElementById('levelDegree').value),
+        instituicaoEnsino: formatFormacao(document.getElementById('education').value),
+        curso: document.getElementById('degree').value,
         idiomas: document.getElementById('languages').value.split(',').map(s => s.trim()),
         palavrasChave: document.getElementById('keywords').value.split(',').map(s => s.trim()),
         idArea: idAreaUsuario ? parseInt(idAreaUsuario) : null
@@ -424,8 +441,8 @@ document.getElementById('btn-sugestao-vaga').onclick = async function() {
                             document.getElementById('jobTitle').value = dados.titulo || '';
                             document.getElementById('position').value = getCargoValue(dados.cargo);
                             document.getElementById('experience').value = getExperienciaValue(dados.experienciaEsperada);
-                            document.getElementById('degree').value = getFormacaoValue(dados.nivelFormacaoEsperada);
-                            document.getElementById('education').value = dados.cursoEsperado || '';
+                            document.getElementById('levelDegree').value = getFormacaoValue(dados.nivelFormacaoEsperada);
+                            document.getElementById('degree').value = dados.cursoEsperado || '';
                             document.getElementById('languages').value = Object.keys(dados.idiomasEsperados).map(idioma => idioma).join(', ');
                             document.getElementById('keywords').value = '';
                             modal.style.display = 'none';

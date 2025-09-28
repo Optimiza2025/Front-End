@@ -197,3 +197,56 @@ small.error { color: #d32f2f; display: block; margin-top: 6px; font-size: 0.85re
 
 /* borda vermelha no campo inválido */
 .input-error { border-color: #d32f2f !important; box-shadow: 0 0 0 3px rgba(211,47,47,0.04); }
+
+/* Modal de sugestão de vaga - garantir que display:flex funcione */
+.modal-sugestao-vaga {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.25);
+  z-index: 10000;
+  justify-content: center;
+  align-items: center;
+}
+.modal-sugestao-vaga[style*="display: flex"] {
+  display: flex !important;
+}
+.modal-sugestao-content {
+  background: #fff;
+  border-radius: 1rem;
+  padding: 2rem;
+  width: 90%; 
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 24px rgba(32,38,54,0.18);
+  position: relative;
+}
+.close-modal-sugestao {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #6C63FF;
+}
+.modal-sugestao-title {
+  margin-bottom: 1.5rem;
+  color: #032656;
+}
+.modal-sugestao-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.modal-sugestao-list li {
+  padding: 0.7rem 0.5rem;
+  border-bottom: 1px solid #e9e9f7;
+  color: #032656;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
