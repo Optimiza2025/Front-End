@@ -81,25 +81,28 @@
     container.innerHTML = '';
 
     if (candidatos.length === 0) {
-        container.innerHTML = `<p style="text-align:center; color:#888; margin-top:2vh;">Nenhum candidato encontrado.</p>`;
-        return;
+      container.innerHTML = `<p style="text-align:center; color:#888; margin-top:2vh;">Nenhum candidato encontrado.</p>`;
+      return;
     }
 
-    candidatos.forEach(candidato => {
-        // Definir a classe da borda pela porcentagem
-        let cardClass = "candidate-card";
-        if (candidato.porcentagem >= 70) {
-            cardClass += " success"; // verde
-        } else if (candidato.porcentagem >= 30) {
-            cardClass += " warning"; // amarelo
-        } else {
-            cardClass += " danger"; // podemos criar vermelho depois se quiser
-        }
+    //ordenar por porcentagem (maior primeiro)
+    candidatos.sort((a, b) => b.porcentagem - a.porcentagem);
 
-        // Criar card
-        const div = document.createElement('div');
-        div.className = cardClass;
-        div.innerHTML = `
+    candidatos.forEach(candidato => {
+      // Definir a classe da borda pela porcentagem
+      let cardClass = "candidate-card";
+      if (candidato.porcentagem >= 70) {
+        cardClass += " success"; // verde
+      } else if (candidato.porcentagem >= 30) {
+        cardClass += " warning"; // amarelo
+      } else {
+        cardClass += " danger"; // podemos criar vermelho depois se quiser
+      }
+
+      // Criar card
+      const div = document.createElement('div');
+      div.className = cardClass;
+      div.innerHTML = `
             <div class="candidate-info">
                 <strong>${candidato.nome}</strong>
                 <p>Banco de Talentos Interno</p>
@@ -109,17 +112,20 @@
             </div>
         `;
 
-        container.appendChild(div);
+      container.appendChild(div);
     });
-}
+  }
 
-// Exemplo de uso (simulando retorno do backend)
-const candidatosBackend = [
+  // Exemplo de uso (simulando retorno do backend)
+  const candidatosBackend = [
     { nome: "Maria Silva", porcentagem: 70 },
     { nome: "João Souza", porcentagem: 50 },
-    { nome: "Ana Costa", porcentagem: 20 }
-];
+    { nome: "Ana Costa", porcentagem: 20 },
+    { nome: "Marcos Souza", porcentagem: 77 },
+    { nome: "Joana Santos", porcentagem: 32 },
+    { nome: "Ana Luiza Carvalho", porcentagem: 2 }
+  ];
 
-renderizarCandidatos(candidatosBackend);
+  renderizarCandidatos(candidatosBackend);
 
 </script>
