@@ -90,7 +90,7 @@
         let cardClass = "candidate-card";
         if (candidato.porcentagem >= 70) {
             cardClass += " success"; // verde
-        } else if (candidato.porcentagem >= 50) {
+        } else if (candidato.porcentagem >= 30) {
             cardClass += " warning"; // amarelo
         } else {
             cardClass += " danger"; // podemos criar vermelho depois se quiser
@@ -117,7 +117,7 @@
 const candidatosBackend = [
     { nome: "Maria Silva", porcentagem: 70 },
     { nome: "João Souza", porcentagem: 50 },
-    { nome: "Ana Costa", porcentagem: 40 }
+    { nome: "Ana Costa", porcentagem: 20 }
 ];
 
 renderizarCandidatos(candidatosBackend);
