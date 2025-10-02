@@ -51,7 +51,7 @@
   </div>
   <!-- Seção Por onde começar -->
   <div class="start-section">
-    <div class="start-title" id="start-title">Perfis Correspondentes a vaga: </div>
+    <div class="start-title" id="start-title">Perfis Correspondentes a Vaga: </div>
   </div>
 
   <div class="all-candidates" id="all-candidates"></div>
@@ -63,8 +63,8 @@
       if (nomeUsuario) {
         document.getElementById('profile-name').textContent = nomeUsuario;
       }
-      // mudar para localStorage?
-      var nomeVaga = "Analista front-end"
+      // var nomeVaga = "Analista front-end" -- Teste
+      var nomeVaga = localStorage.getItem('nomeVaga');
       if (nomeVaga) {
         var titulo = document.getElementById('start-title')
         titulo.innerHTML += `<div style="color:#5555FF;">${nomeVaga}</div>`
@@ -116,15 +116,15 @@
     });
   }
 
-  // Exemplo de uso (simulando retorno do backend)
-  const candidatosBackend = [
-    { nome: "Maria Silva", porcentagem: 70 },
-    { nome: "João Souza", porcentagem: 50 },
-    { nome: "Ana Costa", porcentagem: 20 },
-    { nome: "Marcos Souza", porcentagem: 77 },
-    { nome: "Joana Santos", porcentagem: 32 },
-    { nome: "Ana Luiza Carvalho", porcentagem: 2 }
-  ];
+  // Exemplo de uso (simulando retorno do backend) -- teste
+  // const candidatosBackend = [
+  //   { nome: "Maria Silva", porcentagem: 70 },
+  //   { nome: "João Souza", porcentagem: 50 },
+  //   { nome: "Ana Costa", porcentagem: 20 },
+  //   { nome: "Marcos Souza", porcentagem: 77 },
+  //   { nome: "Joana Santos", porcentagem: 32 },
+  //   { nome: "Ana Luiza Carvalho", porcentagem: 2 }
+  // ];
 
   renderizarCandidatos(candidatosBackend);
 
