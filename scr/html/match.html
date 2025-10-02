@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="../Assets/Logo fundo branco.png" type="image/x-icon">
+  <title>Perfis Correspondentes - Optimiza</title>
+  <link rel="stylesheet" href="../css/match.css">
+  <link rel="stylesheet" href="../css/menu.css">
+</head>
+
+<body>
+  <!-- Menu -->
+  <div class="header">
+    <div class="container">
+      <div class="header-left">
+        <img src="../Assets/Logo fundo branco.png" alt="Optimiza" class="register-logo">
+        <div class="optimiza-inicial">
+          Optimiza
+        </div>
+      </div>
+      <div class="header-center">
+        <div class="menu-text pag">
+          <a href="home.html">Home</a>
+        </div>
+        <div class="menu-container">
+          <button class="menu-btn menu-text">Vagas</button>
+          <div class="dropdown-content">
+            <a href="aberturaVaga.html">Abrir Vaga</a>
+            <a href="vagasAbertas.html">Vagas Abertas</a>
+          </div>
+        </div>
+        <div class="menu-text">
+          <a href="bancoDeTalentos.html">Banco de Talentos</a>
+        </div>
+        <div class="menu-text">
+          <a href="painel.html">Analítico</a>
+        </div>
+        <div class="menu-text">
+          <a href="http://34.195.148.77/chamado/">Ajuda</a>
+        </div>
+      </div>
+      <div class="header-right">
+        <img src="../Assets/profile.png" class="icon-profile" alt="">
+        <div class="menu-profile" id="profile-name">
+          Perfil
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Seção Por onde começar -->
+  <div class="start-section">
+    <div class="start-title" id="start-title">Perfis Correspondentes a vaga: </div>
+  </div>
+
+  <div class="all-candidates" id="all-candidates"></div>
+
+  <script>
+    // Exibe o nome do usuário salvo no localStorage ao lado da foto de perfil
+    window.addEventListener('DOMContentLoaded', function () {
+      var nomeUsuario = localStorage.getItem('nomeUsuario');
+      if (nomeUsuario) {
+        document.getElementById('profile-name').textContent = nomeUsuario;
+      }
+      // mudar para localStorage?
+      var nomeVaga = "Analista front-end"
+      if (nomeVaga) {
+        var titulo = document.getElementById('start-title')
+        titulo.innerHTML += `<div style="color:#5555FF;">${nomeVaga}</div>`
+      }
+    });
+  </script>
+</body>
+
+</html>
+
+<script>
+  function renderizarCandidatos(candidatos) {
+    const container = document.getElementById('all-candidates');
+    container.innerHTML = '';
+
+    if (candidatos.length === 0) {
+        container.innerHTML = `<p style="text-align:center; color:#888; margin-top:2vh;">Nenhum candidato encontrado.</p>`;
+        return;
+    }
+
+    candidatos.forEach(candidato => {
+        // Definir a classe da borda pela porcentagem
+        let cardClass = "candidate-card";
+        if (candidato.porcentagem >= 70) {
+            cardClass += " success"; // verde
+        } else if (candidato.porcentagem >= 50) {
+            cardClass += " warning"; // amarelo
+        } else {
+            cardClass += " danger"; // podemos criar vermelho depois se quiser
+        }
+
+        // Criar card
+        const div = document.createElement('div');
+        div.className = cardClass;
+        div.innerHTML = `
+            <div class="candidate-info">
+                <strong>${candidato.nome}</strong>
+                <p>Banco de Talentos Interno</p>
+            </div>
+            <div class="candidate-score">
+                <span>${candidato.porcentagem}%</span>
+            </div>
+        `;
+
+        container.appendChild(div);
+    });
+}
+
+// Exemplo de uso (simulando retorno do backend)
+const candidatosBackend = [
+    { nome: "Maria Silva", porcentagem: 70 },
+    { nome: "João Souza", porcentagem: 50 },
+    { nome: "Ana Costa", porcentagem: 40 }
+];
+
+renderizarCandidatos(candidatosBackend);
+
+</script>
