@@ -338,10 +338,134 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 <script>
+// ==== Funções de mapeamento e idiomas (novas) ==== //
+function mapCargo(cargo) {
+    if (!cargo) return '';
+    cargo = cargo.toLowerCase();
+    const allowed = ['jovem-aprendiz','estagiario','analista-jr','analista-pl','analista-sr','specialist','tech-lead','manager'];
+    cargo = cargo
+        .replace(/est.a[gí]rio?/,'estagiario')
+        .replace(/j[óo]vem.?aprendiz/,'jovem-aprendiz')
+        .replace(/analista.?junior|analista.?j[r]?/,'analista-jr')
+        .replace(/analista.?pleno|analista.?pl/,'analista-pl')
+        .replace(/analista.?s[eê]nior|analista.?sr/,'analista-sr')
+        .replace(/tech.?lead/,'tech-lead');
+    if (allowed.includes(cargo)) return cargo;
+    const found = allowed.find(a => cargo.includes(a.split('-')[0]));
+    return found || '';
+}
+function mapExperiencia(exp) {
+    if (!exp) return '';
+    exp = exp.toLowerCase();
+    if (exp === '1-3' || /1.*3/.test(exp)) return '1-3';
+    if (exp === '3-5' || /3.*5/.test(exp)) return '3-5';
+    if (exp.includes('5') && !exp.includes('3-5')) return '5plus';
+    if (exp.includes('none') || exp.includes('nenhuma')) return 'none';
+    return '';
+}
+function mapNivelFormacao(nv) {
+    if (!nv) return '';
+    nv = nv.toLowerCase().replace(/ /g,'_');
+    if (nv.includes('fundamental')) return 'Ensino_Fundamental_completo';
+    if (nv.includes('medio_incompleto') || nv.includes('médio_incompleto')) return 'Ensino_Medio_incompleto';
+    if (nv.includes('medio_completo') || nv.includes('médio_completo')) return 'Ensino_Medio_completo';
+    if (nv.includes('superior_cursando')) return 'Ensino_Superior_cursando';
+    if (nv.includes('superior_completo')) return 'Ensino_Superior_completo';
+    if (nv.includes('pos') || nv.includes('pós') || nv.includes('pos_graduacao')) return 'Pos_graduacao';
+    if (nv.includes('mestrado')) return 'Mestrado';
+    if (nv.includes('doutorado')) return 'Doutorado';
+    return '';
+}
+function resetLanguageBlocks() {
+    const blocks = document.querySelectorAll('.languages-block');
+    blocks.forEach((b,i) => {
+        if (i === 0) {
+            const langInput = b.querySelector('#languages');
+            const levelSelect = b.querySelector('#languagesLevel');
+            if (langInput) langInput.value = '';
+            if (levelSelect) levelSelect.value = '';
+        } else { b.remove(); }
+    });
+}
+function createLanguageBlock(lang, level) {
+    const formRight = document.querySelector('.form-right');
+    if (!formRight) return;
+    const newBlock = document.createElement('div');
+    newBlock.classList.add('languages-block');
+    newBlock.innerHTML = `
+        <div class="form-group">
+            <label>Idiomas</label>
+            <input type="text" name="languages[]" value="${lang}">
+        </div>
+        <div class="form-group">
+            <label>Nível do Idioma</label>
+            <select name="languagesLevel[]">
+                <option value=""></option>
+                <option value="A1">A1 - BÁSICO INICIANTE</option>
+                <option value="A2">A2 - BÁSICO INTERMEDIÁRIO</option>
+                <option value="B1">B1 - FALANTE INDEPENDENTE BÁSICO</option>
+                <option value="B2">B2 - FALANTE INDEPENDENTE AVANÇADO</option>
+                <option value="C1">C1 - PROFICIENTE AVANÇADO</option>
+                <option value="C2">C2 - DOMÍNIO PLENO</option>
+            </select>
+        </div>
+        <div class="languages-button">
+            <button class="btn-remove" type="button">×</button>
+        </div>`;
+    const baseBlock = document.querySelector('.languages-block');
+    formRight.insertBefore(newBlock, baseBlock.nextSibling);
+    const select = newBlock.querySelector('select');
+    if (select) select.value = level || '';
+    const removeBtn = newBlock.querySelector('.btn-remove');
+    if (removeBtn) removeBtn.addEventListener('click', () => newBlock.remove());
+}
+function applyIdiomas(idiomasObj) {
+    resetLanguageBlocks();
+    const entries = Object.entries(idiomasObj || {});
+    if (entries.length === 0) return;
+    const first = entries[0];
+    const baseInput = document.getElementById('languages');
+    const baseSelect = document.getElementById('languagesLevel');
+    if (baseInput) baseInput.value = first[0];
+    if (baseSelect) baseSelect.value = first[1];
+    for (let i = 1; i < entries.length; i++) {
+        createLanguageBlock(entries[i][0], entries[i][1]);
+    }
+}
 document.querySelector('form').addEventListener('submit', async function(e) {
     e.preventDefault();
     // Pega o id da área do usuário do localStorage
     const idAreaUsuario = localStorage.getItem('idAreaUsuario');
+    if (!idAreaUsuario) {
+        Swal.fire({icon:'warning', title:'Área não definida', text:'Área do usuário não encontrada. Refaça o login.'});
+        return;
+    }
+    // Monta mapa de idiomas: { idioma: nivel }
+    function collectIdiomas() {
+        const map = {};
+        // bloco base
+        const baseLang = document.getElementById('languages')?.value.trim();
+        const baseLevel = document.getElementById('languagesLevel')?.value.trim();
+        if (baseLang && baseLevel) map[baseLang] = baseLevel;
+        // blocos adicionais
+        document.querySelectorAll('.languages-block').forEach(block => {
+            const inputEl = block.querySelector('input[name="languages[]"]');
+            const selectEl = block.querySelector('select[name="languagesLevel[]"]');
+            if (inputEl && selectEl) {
+                const lang = inputEl.value.trim();
+                const lvl = selectEl.value.trim();
+                if (lang && lvl) map[lang] = lvl;
+            }
+        });
+        return Object.keys(map).length ? map : null;
+    }
+    function parsePalavrasChave(raw) {
+        if (!raw) return [];
+        return raw
+            .split(/[,;\n]+/)
+            .map(s => s.trim())
+            .filter(s => s.length > 0);
+    }
     function formatFormacao(value) {
         if (!value) return '';
         value = value.trim().toLowerCase();
@@ -359,15 +483,15 @@ document.querySelector('form').addEventListener('submit', async function(e) {
         return result.charAt(0).toUpperCase() + result.slice(1);
     }
     const data = {
-        titulo: document.getElementById('jobTitle').value,
-        cargo: document.getElementById('position').value,
-        experiencia: document.getElementById('experience').value,
-        nivelFormacao: formatFormacao(document.getElementById('levelDegree').value),
-        instituicaoEnsino: formatFormacao(document.getElementById('education').value),
-        curso: document.getElementById('degree').value,
-        idiomas: document.getElementById('languages').value.split(',').map(s => s.trim()),
-        palavrasChave: document.getElementById('keywords').value.split(',').map(s => s.trim()),
-        idArea: idAreaUsuario ? parseInt(idAreaUsuario) : null
+        titulo: document.getElementById('jobTitle').value || null,
+        cargo: document.getElementById('position').value || null,
+        experiencia: document.getElementById('experience').value || null,
+        nivelFormacao: formatFormacao(document.getElementById('levelDegree').value) || null,
+        instituicaoEnsino: document.getElementById('education').value || null,
+        curso: document.getElementById('degree').value || null,
+        idiomas: collectIdiomas(),
+        palavrasChave: parsePalavrasChave(document.getElementById('keywords').value),
+        idArea: parseInt(idAreaUsuario)
     };
     try {
         const response = await fetch('http://localhost:8080/optimiza/vagas', {
@@ -439,11 +563,11 @@ document.getElementById('btn-sugestao-vaga').onclick = async function() {
                         if (res.ok) {
                             const dados = await res.json();
                             document.getElementById('jobTitle').value = dados.titulo || '';
-                            document.getElementById('position').value = getCargoValue(dados.cargo);
-                            document.getElementById('experience').value = getExperienciaValue(dados.experienciaEsperada);
-                            document.getElementById('levelDegree').value = getFormacaoValue(dados.nivelFormacaoEsperada);
+                            document.getElementById('position').value = mapCargo(dados.cargo);
+                            document.getElementById('experience').value = mapExperiencia(dados.experienciaEsperada);
+                            document.getElementById('levelDegree').value = mapNivelFormacao(dados.nivelFormacaoEsperada);
                             document.getElementById('degree').value = dados.cursoEsperado || '';
-                            document.getElementById('languages').value = Object.keys(dados.idiomasEsperados).map(idioma => idioma).join(', ');
+                            applyIdiomas(dados.idiomasEsperados || {});
                             document.getElementById('keywords').value = '';
                             modal.style.display = 'none';
                         } else {
@@ -471,41 +595,6 @@ document.getElementById('btn-sugestao-vaga').onclick = async function() {
 };
 
 // Funções auxiliares para mapear valores do backend para os selects
-function getCargoValue(cargo) {
-    if (!cargo) return '';
-    cargo = cargo.toLowerCase();
-    if (cargo.includes('jovem aprendiz')) return 'jovem-aprendiz';
-    if (cargo.includes('estagi')) return 'estagiario';
-    if (cargo.includes('júnior')) return 'analista-jr';
-    if (cargo.includes('pleno')) return 'analista-pl';
-    if (cargo.includes('sênior') || cargo.includes('senior')) return 'analista-sr';
-    if (cargo.includes('especialista')) return 'specialist';
-    if (cargo.includes('tech lead')) return 'tech-lead';
-    if (cargo.includes('gerente')) return 'manager';
-    return '';
-}
-function getExperienciaValue(exp) {
-    if (!exp) return '';
-    exp = exp.toLowerCase();
-    if (exp.includes('nenhuma')) return 'none';
-    if (exp.match(/1.*3/)) return '1-3';
-    if (exp.match(/3.*5/)) return '3-5';
-    if (exp.match(/5/)) return '5plus';
-    return '';
-}
-function getFormacaoValue(formacao) {
-    if (!formacao) return '';
-    formacao = formacao.toLowerCase();
-    if (formacao.includes('fundamental')) return 'Ensino_Fundamental_completo';
-    if (formacao.includes('médio incompleto')) return 'Ensino_Medio_incompleto';
-    if (formacao.includes('médio completo')) return 'Ensino_Medio_completo';
-    if (formacao.includes('superior cursando')) return 'Ensino_Superior_cursando';
-    if (formacao.includes('superior completo')) return 'Ensino_Superior_completo';
-    if (formacao.includes('pós')) return 'Pos_graduacao';
-    if (formacao.includes('mestrado')) return 'Mestrado';
-    if (formacao.includes('doutorado')) return 'Doutorado';
-    return '';
-}
 document.getElementById('close-modal-sugestao').onclick = function() {
     document.getElementById('modal-sugestao-vaga').style.display = 'none';
 };

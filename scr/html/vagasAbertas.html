@@ -25,8 +25,8 @@
                 <div class="menu-text">
                     <a href="home.html">Home</a>
                 </div>
-                <div class="menu-container pag">
-                    <button class="menu-btn menu-text">Vagas</button>
+                <div class="menu-container">
+                    <button class="menu-btn menu-text pag">Vagas</button>
                     <div class="dropdown-content">
                         <a href="aberturaVaga.html">Abrir Vaga</a>
                         <a href="vagasAbertas.html">Vagas Abertas</a>
@@ -125,8 +125,18 @@
             .join(' ');
     }
     function formatarIdiomas(idiomas) {
-        if (!Array.isArray(idiomas)) return '';
-        return idiomas.map(formatarTexto).join(', ');
+        if (!idiomas) return '';
+        // Se vier como array simples
+        if (Array.isArray(idiomas)) {
+            return idiomas.map(i => formatarTexto(i)).join(', ');
+        }
+        // Se vier como objeto { "Inglês": "B2", ... }
+        if (typeof idiomas === 'object') {
+            return Object.entries(idiomas)
+                .map(([lang, nivel]) => `${formatarTexto(lang)}${nivel ? ' (' + nivel.toUpperCase() + ')' : ''}`)
+                .join(', ');
+        }
+        return '';
     }
     function renderizarVagas(vagas) {
         const tbody = document.getElementById('talentos-list');
@@ -238,7 +248,12 @@
             const valor = filtrosExtras[key].toLowerCase();
             vagasFiltradas = vagasFiltradas.filter(vaga => {
                 if (key === 'idiomas') {
-                    return Array.isArray(vaga.idiomas) && vaga.idiomas.some(idioma => formatarTexto(idioma).toLowerCase().includes(valor));
+                    if (!vaga.idiomas) return false;
+                    if (Array.isArray(vaga.idiomas)) {
+                        return vaga.idiomas.some(idioma => formatarTexto(idioma).toLowerCase().includes(valor));
+                    }
+                    // objeto map
+                    return Object.keys(vaga.idiomas).some(id => formatarTexto(id).toLowerCase().includes(valor) || (vaga.idiomas[id] && vaga.idiomas[id].toLowerCase().includes(valor)));
                 }
                 return vaga[key] && formatarTexto(vaga[key]).toLowerCase().includes(valor);
             });
