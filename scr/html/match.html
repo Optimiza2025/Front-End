@@ -46,6 +46,7 @@
         <div class="menu-profile" id="profile-name">
           Perfil
         </div>
+        <button id="btn-logout" class="logout-btn">Sair</button>
       </div>
     </div>
   </div>
@@ -68,6 +69,16 @@
       if (nomeVaga) {
         var titulo = document.getElementById('start-title')
         titulo.innerHTML += `<div style="color:#5555FF;">${nomeVaga}</div>`
+      }
+      const logoutBtn = document.getElementById('btn-logout');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', function() {
+          try {
+            ['nomeUsuario','idAreaUsuario','nomeAreaUsuario','idVaga','idVagaSelecionada','nomeVaga','token']
+              .forEach(k => localStorage.removeItem(k));
+          } catch (e) {}
+          window.location.href = 'Index.html';
+        });
       }
     });
   </script>
@@ -116,16 +127,53 @@
     });
   }
 
-  // Exemplo de uso (simulando retorno do backend) -- teste
-  // const candidatosBackend = [
-  //   { nome: "Maria Silva", porcentagem: 70 },
-  //   { nome: "João Souza", porcentagem: 50 },
-  //   { nome: "Ana Costa", porcentagem: 20 },
-  //   { nome: "Marcos Souza", porcentagem: 77 },
-  //   { nome: "Joana Santos", porcentagem: 32 },
-  //   { nome: "Ana Luiza Carvalho", porcentagem: 2 }
-  // ];
+  function getIdVagaFromContext() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return (
+      urlParams.get('idVaga') ||
+      localStorage.getItem('idVaga') ||
+      localStorage.getItem('idVagaSelecionada') ||
+      null
+    );
+  }
 
-  renderizarCandidatos(candidatosBackend);
+  function normalizarPorcentagem(matching) {
+    if (matching === null || matching === undefined) return 0;
+    const num = Number(matching);
+    if (Number.isNaN(num)) return 0;
+    if (num <= 1) return Math.round(num * 100);
+    if (num > 100) return 100;
+    return Math.round(num);
+  }
+
+  async function carregarCandidaturas(idVaga) {
+    const container = document.getElementById('all-candidates');
+    container.innerHTML = `<p style="text-align:center; color:#888; margin-top:2vh;">Carregando...</p>`;
+    try {
+      const resp = await fetch(`http://localhost:8080/optimiza/candidaturas/vaga?idVaga=${encodeURIComponent(idVaga)}`);
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      const data = await resp.json();
+      const lista = Array.isArray(data) ? data : (data?.content || []);
+      const candidatos = lista.map(c => ({
+        nome: c?.candidato?.nome || 'Candidato',
+        porcentagem: normalizarPorcentagem(c?.matching)
+      }));
+      renderizarCandidatos(candidatos);
+    } catch (err) {
+      console.error('Erro ao carregar candidaturas:', err);
+      container.innerHTML = `<p style="text-align:center; color:#d33; margin-top:2vh;">Erro ao carregar candidatos.</p>`;
+    }
+  }
+
+  (function init() {
+    const idVaga = getIdVagaFromContext();
+    const container = document.getElementById('all-candidates');
+    if (!idVaga) {
+      container.innerHTML = `<p style="text-align:center; color:#888; margin-top:2vh;">Informe uma vaga para ver os perfis correspondentes.</p>`;
+      return;
+    }
+    carregarCandidaturas(idVaga);
+  })();
 
 </script>
+<script src="../js/sessoes.js"></script>

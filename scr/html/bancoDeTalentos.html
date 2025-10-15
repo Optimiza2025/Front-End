@@ -45,6 +45,7 @@
             <div class="menu-profile" id="profile-name">
                 Perfil
             </div>
+            <button id="btn-logout" class="logout-btn">Sair</button>
         </div>
     </div>
   </div>
@@ -185,6 +186,16 @@
         var nomeUsuario = localStorage.getItem('nomeUsuario');
         if (nomeUsuario) {
             document.getElementById('profile-name').textContent = nomeUsuario;
+        }
+        const logoutBtn = document.getElementById('btn-logout');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function() {
+                try {
+                    ['nomeUsuario','idAreaUsuario','nomeAreaUsuario','idVaga','idVagaSelecionada','nomeVaga','token']
+                      .forEach(k => localStorage.removeItem(k));
+                } catch (e) {}
+                window.location.href = 'Index.html';
+            });
         }
     });
 </script>
@@ -441,5 +452,5 @@ window.onload = function() {
     }
 };
 </script>
-
+<script src="js/sessoes.js"></script>
 </html>
