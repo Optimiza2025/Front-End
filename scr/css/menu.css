@@ -146,3 +146,20 @@ body {
 
 
 /* Fim do menu */
+
+/* Logout button (navbar) */
+.logout-btn {
+  background: #6C63FF;
+  color: #fff;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2vh;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.logout-btn:hover {
+  background: #5548d9;
+}
