@@ -58,14 +58,17 @@
             <input type="text" placeholder="Buscar por título" class="talentos-search" id="filtro-titulo">
             <div class="filtro-dropdown-container" style="display:inline-block; position:relative;">
                 <button class="talentos-btn talentos-btn-filter" id="btn-dropdown">Filtros ▼</button>
-                <div class="filtro-dropdown" id="dropdown-filtros" style="display:none; position:absolute; left:0; top:110%; background:#fff; border:1px solid #ccc; border-radius:0.5rem; padding:1rem; z-index:10; min-width:220px; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+                <div class="filtro-dropdown" id="dropdown-filtros"
+                    style="display:none; position:absolute; left:0; top:110%; background:#fff; border:1px solid #ccc; border-radius:0.5rem; padding:1rem; z-index:10; min-width:220px; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
                     <select id="select-filtro" class="filtro-select" style="width:100%; margin-bottom:0.7rem;">
                         <option value="cargo">Cargo</option>
                         <option value="nivelFormacao">Nível de Formação</option>
                         <option value="idiomas">Idiomas</option>
                     </select>
-                    <input type="text" id="input-filtro" class="filtro-input" placeholder="Digite o valor" style="width:100%; margin-bottom:0.7rem;">
-                    <button id="btn-aplicar-filtro" class="talentos-btn talentos-btn-search" style="width:100%;">Aplicar</button>
+                    <input type="text" id="input-filtro" class="filtro-input" placeholder="Digite o valor"
+                        style="width:100%; margin-bottom:0.7rem;">
+                    <button id="btn-aplicar-filtro" class="talentos-btn talentos-btn-search"
+                        style="width:100%;">Aplicar</button>
                 </div>
                 <span id="indicadores-filtros" style="margin-left:1rem;"></span>
             </div>
@@ -100,17 +103,99 @@
                 <p><strong>Status:</strong> <span id="modal-status"></span></p>
             </div>
         </div>
+
+        <!-- Modal de Detalhes da Vaga -->
+        <div id="modal-vaga" class="modal-overlay">
+            <div class="modal-content">
+                <span class="close-btn" id="close-modal">&times;</span>
+                <h2 class="modal-title">Vaga <span id="modal-titulo"></span></h2>
+
+                <div class="vaga-status">
+                    <div class="vaga-etapa">
+                        <div class="bolinha"></div>
+                        <p>Vaga Aberta</p>
+                    </div>
+                    <div class="linha"></div>
+                    <div class="vaga-etapa">
+                        <div class="bolinha"></div>
+                        <p>Aprovação RH</p>
+                    </div>
+                    <div class="linha"></div>
+                    <div class="vaga-etapa ativa">
+                        <div class="bolinha"></div>
+                        <p>Entrevistando Candidatos</p>
+                    </div>
+                    <div class="linha"></div>
+                    <div class="vaga-etapa">
+                        <div class="bolinha"></div>
+                        <p>Admissão Concluída</p>
+                    </div>
+                </div>
+
+                <!-- Main info: duas colunas estilo "detalhes" (não inputs) -->
+                <section class="modal-details">
+                    <div class="details-left">
+                        <div class="detail-row">
+                            <div class="detail-label">Título</div>
+                            <div class="detail-value" id="titulo-vaga-display"></div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-label">Cargo</div>
+                            <div class="detail-value" id="cargo-vaga-display"></div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-label">Experiência</div>
+                            <div class="detail-value" id="experiencia-vaga-display"></div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-label">Área de Formação</div>
+                            <div class="detail-value" id="area-vaga-display"></div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-label">Nível de Formação</div>
+                            <div class="detail-value" id="nivel-vaga-display"></div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-label">Idiomas</div>
+                            <div class="detail-value" id="idiomas-vaga-display"></div>
+                        </div>
+                        <!-- Novo campo para Status -->
+                        <div class="detail-row">
+                            <div class="detail-label">Status</div>
+                            <div class="detail-value" id="modal-status-display"></div>
+                        </div>
+                    </div>
+
+                    <div class="details-right">
+                        <div class="detail-block">
+                            <div class="detail-label">Palavras-Chave</div>
+                            <div class="keywords-box" id="palavras-vaga-display"></div>
+                        </div>
+                    </div>
+                </section>
+
+
+                <!-- Buttons: alinhamento central com espaçamento -->
+                <footer class="modal-actions">
+                    <button class="btn action ver-candidatos">Ver Candidatos</button>
+                    <button class="btn action editar">Editar Vaga</button>
+                    <button class="btn action aprovar">Aprovar Vaga</button>
+                    <button class="btn action apagar vermelho">Apagar Vaga</button>
+                </footer>
+            </div>
+        </div>
+
     </div>
     </div>
-<script>
-    // Exibe o nome do usuário salvo no localStorage ao lado da foto de perfil
-    window.addEventListener('DOMContentLoaded', function() {
-        var nomeUsuario = localStorage.getItem('nomeUsuario');
-        if (nomeUsuario) {
-            document.getElementById('profile-name').textContent = nomeUsuario;
-        }
-    });
-</script>
+    <script>
+        // Exibe o nome do usuário salvo no localStorage ao lado da foto de perfil
+        window.addEventListener('DOMContentLoaded', function () {
+            var nomeUsuario = localStorage.getItem('nomeUsuario');
+            if (nomeUsuario) {
+                document.getElementById('profile-name').textContent = nomeUsuario;
+            }
+        });
+    </script>
 </body>
 
 <script>
@@ -161,6 +246,10 @@
                 <td class="talentos-nome"><strong>${nivelFormatado}</strong></td>
                 <td class="talentos-nome"><strong>${idiomasFormatados}</strong></td>
             `;
+
+            // 👉 Aqui adiciona o clique para abrir o modal
+            tr.addEventListener('click', () => abrirModal(vaga));
+
             tbody.appendChild(tr);
         });
     }
@@ -182,19 +271,19 @@
             console.error('Erro ao carregar vagas:', error);
         }
     }
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         // Busca por título em tempo real
-        document.getElementById('filtro-titulo').addEventListener('input', function() {
+        document.getElementById('filtro-titulo').addEventListener('input', function () {
             filtrarEVizualizarVagas();
         });
         // Dropdown de filtros extras
         const btnDropdown = document.getElementById('btn-dropdown');
         const dropdown = document.getElementById('dropdown-filtros');
-        btnDropdown.addEventListener('click', function(e) {
+        btnDropdown.addEventListener('click', function (e) {
             e.stopPropagation();
             dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
         });
-        document.getElementById('btn-aplicar-filtro').addEventListener('click', function() {
+        document.getElementById('btn-aplicar-filtro').addEventListener('click', function () {
             const campo = document.getElementById('select-filtro').value;
             const valor = document.getElementById('input-filtro').value.trim();
             if (valor) {
@@ -223,7 +312,7 @@
                 container.appendChild(span);
             });
             container.querySelectorAll('button[data-remove]').forEach(btn => {
-                btn.onclick = function() {
+                btn.onclick = function () {
                     const campo = btn.getAttribute('data-remove');
                     delete filtrosExtras[campo];
                     atualizarIndicadoresFiltros();
@@ -232,7 +321,7 @@
             });
         }
         // Fecha dropdown ao clicar fora
-        document.addEventListener('click', function(e) {
+        document.addEventListener('click', function (e) {
             if (!dropdown.contains(e.target) && e.target !== btnDropdown) {
                 dropdown.style.display = 'none';
             }
@@ -281,7 +370,124 @@
             }
         };
     };
+
+    // Abre o modal com as informações da vaga
+    function abrirModal(vaga) {
+        // Preenche os campos com texto, não inputs
+        preencherModalDisplay(vaga);
+
+        // Atualiza a linha de progresso conforme status
+        atualizarProgresso(vaga.status.toLowerCase());
+
+        // Exibe o modal
+        document.getElementById('modal-vaga').style.display = 'flex';
+    }
+
+    // Fecha o modal ao clicar no botão X
+    document.getElementById('close-modal').addEventListener('click', () => {
+        document.getElementById('modal-vaga').style.display = 'none';
+    });
+
+    // Fecha ao clicar fora do conteúdo
+    window.addEventListener('click', e => {
+        const modal = document.getElementById('modal-vaga');
+        if (e.target === modal) modal.style.display = 'none';
+    });
+
+    // Atualiza as bolinhas de status
+    function atualizarProgresso(status) {
+        const etapas = document.querySelectorAll('.vaga-etapa');
+        etapas.forEach(etapa => etapa.classList.remove('ativa'));
+
+        if (status.includes('vaga aberta')) etapas[0].classList.add('ativa');
+        else if (status.includes('aprovação rh')) etapas[1].classList.add('ativa');
+        else if (status.includes('entrevistando candidatos')) etapas[2].classList.add('ativa');
+        else if (status.includes('admissão concluída')) etapas[3].classList.add('ativa');
+    }
+
+    // Inicializa o mock
+    window.onload = function () {
+        renderizarVagas(vagasMock);
+    };
+
+    // Preenche os campos display (chame isso dentro de abrirModal antes de mostrar o modal)
+    function preencherModalDisplay(vaga) {
+        document.getElementById('modal-titulo').textContent = vaga.titulo || '';
+        document.getElementById('modal-status-display').textContent = vaga.status || '';
+        document.getElementById('titulo-vaga-display').textContent = vaga.titulo || '';
+        document.getElementById('cargo-vaga-display').textContent = vaga.cargo || '';
+        document.getElementById('experiencia-vaga-display').textContent = vaga.experiencia || '';
+        document.getElementById('area-vaga-display').textContent = vaga.area || '';
+        document.getElementById('nivel-vaga-display').textContent = vaga.nivelFormacao || '';
+        document.getElementById('idiomas-vaga-display').textContent = Array.isArray(vaga.idiomas)
+            ? vaga.idiomas.join(', ')
+            : (vaga.idiomas ? Object.entries(vaga.idiomas).map(([k, v]) => `${k} (${v})`).join(', ') : '');
+
+        // palavras-chave (manter quebras de linha)
+        const palavras = vaga.palavrasChave ? (Array.isArray(vaga.palavrasChave) ? vaga.palavrasChave.join('\n') : String(vaga.palavrasChave)) : '';
+        document.getElementById('palavras-vaga-display').textContent = palavras;
+    }
+
+    // Atualize abrirModal para usar preencherModalDisplay e depois mostrar modal
+    // (se já estiver chamando abrirModal no seu código, substitua a parte que preenche inputs por esta chamada)
+    // Exemplo de uso dentro de abrirModal:
+    // preencherModalDisplay(vaga); atualizarProgresso(vaga.status.toLowerCase()); document.getElementById('modal-vaga').style.display = 'flex';
+
+    // Handler do botão Aprovar (exemplo - troca de status local e atualiza visual)
+    document.querySelector('.modal-actions .aprovar')?.addEventListener('click', function () {
+        // placeholder: aqui você faria fetch para aprovar no backend
+        const titulo = document.getElementById('modal-titulo').textContent;
+        // exemplo simples de feedback
+        alert(`Vaga "${titulo}" aprovada (simulação).`);
+        // se quiser, atualize o status na UI:
+        document.getElementById('modal-status-display').textContent = 'Aprovação RH';
+        atualizarProgresso('Aprovação RH');
+    });
+
+
 </script>
 
+<script>
+    // ===== MOCK DE TESTE PARA FRONT =====
+    const vagasMock = [
+        {
+            titulo: "Desenvolvedor Front-End",
+            cargo: "Analista de Sistemas",
+            nivelFormacao: "Superior Completo",
+            idiomas: { "Inglês": "B2", "Espanhol": "A2" },
+            status: "Vaga Aberta"
+        },
+        {
+            titulo: "Analista de Dados Júnior",
+            cargo: "Analista de Dados",
+            nivelFormacao: "Superior Incompleto",
+            idiomas: ["Inglês"],
+            status: "Aprovação RH"
+        },
+        {
+            titulo: "Coordenador de Projetos",
+            cargo: "Gestor de TI",
+            nivelFormacao: "Pós-Graduação",
+            idiomas: { "Inglês": "C1", "Francês": "B1" },
+            status: "Entrevistando Candidatos"
+        },
+        {
+            titulo: "Estagiário de QA",
+            cargo: "Testes de Software",
+            nivelFormacao: "Ensino Superior em Andamento",
+            idiomas: ["Português"],
+            status: "Admissão Concluída"
+        }
+    ];
+
+
+    // Substitui a chamada ao backend apenas para teste
+    window.onload = function () {
+        renderizarVagas(vagasMock);
+    };
+</script>
+
+
 <script src="../js/sessoes.js"></script>
+
 </html>
