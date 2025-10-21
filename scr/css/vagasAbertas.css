@@ -54,19 +54,23 @@ body {
     cursor: pointer;
     transition: background 0.2s;
 }
+
 .talentos-btn-search,
 .talentos-btn-filter {
     background: #6C63FF;
     color: #fff;
 }
+
 .talentos-btn-import {
     background: #032656;
     color: #fff;
 }
+
 .talentos-btn-search:hover,
 .talentos-btn-filter:hover {
     background: #5548d9;
 }
+
 .talentos-btn-import:hover {
     background: #021a3a;
 }
@@ -78,29 +82,36 @@ body {
     box-shadow: none;
     background: transparent;
 }
+
 .talentos-row-alt {
     background: #E9E9F7;
 }
+
 .talentos-row-normal {
     background: #F5F5FF;
 }
+
 .talentos-nome {
     padding: 1rem 1.5rem;
     color: #032656;
 }
+
 .talentos-nome-header {
     font-weight: 500;
 }
+
 .talentos-vermais {
     padding: 1rem 1.5rem;
     text-align: right;
 }
+
 .talentos-link {
     color: #6C63FF;
     text-decoration: none;
     font-weight: 500;
     transition: color 0.2s;
 }
+
 .talentos-link:hover {
     color: #5548d9;
 }
@@ -111,21 +122,23 @@ body {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0,0,0,0.4);
+    background: rgba(0, 0, 0, 0.4);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1000;
 }
+
 .modal-content {
     background: #fff;
     border-radius: 0.625rem;
     padding: 2rem 1.5rem;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
     min-width: 20rem;
     max-width: 90vw;
     position: relative;
 }
+
 .modal-close {
     position: absolute;
     top: 1rem;
@@ -136,18 +149,19 @@ body {
     font-weight: bold;
     transition: color 0.2s;
 }
+
 .modal-close:hover {
     color: #032656;
 }
 
-.description-table-jobs{
+.description-table-jobs {
     height: 3vh;
     padding: 1rem;
     width: 99%;
     border-bottom: 0.2rem solid #021a3a;
 }
 
-.table-description{
+.table-description {
     width: 100%;
     border-collapse: collapse;
     font-family: 'Montserrat', sans-serif;
@@ -165,7 +179,8 @@ body {
 
 /* Ajusta largura das colunas pelo título */
 .table-description th.description-names:nth-child(1),
-.talentos-table td, .table-description th {
+.talentos-table td,
+.table-description th {
     padding: 1rem 1.5rem;
     text-align: left;
     vertical-align: middle;
@@ -185,24 +200,28 @@ body {
     min-width: 8rem;
     max-width: 20rem;
 }
+
 .table-description th.description-names:nth-child(2),
 .talentos-table td:nth-child(2) {
     width: 20%;
     min-width: 6rem;
     max-width: 15rem;
 }
+
 .table-description th.description-names:nth-child(3),
 .talentos-table td:nth-child(3) {
     width: 20%;
     min-width: 6rem;
     max-width: 15rem;
 }
+
 .table-description th.description-names:nth-child(4),
 .talentos-table td:nth-child(4) {
     width: 20%;
     min-width: 6rem;
     max-width: 15rem;
 }
+
 .table-description th.description-names:nth-child(5),
 .talentos-table td:nth-child(5) {
     width: 15%;
@@ -217,7 +236,7 @@ body {
     overflow-y: auto;
     margin-top: 0.5rem;
     border-radius: 0.5rem;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     background: #fff;
     width: 100%;
     padding-bottom: 0.5rem;
@@ -230,12 +249,15 @@ body {
     box-shadow: none;
     background: transparent;
 }
+
 .talentos-table tr {
     transition: background 0.2s;
 }
+
 .talentos-table tr:hover {
     background: #d1d1f7;
 }
+
 .talentos-table td {
     border-bottom: 1px solid #e0e0e0;
 }
@@ -245,6 +267,7 @@ body {
     display: inline-block;
     position: relative;
 }
+
 .talentos-btn-filter {
     background: #6C63FF;
     color: #fff;
@@ -256,14 +279,16 @@ body {
     cursor: pointer;
     transition: background 0.2s;
 }
+
 .talentos-btn-filter:hover {
     background: #5548c8;
 }
+
 .filtro-dropdown {
     background: #fff;
     border: 1px solid #d1d1d1;
     border-radius: 0.7rem;
-    box-shadow: 0 4px 16px rgba(32,38,54,0.10);
+    box-shadow: 0 4px 16px rgba(32, 38, 54, 0.10);
     padding: 1.2rem;
     min-width: 250px;
     z-index: 10;
@@ -272,6 +297,7 @@ body {
     top: 110%;
     display: none;
 }
+
 .filtro-select {
     width: 100%;
     padding: 0.6rem;
@@ -282,6 +308,7 @@ body {
     background: #f8f9fa;
     color: #032656;
 }
+
 .filtro-input {
     width: 90% !important;
     padding: 0.6rem;
@@ -292,6 +319,7 @@ body {
     background: #f8f9fa;
     color: #032656;
 }
+
 .filtro-indicador {
     background: #e9e9f7;
     color: #032656;
@@ -301,8 +329,9 @@ body {
     margin-right: 0.5rem;
     display: inline-flex;
     align-items: center;
-    box-shadow: 0 2px 8px rgba(32,38,54,0.07);
+    box-shadow: 0 2px 8px rgba(32, 38, 54, 0.07);
 }
+
 .filtro-remove {
     margin-left: 0.5rem;
     background: none;
@@ -313,6 +342,202 @@ body {
     font-size: 1em;
     transition: color 0.2s;
 }
+
 .filtro-remove:hover {
     color: #5548c8;
+}
+
+/* modal detalhes vaga */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.4);
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 3vh 4vw;
+    border-radius: 1.5rem;
+    width: 70vw;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 0 2vh rgba(0, 0, 0, 0.2);
+    position: relative;
+}
+
+.close-btn {
+    position: absolute;
+    top: 1vh;
+    right: 1.5vw;
+    font-size: 2rem;
+    cursor: pointer;
+    color: #444;
+}
+
+.modal-title {
+    text-align: center;
+    color: #222;
+    font-size: 1.5rem;
+}
+
+.modal-title span {
+    text-align: center;
+    color: #5555FF;
+    font-size: 1.5rem;
+}
+
+.vaga-status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    margin: 2vh auto;
+    ;
+}
+
+.vaga-etapa {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 20%;
+}
+
+.bolinha {
+    margin-top: 1vh;
+    width: 3vh;
+    height: 3vh;
+    border-radius: 50%;
+    background-color: #ccc;
+    z-index: 2;
+}
+
+.linha {
+    flex-grow: 1;
+    height: 0.4vh;
+    background-color: #032656;
+    z-index: 1;
+    width: 10vw;
+    border-radius: 2rem;
+}
+
+.vaga-etapa p {
+    font-size: 1rem;
+    color: #555;
+}
+
+/* etapa ativa */
+.vaga-etapa.ativa .bolinha {
+    background-color: #00b300;
+}
+
+.vaga-etapa.ativa p {
+    color: #00b300;
+}
+
+
+/* detalhe principal: duas colunas */
+.modal-details {
+  display: flex;
+  gap: 2.5rem;
+  align-items: flex-start;
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+/* esquerda com lista vertical de campos */
+.details-left {
+  flex: 1 1 60%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* direita menor para palavras-chave */
+.details-right {
+  flex: 0 0 35%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* linha de cada campo (label + valor) */
+.detail-row {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.detail-label {
+  width: 12rem; /* alinha labels */
+  color: #6b6b6b;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.detail-value {
+  color: #032656;
+  font-size: 1rem;
+  background: transparent;
+  padding: 0.25rem 0;
+  border-radius: 0.25rem;
+  word-break: break-word;
+}
+
+/* caixa visual para palavras-chave (read-only look) */
+.keywords-box {
+  min-height: 9rem;
+  border: 1px solid #dfe3f6;
+  background: #fbfbff;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  color: #223;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+/* Ações / botões */
+.modal-actions {
+  display: flex;
+  justify-content: center; /* centraliza todos */
+  gap: 1rem;
+  margin-top: 1.25rem;
+  flex-wrap: wrap;
+}
+
+/* botões do modal (estética) */
+.modal-actions .btn {
+  padding: 0.6rem 1.25rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+  min-width: 140px;
+}
+
+/* cores específicas */
+.modal-actions .ver-candidatos { background: #6C63FF; color: #fff; }
+.modal-actions .editar { background: #4b44d6; color: #fff; }
+.modal-actions .aprovar { background: #22a55a; color: #fff; }
+.modal-actions .apagar { background: #ff2b2b; color: #fff; }
+
+/* botão vermelho já tinha, mantive a classe vermelho para consistência */
+.modal-actions .vermelho { background: #ff2b2b; color: #fff; }
+
+/* hover states */
+.modal-actions .btn:hover { opacity: 0.92; transform: translateY(-1px); transition: .12s ease; }
+
+/* cursor e hover para linhas clicáveis da tabela */
+.talentos-table tr { cursor: pointer; }
+
+/* responsividade: empilha colunas em telas pequenas */
+@media (max-width: 900px) {
+  .modal-details { flex-direction: column; }
+  .detail-label { width: 35%; }
 }

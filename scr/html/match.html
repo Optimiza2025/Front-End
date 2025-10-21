@@ -57,6 +57,111 @@
 
   <div class="all-candidates" id="all-candidates"></div>
 
+  <!-- Modal do candidato com abas -->
+  <div id="modal-candidato" class="modal-candidato" style="display:none;">
+    <div class="modal-content modal-cand">
+      <span class="modal-close" id="modal-close">&times;</span>
+      <div class="cand-wrapper">
+        <aside class="cand-sidebar">
+          <div class="cand-avatar"></div>
+          <div class="cand-info">
+            <div><strong>Nome:</strong> <span id="cand-nome"></span></div>
+            <div><strong>Status:</strong> <span id="cand-status"></span></div>
+          </div>
+        </aside>
+        <main class="cand-main">
+          <div class="cand-tabs">
+            <button class="cand-tab active" data-tab="detalhes">Detalhes</button>
+            <button class="cand-tab" data-tab="avaliacao">Avaliação</button>
+            <button class="cand-tab" data-tab="entrevista">Entrevista</button>
+          </div>
+          <section class="cand-panel active" id="tab-detalhes">
+            <h3>Detalhes do Candidato</h3>
+            <div class="cand-grid">
+              <div class="card">
+                <h4>Formação</h4>
+                <p><strong>Nível:</strong> <span id="det-nivel"></span></p>
+                <p><strong>Curso:</strong> <span id="det-curso"></span></p>
+                <p><strong>Instituição:</strong> <span id="det-instituicao"></span></p>
+                <p><strong>Idiomas:</strong> <span id="det-idiomas"></span></p>
+                <p><strong>Email:</strong> <span id="det-email"></span></p>
+              </div>
+              <div class="card">
+                <h4>Profissional</h4>
+                <p><strong>Cargo:</strong> <span id="det-cargo"></span></p>
+                <p><strong>Experiência:</strong> <span id="det-experiencia"></span></p>
+                <p><strong>Currículo:</strong> <span id="det-curriculo"></span></p>
+                <p><strong>Atualizado em:</strong> <span id="det-update"></span></p>
+              </div>
+            </div>
+          </section>
+          <section class="cand-panel" id="tab-avaliacao">
+            <h3>Avaliações</h3>
+            <div class="avaliacao-card">
+              <div class="rating-row">
+                <div class="rating-stars" id="rating-stars" aria-label="Classificação por estrelas">
+                  <button type="button" class="rating-star" data-value="1" aria-label="1 estrela">★</button>
+                  <button type="button" class="rating-star" data-value="2" aria-label="2 estrelas">★</button>
+                  <button type="button" class="rating-star" data-value="3" aria-label="3 estrelas">★</button>
+                  <button type="button" class="rating-star" data-value="4" aria-label="4 estrelas">★</button>
+                  <button type="button" class="rating-star" data-value="5" aria-label="5 estrelas">★</button>
+                </div>
+                <div class="rating-score"><span id="rating-score">0.0</span></div>
+              </div>
+              <div class="comentarios-area">
+                <label for="aval-obs">Comentários</label>
+                <textarea id="aval-obs" placeholder="Escreva seu comentário..."></textarea>
+                <div class="comentarios-list" id="comentarios-list"></div>
+              </div>
+              <input type="hidden" id="aval-nota" value="0">
+              <div class="actions">
+                <button class="talentos-btn talentos-btn-search" id="btn-salvar-avaliacao" type="button">Enviar
+                  Avaliação</button>
+              </div>
+            </div>
+          </section>
+          <section class="cand-panel" id="tab-entrevista">
+            <h3>Avaliação Entrevista</h3>
+            <div class="form-entrevista entrevista-grid">
+              <div class="form-group-inline">
+                <label for="ent-titulo">Título Vaga</label>
+                <input type="text" id="ent-titulo" placeholder="Ex.: Desenvolvedor Back-End">
+              </div>
+              <div class="grid-2col">
+                <div class="form-group-inline">
+                  <label for="ent-hard">Hard Skills</label>
+                  <input type="text" id="ent-hard" placeholder="Ex.: Java, SQL, Spring">
+                </div>
+                <div class="form-group-inline">
+                  <label for="ent-soft">Soft Skills</label>
+                  <input type="text" id="ent-soft" placeholder="Ex.: Comunicação, Liderança">
+                </div>
+              </div>
+              <div class="grid-2col">
+                <div class="form-group-inline">
+                  <label for="ent-exp">Experiência</label>
+                  <input type="text" id="ent-exp" placeholder="Ex.: 5+ anos Back-End">
+                </div>
+                <div class="form-group-inline">
+                  <label for="ent-cultura">Cultura</label>
+                  <input type="text" id="ent-cultura" placeholder="Ex.: Fit com a equipe">
+                </div>
+              </div>
+              <div class="form-group-inline">
+                <label for="ent-coment">Comentário</label>
+                <input type="text" id="ent-coment" placeholder="Observações gerais da entrevista">
+              </div>
+              <div class="actions">
+                <button class="talentos-btn talentos-btn-search" id="btn-agendar-entrevista" type="button">Enviar
+                  Avaliação</button>
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+  </div>
+
   <script>
     // Exibe o nome do usuário salvo no localStorage ao lado da foto de perfil
     window.addEventListener('DOMContentLoaded', function () {
@@ -72,11 +177,11 @@
       }
       const logoutBtn = document.getElementById('btn-logout');
       if (logoutBtn) {
-        logoutBtn.addEventListener('click', function() {
+        logoutBtn.addEventListener('click', function () {
           try {
-            ['nomeUsuario','idAreaUsuario','nomeAreaUsuario','idVaga','idVagaSelecionada','nomeVaga','token']
+            ['nomeUsuario', 'idAreaUsuario', 'nomeAreaUsuario', 'idVaga', 'idVagaSelecionada', 'nomeVaga', 'token']
               .forEach(k => localStorage.removeItem(k));
-          } catch (e) {}
+          } catch (e) { }
           window.location.href = 'Index.html';
         });
       }
