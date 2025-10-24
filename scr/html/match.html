@@ -207,7 +207,7 @@
     candidatos.forEach(candidato => {
       // Definir a classe da borda pela porcentagem
       let cardClass = "candidate-card";
-      if (candidato.porcentagem >= 70) {
+      if (candidato.porcentagem >= 60) {
         cardClass += " success"; // verde
       } else if (candidato.porcentagem >= 30) {
         cardClass += " warning"; // amarelo
@@ -220,7 +220,7 @@
       div.className = cardClass;
       div.innerHTML = `
             <div class="candidate-info">
-                <strong>${candidato.nome}</strong>
+                <strong>${candidato.nomeCandidato}</strong>
                 <p>Banco de Talentos Interno</p>
             </div>
             <div class="candidate-score">
@@ -259,8 +259,14 @@
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
       const data = await resp.json();
       const lista = Array.isArray(data) ? data : (data?.content || []);
+      // Normaliza para o contrato do backend (idCandidatura, idVaga, nomeCandidato, matching, ...)
       const candidatos = lista.map(c => ({
-        nome: c?.candidato?.nome || 'Candidato',
+        idCandidatura: c?.idCandidatura ?? null,
+        idVaga: c?.idVaga ?? idVaga,
+        idCandidato: c?.idCandidato ?? c?.candidato?.id ?? null,
+        nomeCandidato: c?.nomeCandidato || c?.candidato?.nome || 'Candidato',
+        cargoCandidato: c?.cargoCandidato || c?.candidato?.cargo || '',
+        status: c?.status || '',
         porcentagem: normalizarPorcentagem(c?.matching)
       }));
       renderizarCandidatos(candidatos);

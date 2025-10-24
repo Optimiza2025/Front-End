@@ -113,12 +113,7 @@
                 <div class="vaga-status">
                     <div class="vaga-etapa">
                         <div class="bolinha"></div>
-                        <p>Vaga Aberta</p>
-                    </div>
-                    <div class="linha"></div>
-                    <div class="vaga-etapa">
-                        <div class="bolinha"></div>
-                        <p>Aprovação RH</p>
+                        <p>Aguardando Aprovação RH</p>
                     </div>
                     <div class="linha"></div>
                     <div class="vaga-etapa ativa">
@@ -201,6 +196,7 @@
 <script>
     let filtrosExtras = {};
     let todasVagas = [];
+    let currentVagaId = null;
     function formatarTexto(texto) {
         if (!texto) return '';
         // Substitui hífens e underlines por espaço, coloca cada palavra com inicial maiúscula
@@ -223,6 +219,38 @@
         }
         return '';
     }
+
+    // Helper para evitar erros quando um id não existe no DOM
+    function setText(id, value) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value == null ? '' : String(value);
+    }
+
+    // Mapeia idArea conhecidos para nomes (fallback; pode ser ajustado conforme backend)
+    const MAP_AREAS = { 1: 'Financeiro', 2: 'Recursos Humanos', 3: 'TI', 4: 'Marketing', 5: 'Operações' };
+    function obterNomeArea(infoArea) {
+        if (typeof infoArea === 'string') return formatarTexto(infoArea);
+        if (typeof infoArea === 'number') return MAP_AREAS[infoArea] || String(infoArea);
+        return '';
+    }
+
+    // Converte etapa do backend para label amigável usado na barra
+    function etapaParaLabel(etapa, status) {
+        const raw = ((etapa || status || '') + '').toLowerCase().replace(/[_-]/g, ' ');
+        // Default para novas vagas: Aguardando Aprovação RH
+        if (!raw) return 'Aguardando Aprovação RH';
+        if (
+            raw.includes('aprovacao rh') ||
+            raw.includes('aprovação rh') ||
+            raw.includes('aguardando') ||
+            raw.includes('vaga aberta') ||
+            raw.includes('aberta')
+        ) return 'Aguardando Aprovação RH';
+        if (raw.includes('entrevista') || raw.includes('entrevistando')) return 'Entrevistando Candidatos';
+        if (raw.includes('admiss')) return 'Admissão Concluída';
+        // fallback amigável
+        return 'Aguardando Aprovação RH';
+    }
     function renderizarVagas(vagas) {
         const tbody = document.getElementById('talentos-list');
         tbody.innerHTML = '';
@@ -240,6 +268,15 @@
             const cargoFormatado = formatarTexto(vaga.cargo);
             const nivelFormatado = formatarTexto(vaga.nivelFormacao);
             const idiomasFormatados = formatarIdiomas(vaga.idiomas);
+            const etapaLabel = etapaParaLabel(vaga.etapaVaga, vaga.status);
+            // Diminui a opacidade para vagas ainda não aprovadas
+            if (etapaLabel === 'Vaga Aberta' || etapaLabel === 'Aguardando Aprovação RH') {
+                tr.classList.add('vaga-pendente-aprovacao');
+                tr.title = 'Aguardando aprovação do RH';
+            }
+            // Guarda o id (normalizado) no dataset para facilitar debugs
+            const idNorm = vaga?.id ?? vaga?.idVaga ?? vaga?.vagaId ?? null;
+            if (idNorm != null) tr.dataset.idVaga = idNorm;
             tr.innerHTML = `
                 <td class="talentos-nome"><strong>${tituloFormatado}</strong></td>
                 <td class="talentos-nome"><strong>${cargoFormatado}</strong></td>
@@ -265,7 +302,12 @@
                 url += '&' + params.join('&');
             }
             const response = await fetch(url);
-            todasVagas = await response.json();
+            const lista = await response.json();
+            // Normaliza ID para garantir que cada item tenha a propriedade "id"
+            todasVagas = (Array.isArray(lista) ? lista : []).map(v => ({
+                ...v,
+                id: v?.id ?? v?.idVaga ?? v?.vagaId ?? v?.codigo ?? v?.ID ?? v?.Id ?? null
+            }));
             filtrarEVizualizarVagas();
         } catch (error) {
             console.error('Erro ao carregar vagas:', error);
@@ -372,15 +414,48 @@
     };
 
     // Abre o modal com as informações da vaga
-    function abrirModal(vaga) {
-        // Preenche os campos com texto, não inputs
-        preencherModalDisplay(vaga);
+    async function abrirModal(vaga) {
+        try {
+            // tenta várias chaves comuns para ID
+            const id = (vaga && (
+                vaga.id ?? vaga.idVaga ?? vaga.vagaId ?? vaga.codigo ?? vaga.ID ?? vaga.Id
+            )) ?? null;
+            currentVagaId = id;
+            let dados = vaga;
+            if (id != null) {
+                const resp = await fetch(`http://localhost:8080/optimiza/vagas/${id}`);
+                if (resp.ok) {
+                    dados = await resp.json();
+                    // se a API devolver o id, confirma no estado atual
+                    if (dados && (dados.id != null)) currentVagaId = dados.id;
+                }
+            }
 
-        // Atualiza a linha de progresso conforme status
-        atualizarProgresso(vaga.status.toLowerCase());
+            // Fallback caso não haja resposta detalhada
+            dados = dados || {};
 
-        // Exibe o modal
-        document.getElementById('modal-vaga').style.display = 'flex';
+            const labelEtapa = etapaParaLabel(dados.etapaVaga, dados.status);
+
+            setText('modal-titulo', dados.titulo || vaga?.titulo || '');
+            setText('modal-status-display', labelEtapa);
+            setText('titulo-vaga-display', dados.titulo || '');
+            setText('cargo-vaga-display', formatarTexto(dados.cargo));
+            setText('experiencia-vaga-display', dados.experiencia || '');
+            setText('area-vaga-display', obterNomeArea(dados.area || dados.idArea));
+            setText('nivel-vaga-display', formatarTexto(dados.nivelFormacao));
+            setText('idiomas-vaga-display', formatarIdiomas(dados.idiomas));
+
+            const palavras = Array.isArray(dados.palavrasChave)
+                ? dados.palavrasChave.join('\n')
+                : (dados.palavrasChave || '');
+            setText('palavras-vaga-display', palavras);
+
+            atualizarProgresso((labelEtapa || '').toLowerCase());
+            document.getElementById('modal-vaga').style.display = 'flex';
+        } catch (e) {
+            console.error('Erro ao abrir modal da vaga:', e);
+            alert('Não foi possível carregar os detalhes da vaga.');
+        }
     }
 
     // Fecha o modal ao clicar no botão X
@@ -394,21 +469,23 @@
         if (e.target === modal) modal.style.display = 'none';
     });
 
-    // Atualiza as bolinhas de status
+    // Atualiza as bolinhas de status (3 etapas na UI)
     function atualizarProgresso(status) {
         const etapas = document.querySelectorAll('.vaga-etapa');
         etapas.forEach(etapa => etapa.classList.remove('ativa'));
-
-        if (status.includes('vaga aberta')) etapas[0].classList.add('ativa');
-        else if (status.includes('aprovação rh')) etapas[1].classList.add('ativa');
-        else if (status.includes('entrevistando candidatos')) etapas[2].classList.add('ativa');
-        else if (status.includes('admissão concluída')) etapas[3].classList.add('ativa');
+        const s = (status || '').toLowerCase();
+        if (s.includes('aprov') || s.includes('aguard') || s.includes('vaga aberta') || s.includes('aberta')) {
+            etapas[0]?.classList.add('ativa');
+        } else if (s.includes('entrevista')) {
+            etapas[1]?.classList.add('ativa');
+        } else if (s.includes('admiss')) {
+            etapas[2]?.classList.add('ativa');
+        } else {
+            etapas[0]?.classList.add('ativa'); // fallback
+        }
     }
 
-    // Inicializa o mock
-    window.onload = function () {
-        renderizarVagas(vagasMock);
-    };
+
 
     // Preenche os campos display (chame isso dentro de abrirModal antes de mostrar o modal)
     function preencherModalDisplay(vaga) {
@@ -428,65 +505,46 @@
         document.getElementById('palavras-vaga-display').textContent = palavras;
     }
 
-    // Atualize abrirModal para usar preencherModalDisplay e depois mostrar modal
-    // (se já estiver chamando abrirModal no seu código, substitua a parte que preenche inputs por esta chamada)
-    // Exemplo de uso dentro de abrirModal:
-    // preencherModalDisplay(vaga); atualizarProgresso(vaga.status.toLowerCase()); document.getElementById('modal-vaga').style.display = 'flex';
+    // Handler do botão Aprovar (chama backend e atualiza UI)
+    document.querySelector('.modal-actions .aprovar')?.addEventListener('click', async function () {
+        if (!currentVagaId) {
+            alert('ID da vaga não identificado.');
+            return;
+        }
+        try {
+            const resp = await fetch(`http://localhost:8080/optimiza/vagas/aprovacao-rh/${currentVagaId}?aprovado=true`, {
+                method: 'PUT'
+            });
+            if (!resp.ok) throw new Error('Falha ao aprovar a vaga');
+            alert('Vaga aprovada com sucesso.');
+            // Após aprovação, avançamos para "Entrevistando Candidatos"
+            setText('modal-status-display', 'Entrevistando Candidatos');
+            atualizarProgresso('entrevistando candidatos');
+            // Recarrega lista para refletir possíveis mudanças
+            try { carregarVagas(); } catch { }
+        } catch (err) {
+            console.error(err);
+            alert('Erro ao aprovar vaga. Verifique o console.');
+        }
+    });
 
-    // Handler do botão Aprovar (exemplo - troca de status local e atualiza visual)
-    document.querySelector('.modal-actions .aprovar')?.addEventListener('click', function () {
-        // placeholder: aqui você faria fetch para aprovar no backend
-        const titulo = document.getElementById('modal-titulo').textContent;
-        // exemplo simples de feedback
-        alert(`Vaga "${titulo}" aprovada (simulação).`);
-        // se quiser, atualize o status na UI:
-        document.getElementById('modal-status-display').textContent = 'Aprovação RH';
-        atualizarProgresso('Aprovação RH');
+    // Navega para tela de match levando o id da vaga
+    document.querySelector('.modal-actions .ver-candidatos')?.addEventListener('click', function () {
+        if (!currentVagaId) {
+            alert('ID da vaga não identificado.');
+            return;
+        }
+        const titulo = document.getElementById('modal-titulo')?.textContent || '';
+        try {
+            localStorage.setItem('idVaga', String(currentVagaId));
+            localStorage.setItem('idVagaSelecionada', String(currentVagaId));
+            if (titulo) localStorage.setItem('nomeVaga', titulo);
+        } catch { }
+        window.location.href = `match.html?idVaga=${encodeURIComponent(currentVagaId)}`;
     });
 
 
 </script>
-
-<script>
-    // ===== MOCK DE TESTE PARA FRONT =====
-    const vagasMock = [
-        {
-            titulo: "Desenvolvedor Front-End",
-            cargo: "Analista de Sistemas",
-            nivelFormacao: "Superior Completo",
-            idiomas: { "Inglês": "B2", "Espanhol": "A2" },
-            status: "Vaga Aberta"
-        },
-        {
-            titulo: "Analista de Dados Júnior",
-            cargo: "Analista de Dados",
-            nivelFormacao: "Superior Incompleto",
-            idiomas: ["Inglês"],
-            status: "Aprovação RH"
-        },
-        {
-            titulo: "Coordenador de Projetos",
-            cargo: "Gestor de TI",
-            nivelFormacao: "Pós-Graduação",
-            idiomas: { "Inglês": "C1", "Francês": "B1" },
-            status: "Entrevistando Candidatos"
-        },
-        {
-            titulo: "Estagiário de QA",
-            cargo: "Testes de Software",
-            nivelFormacao: "Ensino Superior em Andamento",
-            idiomas: ["Português"],
-            status: "Admissão Concluída"
-        }
-    ];
-
-
-    // Substitui a chamada ao backend apenas para teste
-    window.onload = function () {
-        renderizarVagas(vagasMock);
-    };
-</script>
-
 
 <script src="../js/sessoes.js"></script>
 
