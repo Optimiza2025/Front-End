@@ -382,7 +382,7 @@ body {
 }
 
 .comentarios-list {
-    max-height: 180px;
+    height: 100%;
     overflow: auto;
     background: #f7f9ff;
     border: 1px solid #e2e6f3;
