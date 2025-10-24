@@ -7,6 +7,7 @@
     <title>Banco de Talentos - Optimiza</title>
     <link rel="stylesheet" href="../css/bancoDeTalentos.css">
     <link rel="stylesheet" href="../css/menu.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
 
@@ -92,7 +93,6 @@
                         <div class="cand-tabs">
                             <button class="cand-tab active" data-tab="detalhes">Detalhes</button>
                             <button class="cand-tab" data-tab="avaliacao">Avaliação</button>
-                            <button class="cand-tab" data-tab="entrevista">Entrevista</button>
                         </div>
                         <section class="cand-panel active" id="tab-detalhes">
                             <h3>Detalhes do Candidato</h3>
@@ -117,60 +117,11 @@
                         <section class="cand-panel" id="tab-avaliacao">
                             <h3>Avaliações</h3>
                             <div class="avaliacao-card">
-                                <div class="rating-row">
-                                    <div class="rating-stars" id="rating-stars" aria-label="Classificação por estrelas">
-                                        <button type="button" class="rating-star" data-value="1" aria-label="1 estrela">★</button>
-                                        <button type="button" class="rating-star" data-value="2" aria-label="2 estrelas">★</button>
-                                        <button type="button" class="rating-star" data-value="3" aria-label="3 estrelas">★</button>
-                                        <button type="button" class="rating-star" data-value="4" aria-label="4 estrelas">★</button>
-                                        <button type="button" class="rating-star" data-value="5" aria-label="5 estrelas">★</button>
-                                    </div>
-                                    <div class="rating-score"><span id="rating-score">0.0</span></div>
-                                </div>
                                 <div class="comentarios-area">
-                                    <label for="aval-obs">Comentários</label>
-                                    <textarea id="aval-obs" placeholder="Escreva seu comentário..."></textarea>
                                     <div class="comentarios-list" id="comentarios-list"></div>
                                 </div>
-                                <input type="hidden" id="aval-nota" value="0">
                                 <div class="actions">
                                     <button class="talentos-btn talentos-btn-search" id="btn-salvar-avaliacao" type="button">Enviar Avaliação</button>
-                                </div>
-                            </div>
-                        </section>
-                        <section class="cand-panel" id="tab-entrevista">
-                            <h3>Avaliação Entrevista</h3>
-                            <div class="form-entrevista entrevista-grid">
-                                <div class="form-group-inline">
-                                    <label for="ent-titulo">Título Vaga</label>
-                                    <input type="text" id="ent-titulo" placeholder="Ex.: Desenvolvedor Back-End">
-                                </div>
-                                <div class="grid-2col">
-                                    <div class="form-group-inline">
-                                        <label for="ent-hard">Hard Skills</label>
-                                        <input type="text" id="ent-hard" placeholder="Ex.: Java, SQL, Spring">
-                                    </div>
-                                    <div class="form-group-inline">
-                                        <label for="ent-soft">Soft Skills</label>
-                                        <input type="text" id="ent-soft" placeholder="Ex.: Comunicação, Liderança">
-                                    </div>
-                                </div>
-                                <div class="grid-2col">
-                                    <div class="form-group-inline">
-                                        <label for="ent-exp">Experiência</label>
-                                        <input type="text" id="ent-exp" placeholder="Ex.: 5+ anos Back-End">
-                                    </div>
-                                    <div class="form-group-inline">
-                                        <label for="ent-cultura">Cultura</label>
-                                        <input type="text" id="ent-cultura" placeholder="Ex.: Fit com a equipe">
-                                    </div>
-                                </div>
-                                <div class="form-group-inline">
-                                    <label for="ent-coment">Comentário</label>
-                                    <input type="text" id="ent-coment" placeholder="Observações gerais da entrevista">
-                                </div>
-                                <div class="actions">
-                                    <button class="talentos-btn talentos-btn-search" id="btn-agendar-entrevista" type="button">Enviar Avaliação</button>
                                 </div>
                             </div>
                         </section>
@@ -204,12 +155,89 @@
 <script>
 let filtrosExtras = {};
 let todosCandidatos = [];
+let currentIdCandidato = null; // usado no modal
+let currentIdCandidatura = null; // não disponível no Banco; permanece null
 function formatarTexto(texto) {
     if (!texto) return '';
     return texto.replace(/[-_]/g, ' ')
         .split(' ')
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ');
+}
+function updateRatingUI(media) {
+    const scoreEl = document.getElementById('rating-score');
+    const starsContainer = document.getElementById('rating-stars');
+    if (scoreEl) scoreEl.textContent = (Number(media) || 0).toFixed(1);
+    if (starsContainer) {
+        const arred = Math.round(Number(media) || 0);
+        starsContainer.querySelectorAll('.rating-star').forEach(st => {
+            st.classList.toggle('active', Number(st.dataset.value) <= arred);
+        });
+    }
+}
+function limparHistorico() {
+    const list = document.getElementById('comentarios-list');
+    if (list) list.innerHTML = '<div style="color:#777; font-size:0.95rem;">Não há avaliações registradas.</div>';
+    updateRatingUI(0);
+}
+function renderHistoricoAvaliacoes(data) {
+    const list = document.getElementById('comentarios-list');
+    if (!list) return;
+    list.innerHTML = '';
+    const avals = Array.isArray(data) ? data : (data?.content || []);
+    if (!avals.length) {
+        list.innerHTML = '<div style="color:#777; font-size:0.95rem;">Não há avaliações registradas.</div>';
+        updateRatingUI(0);
+        return;
+    }
+    const ultima = avals[avals.length - 1];
+    const mediaUlt = ((Number(ultima.hardSkills)||0)+(Number(ultima.softSkills)||0)+(Number(ultima.experiencia)||0)+(Number(ultima.cultura)||0))/4;
+    updateRatingUI(mediaUlt);
+    avals.forEach(a => {
+        const media = ((Number(a.hardSkills)||0)+(Number(a.softSkills)||0)+(Number(a.experiencia)||0)+(Number(a.cultura)||0))/4;
+        const item = document.createElement('div');
+        item.className = 'comentario-item';
+        item.style.border = '1px solid #eee';
+        item.style.borderRadius = '8px';
+        item.style.padding = '0.75rem';
+        item.style.marginBottom = '0.6rem';
+        item.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
+            <strong>${a.nomeAvaliador || 'Avaliador'}</strong>
+            <span style="color:#666; font-size:0.9rem;">${a.dataAvaliacao || ''}</span>
+          </div>
+          <div style="display:grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap:0.4rem; font-size:0.9rem; margin-bottom:0.4rem;">
+            <span>Hard: <strong>${Number(a.hardSkills).toFixed(1)}</strong></span>
+            <span>Soft: <strong>${Number(a.softSkills).toFixed(1)}</strong></span>
+            <span>Exp.: <strong>${Number(a.experiencia).toFixed(1)}</strong></span>
+            <span>Cultura: <strong>${Number(a.cultura).toFixed(1)}</strong></span>
+          </div>
+          <div style="color:#333; margin-bottom:0.3rem;">Média: <strong>${media.toFixed(1)}</strong></div>
+          <div style="white-space:pre-wrap; color:#444;">${a.comentario ? a.comentario : ''}</div>
+        `;
+        list.appendChild(item);
+    });
+}
+async function carregarHistoricoAvaliacoes(idCandidato) {
+    if (!idCandidato) { limparHistorico(); return; }
+    try {
+        const r = await fetch(`http://localhost:8080/optimiza/avaliacao/historico?idCandidato=${encodeURIComponent(idCandidato)}`);
+        // Caso específico: API 404 = sem avaliações para o candidato
+        if (r.status === 404) {
+            const list = document.getElementById('comentarios-list');
+            if (list) list.innerHTML = '<div style="color:#777; font-size:0.95rem;">Não tem avaliações pra esse candidato.</div>';
+            updateRatingUI(0);
+            return;
+        }
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        const data = await r.json();
+        renderHistoricoAvaliacoes(data);
+    } catch (e) {
+        console.error('Erro ao carregar histórico de avaliações:', e);
+        limparHistorico();
+        const list = document.getElementById('comentarios-list');
+        if (list) list.innerHTML = '<div style="color:#d33;">Erro ao carregar histórico.</div>';
+    }
 }
 function renderizarCandidatos(candidatos) {
     const tbody = document.getElementById('talentos-list');
@@ -371,9 +399,14 @@ window.onload = function() {
             ['cand-nome','cand-status','det-nivel','det-curso','det-instituicao','det-idiomas','det-email','det-cargo','det-experiencia','det-curriculo','det-update'].forEach(id => {
                 const el = document.getElementById(id); if (el) el.textContent = '';
             });
+            // Prepara Avaliação
+            try { document.getElementById('btn-salvar-avaliacao').style.display = 'none'; } catch(_){}
+            limparHistorico();
 
             // Busca dados completos por ID
             const idCandidato = e.target.getAttribute('data-id');
+            currentIdCandidato = idCandidato ? Number(idCandidato) : null;
+            currentIdCandidatura = null; // no Banco de Talentos não temos
             const fallback = {
                 nome: e.target.getAttribute('data-nome') || '',
                 status: e.target.getAttribute('data-status') || '',
@@ -386,6 +419,7 @@ window.onload = function() {
                 document.getElementById('cand-status').textContent = formatarTexto(fallback.status);
                 document.getElementById('det-nivel').textContent = formatarTexto(fallback.nivelFormacao);
                 document.getElementById('det-curso').textContent = formatarTexto(fallback.curso);
+                carregarHistoricoAvaliacoes(null);
                 return;
             }
             fetch(`http://localhost:8080/optimiza/candidatos/${idCandidato}`)
@@ -403,6 +437,7 @@ window.onload = function() {
                     document.getElementById('det-update').textContent = formatarDataISO(d.dataUpdate);
                     document.getElementById('det-idiomas').textContent = formatarIdiomasDetalhes(d.idiomas);
                     document.getElementById('det-email').textContent = d.email || '';
+                    carregarHistoricoAvaliacoes(currentIdCandidato);
                 })
                 .catch(err => {
                     console.error('Erro ao carregar candidato por ID:', err);
@@ -411,6 +446,7 @@ window.onload = function() {
                     document.getElementById('cand-status').textContent = formatarTexto(fallback.status);
                     document.getElementById('det-nivel').textContent = formatarTexto(fallback.nivelFormacao);
                     document.getElementById('det-curso').textContent = formatarTexto(fallback.curso);
+                    carregarHistoricoAvaliacoes(currentIdCandidato);
                 });
         }
     });
@@ -433,23 +469,6 @@ window.onload = function() {
         const panel = document.getElementById('tab-' + tab);
         if (panel) panel.classList.add('active');
     });
-    // Rating stars
-    const starsContainer = document.getElementById('rating-stars');
-    const scoreEl = document.getElementById('rating-score');
-    const notaEl = document.getElementById('aval-nota');
-    if (starsContainer) {
-        starsContainer.addEventListener('click', (e) => {
-            const btn = e.target.closest('.rating-star');
-            if (!btn) return;
-            const val = Number(btn.dataset.value);
-            notaEl.value = val.toFixed(1);
-            scoreEl.textContent = notaEl.value;
-            // ativa estrelas até a selecionada
-            starsContainer.querySelectorAll('.rating-star').forEach(st => {
-                st.classList.toggle('active', Number(st.dataset.value) <= val);
-            });
-        });
-    }
 };
 </script>
 <script src="js/sessoes.js"></script>

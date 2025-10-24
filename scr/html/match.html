@@ -8,6 +8,7 @@
   <title>Perfis Correspondentes - Optimiza</title>
   <link rel="stylesheet" href="../css/match.css">
   <link rel="stylesheet" href="../css/menu.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
@@ -21,11 +22,11 @@
         </div>
       </div>
       <div class="header-center">
-        <div class="menu-text pag">
+        <div class="menu-text">
           <a href="home.html">Home</a>
         </div>
         <div class="menu-container">
-          <button class="menu-btn menu-text">Vagas</button>
+          <button class="menu-btn menu-text pag">Vagas</button>
           <div class="dropdown-content">
             <a href="aberturaVaga.html">Abrir Vaga</a>
             <a href="vagasAbertas.html">Vagas Abertas</a>
@@ -98,22 +99,9 @@
           <section class="cand-panel" id="tab-avaliacao">
             <h3>Avaliações</h3>
             <div class="avaliacao-card">
-              <div class="rating-row">
-                <div class="rating-stars" id="rating-stars" aria-label="Classificação por estrelas">
-                  <button type="button" class="rating-star" data-value="1" aria-label="1 estrela">★</button>
-                  <button type="button" class="rating-star" data-value="2" aria-label="2 estrelas">★</button>
-                  <button type="button" class="rating-star" data-value="3" aria-label="3 estrelas">★</button>
-                  <button type="button" class="rating-star" data-value="4" aria-label="4 estrelas">★</button>
-                  <button type="button" class="rating-star" data-value="5" aria-label="5 estrelas">★</button>
-                </div>
-                <div class="rating-score"><span id="rating-score">0.0</span></div>
-              </div>
               <div class="comentarios-area">
-                <label for="aval-obs">Comentários</label>
-                <textarea id="aval-obs" placeholder="Escreva seu comentário..."></textarea>
                 <div class="comentarios-list" id="comentarios-list"></div>
               </div>
-              <input type="hidden" id="aval-nota" value="0">
               <div class="actions">
                 <button class="talentos-btn talentos-btn-search" id="btn-salvar-avaliacao" type="button">Enviar
                   Avaliação</button>
@@ -123,28 +111,56 @@
           <section class="cand-panel" id="tab-entrevista">
             <h3>Avaliação Entrevista</h3>
             <div class="form-entrevista entrevista-grid">
-              <div class="form-group-inline">
-                <label for="ent-titulo">Título Vaga</label>
-                <input type="text" id="ent-titulo" placeholder="Ex.: Desenvolvedor Back-End">
+              <div class="grid-2col">
+                <div class="form-group-inline">
+                  <label>Hard Skills</label>
+                  <div class="rating-stars" id="ent-hard-stars" aria-label="Avaliar Hard Skills">
+                    <button type="button" class="rating-star" data-value="1">★</button>
+                    <button type="button" class="rating-star" data-value="2">★</button>
+                    <button type="button" class="rating-star" data-value="3">★</button>
+                    <button type="button" class="rating-star" data-value="4">★</button>
+                    <button type="button" class="rating-star" data-value="5">★</button>
+                  </div>
+                  <div class="rating-score"><span id="ent-hard-score">0.0</span></div>
+                  <input type="hidden" id="ent-hard-val" value="0">
+                </div>
+                <div class="form-group-inline">
+                  <label>Soft Skills</label>
+                  <div class="rating-stars" id="ent-soft-stars" aria-label="Avaliar Soft Skills">
+                    <button type="button" class="rating-star" data-value="1">★</button>
+                    <button type="button" class="rating-star" data-value="2">★</button>
+                    <button type="button" class="rating-star" data-value="3">★</button>
+                    <button type="button" class="rating-star" data-value="4">★</button>
+                    <button type="button" class="rating-star" data-value="5">★</button>
+                  </div>
+                  <div class="rating-score"><span id="ent-soft-score">0.0</span></div>
+                  <input type="hidden" id="ent-soft-val" value="0">
+                </div>
               </div>
               <div class="grid-2col">
                 <div class="form-group-inline">
-                  <label for="ent-hard">Hard Skills</label>
-                  <input type="text" id="ent-hard" placeholder="Ex.: Java, SQL, Spring">
+                  <label>Experiência</label>
+                  <div class="rating-stars" id="ent-exp-stars" aria-label="Avaliar Experiência">
+                    <button type="button" class="rating-star" data-value="1">★</button>
+                    <button type="button" class="rating-star" data-value="2">★</button>
+                    <button type="button" class="rating-star" data-value="3">★</button>
+                    <button type="button" class="rating-star" data-value="4">★</button>
+                    <button type="button" class="rating-star" data-value="5">★</button>
+                  </div>
+                  <div class="rating-score"><span id="ent-exp-score">0.0</span></div>
+                  <input type="hidden" id="ent-exp-val" value="0">
                 </div>
                 <div class="form-group-inline">
-                  <label for="ent-soft">Soft Skills</label>
-                  <input type="text" id="ent-soft" placeholder="Ex.: Comunicação, Liderança">
-                </div>
-              </div>
-              <div class="grid-2col">
-                <div class="form-group-inline">
-                  <label for="ent-exp">Experiência</label>
-                  <input type="text" id="ent-exp" placeholder="Ex.: 5+ anos Back-End">
-                </div>
-                <div class="form-group-inline">
-                  <label for="ent-cultura">Cultura</label>
-                  <input type="text" id="ent-cultura" placeholder="Ex.: Fit com a equipe">
+                  <label>Cultura</label>
+                  <div class="rating-stars" id="ent-cultura-stars" aria-label="Avaliar Cultura Organizacional">
+                    <button type="button" class="rating-star" data-value="1">★</button>
+                    <button type="button" class="rating-star" data-value="2">★</button>
+                    <button type="button" class="rating-star" data-value="3">★</button>
+                    <button type="button" class="rating-star" data-value="4">★</button>
+                    <button type="button" class="rating-star" data-value="5">★</button>
+                  </div>
+                  <div class="rating-score"><span id="ent-cultura-score">0.0</span></div>
+                  <input type="hidden" id="ent-cultura-val" value="0">
                 </div>
               </div>
               <div class="form-group-inline">
@@ -222,6 +238,7 @@
             <div class="candidate-info">
                 <strong>${candidato.nomeCandidato}</strong>
                 <p>Banco de Talentos Interno</p>
+        <a href="#" class="cand-vermais" data-id="${candidato.idCandidato || ''}" data-candidatura="${candidato.idCandidatura || ''}" data-nome="${candidato.nomeCandidato}">Ver Mais</a>
             </div>
             <div class="candidate-score">
                 <span>${candidato.porcentagem}%</span>
@@ -286,5 +303,295 @@
     carregarCandidaturas(idVaga);
   })();
 
+</script>
+<script>
+  // Estado atual do modal
+  let currentIdCandidato = null;
+  let currentIdCandidatura = null;
+
+  // Helpers de formatação
+  function formatarTexto(txt) {
+    if (!txt) return '';
+    return String(txt).replace(/[-_]/g, ' ').split(' ').map(w => w ? w[0].toUpperCase() + w.slice(1) : '').join(' ');
+  }
+  function formatarIdiomasDetalhes(idiomas) {
+    if (!idiomas) return '';
+    try {
+      if (Array.isArray(idiomas)) {
+        return idiomas.map(i => {
+          if (typeof i === 'string') return formatarTexto(i);
+          if (i && typeof i === 'object') {
+            const lang = Object.keys(i)[0];
+            const lvl = i[lang];
+            return `${formatarTexto(lang)} (${String(lvl).toUpperCase()})`;
+          }
+          return '';
+        }).filter(Boolean).join(', ');
+      }
+      if (typeof idiomas === 'object') {
+        return Object.entries(idiomas).map(([lang, lvl]) => `${formatarTexto(lang)} (${String(lvl).toUpperCase()})`).join(', ');
+      }
+      return String(idiomas);
+    } catch { return ''; }
+  }
+  function formatarDataISO(iso) {
+    if (!iso) return '';
+    const d = new Date(iso);
+    if (isNaN(d)) return String(iso);
+    return d.toLocaleDateString('pt-BR', { year: 'numeric', month: '2-digit', day: '2-digit' });
+  }
+
+  // Atualiza UI de rating (Aba Avaliação) com base na média
+  function updateRatingUI(media) {
+    const scoreEl = document.getElementById('rating-score');
+    const starsContainer = document.getElementById('rating-stars');
+    if (scoreEl) scoreEl.textContent = (Number(media) || 0).toFixed(1);
+    if (starsContainer) {
+      const arred = Math.round(Number(media) || 0);
+      starsContainer.querySelectorAll('.rating-star').forEach(st => {
+        st.classList.toggle('active', Number(st.dataset.value) <= arred);
+      });
+    }
+  }
+
+  function limparHistorico() {
+    const list = document.getElementById('comentarios-list');
+    if (list) list.innerHTML = '<div style="color:#777; font-size:0.95rem;">Não há avaliações registradas.</div>';
+    updateRatingUI(0);
+  }
+
+  function renderHistoricoAvaliacoes(data) {
+    const list = document.getElementById('comentarios-list');
+    if (!list) return;
+    list.innerHTML = '';
+    const avals = Array.isArray(data) ? data : (data?.content || []);
+    if (!avals.length) {
+      list.innerHTML = '<div style="color:#777; font-size:0.95rem;">Não há avaliações registradas.</div>';
+      updateRatingUI(0);
+      return;
+    }
+    // Usa a última avaliação para o score do topo
+    const ultima = avals[avals.length - 1];
+    const mediaUlt = ((Number(ultima.hardSkills)||0)+(Number(ultima.softSkills)||0)+(Number(ultima.experiencia)||0)+(Number(ultima.cultura)||0))/4;
+    updateRatingUI(mediaUlt);
+    // Renderiza histórico
+    avals.forEach(a => {
+      const media = ((Number(a.hardSkills)||0)+(Number(a.softSkills)||0)+(Number(a.experiencia)||0)+(Number(a.cultura)||0))/4;
+      const item = document.createElement('div');
+      item.className = 'comentario-item';
+      item.style.border = '1px solid #eee';
+      item.style.borderRadius = '8px';
+      item.style.padding = '0.75rem';
+      item.style.marginBottom = '0.6rem';
+      item.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
+          <strong>${a.nomeAvaliador || 'Avaliador'}</strong>
+          <span style="color:#666; font-size:0.9rem;">${a.dataAvaliacao || ''}</span>
+        </div>
+        <div style="display:grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap:0.4rem; font-size:0.9rem; margin-bottom:0.4rem;">
+          <span>Hard: <strong>${Number(a.hardSkills).toFixed(1)}</strong></span>
+          <span>Soft: <strong>${Number(a.softSkills).toFixed(1)}</strong></span>
+          <span>Exp.: <strong>${Number(a.experiencia).toFixed(1)}</strong></span>
+          <span>Cultura: <strong>${Number(a.cultura).toFixed(1)}</strong></span>
+        </div>
+        <div style="color:#333; margin-bottom:0.3rem;">Média: <strong>${media.toFixed(1)}</strong></div>
+        <div style="white-space:pre-wrap; color:#444;">${a.comentario ? a.comentario : ''}</div>
+      `;
+      list.appendChild(item);
+    });
+  }
+
+  async function carregarHistoricoAvaliacoes(idCandidato) {
+    if (!idCandidato) { limparHistorico(); return; }
+    try {
+      const r = await fetch(`http://localhost:8080/optimiza/avaliacao/historico?idCandidato=${encodeURIComponent(idCandidato)}`);
+      // Caso específico: endpoint retorna 404 quando não há avaliações
+      if (r.status === 404) {
+        const list = document.getElementById('comentarios-list');
+        if (list) list.innerHTML = '<div style="color:#777; font-size:0.95rem;">Não tem avaliações pra esse candidato.</div>';
+        updateRatingUI(0);
+        return;
+      }
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      const data = await r.json();
+      renderHistoricoAvaliacoes(data);
+    } catch (e) {
+      console.error('Erro ao carregar histórico de avaliações:', e);
+      limparHistorico();
+      const list = document.getElementById('comentarios-list');
+      if (list) list.innerHTML = '<div style="color:#d33;">Erro ao carregar histórico.</div>';
+    }
+  }
+
+  // Abre modal e carrega detalhes do candidato
+  async function abrirModalCandidato(idCandidato, fallbackNome) {
+    currentIdCandidato = idCandidato || null;
+    // Ativa aba Detalhes
+    document.querySelectorAll('.cand-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.cand-panel').forEach(p => p.classList.remove('active'));
+    const tabBtn = document.querySelector('.cand-tab[data-tab="detalhes"]');
+    const tabPanel = document.getElementById('tab-detalhes');
+    if (tabBtn) tabBtn.classList.add('active');
+    if (tabPanel) tabPanel.classList.add('active');
+
+    // Limpa campos
+    ['cand-nome','cand-status','det-nivel','det-curso','det-instituicao','det-idiomas','det-email','det-cargo','det-experiencia','det-curriculo','det-update'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.textContent = '';
+    });
+
+    // Prepara UI da Avaliação
+    try { document.getElementById('btn-salvar-avaliacao').style.display = 'none'; } catch(_){}
+    limparHistorico();
+
+    document.getElementById('modal-candidato').style.display = 'flex';
+
+    try {
+      if (!idCandidato) {
+        document.getElementById('cand-nome').textContent = formatarTexto(fallbackNome || 'Candidato');
+        carregarHistoricoAvaliacoes(null);
+        return;
+      }
+      const resp = await fetch(`http://localhost:8080/optimiza/candidatos/${idCandidato}`);
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      const d = await resp.json();
+      document.getElementById('cand-nome').textContent = formatarTexto(d.nome || fallbackNome || 'Candidato');
+      document.getElementById('cand-status').textContent = formatarTexto(d.status || '');
+      document.getElementById('det-nivel').textContent = formatarTexto(d.nivelFormacao || '');
+      document.getElementById('det-curso').textContent = formatarTexto(d.curso || '');
+      document.getElementById('det-instituicao').textContent = d.instituicaoEnsino || '';
+      document.getElementById('det-cargo').textContent = formatarTexto(d.cargo || '');
+      document.getElementById('det-experiencia').textContent = d.experiencia || '';
+      document.getElementById('det-curriculo').textContent = d.curriculo || '';
+      document.getElementById('det-update').textContent = formatarDataISO(d.dataUpdate);
+      document.getElementById('det-idiomas').textContent = formatarIdiomasDetalhes(d.idiomas);
+      document.getElementById('det-email').textContent = d.email || '';
+      carregarHistoricoAvaliacoes(idCandidato);
+    } catch (e) {
+      console.error('Erro ao carregar candidato por ID:', e);
+      document.getElementById('cand-nome').textContent = formatarTexto(fallbackNome || 'Candidato');
+      carregarHistoricoAvaliacoes(idCandidato);
+    }
+  }
+
+  // Delegação de clique: "Ver Mais"
+  document.getElementById('all-candidates').addEventListener('click', function(e) {
+    const link = e.target.closest('.cand-vermais');
+    if (!link) return;
+    e.preventDefault();
+    const id = link.getAttribute('data-id');
+    const idCand = link.getAttribute('data-candidatura');
+    currentIdCandidato = id || null;
+    currentIdCandidatura = idCand ? Number(idCand) : null;
+    const nome = link.getAttribute('data-nome') || '';
+    abrirModalCandidato(id, nome);
+  });
+
+  // Fechar modal e interações de abas
+  document.getElementById('modal-close')?.addEventListener('click', () => {
+    document.getElementById('modal-candidato').style.display = 'none';
+  });
+  window.addEventListener('click', (ev) => {
+    const overlay = document.getElementById('modal-candidato');
+    if (ev.target === overlay) overlay.style.display = 'none';
+  });
+  document.addEventListener('click', function(ev) {
+    const btn = ev.target.closest('.cand-tab');
+    if (!btn) return;
+    document.querySelectorAll('.cand-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.cand-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    const tab = btn.getAttribute('data-tab');
+    const panel = document.getElementById('tab-' + tab);
+    if (panel) panel.classList.add('active');
+  });
+
+  // Envio da Avaliação de Entrevista (POST)
+  document.getElementById('btn-agendar-entrevista')?.addEventListener('click', async () => {
+    if (!currentIdCandidatura) {
+      Swal.fire({
+        icon: 'info',
+        title: 'Sem candidatura',
+        text: 'Abra pelo Match para avaliar este candidato na vaga.',
+        confirmButtonText: 'Ok'
+      });
+      return;
+    }
+    const hard = parseFloat(document.getElementById('ent-hard-val')?.value) || 0;
+    const soft = parseFloat(document.getElementById('ent-soft-val')?.value) || 0;
+    const exp = parseFloat(document.getElementById('ent-exp-val')?.value) || 0;
+    const cult = parseFloat(document.getElementById('ent-cultura-val')?.value) || 0;
+    const coment = document.getElementById('ent-coment')?.value || '';
+    const idAvaliador = Number(localStorage.getItem('idAvaliador') || localStorage.getItem('idUsuario') || 1);
+    const payload = {
+      idCandidatura: Number(currentIdCandidatura),
+      idAvaliador: idAvaliador,
+      hardSkills: hard,
+      softSkills: soft,
+      experiencia: exp,
+      cultura: cult,
+      comentario: coment
+    };
+    try {
+      const resp = await fetch('http://localhost:8080/optimiza/avaliacao/avaliar?aprovado=true', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      Swal.fire({
+        icon: 'success',
+        title: 'Avaliação enviada',
+        text: 'Sua avaliação foi registrada com sucesso.',
+        timer: 1800,
+        showConfirmButton: false
+      });
+      // Limpa campos e atualiza histórico
+      ['ent-hard-val','ent-soft-val','ent-exp-val','ent-cultura-val'].forEach(id => { const el = document.getElementById(id); if (el) el.value = '0'; });
+      // reset stars and scores
+      [
+        ['ent-hard-stars','ent-hard-score'],
+        ['ent-soft-stars','ent-soft-score'],
+        ['ent-exp-stars','ent-exp-score'],
+        ['ent-cultura-stars','ent-cultura-score']
+      ].forEach(([cid,sid]) => {
+        const cont = document.getElementById(cid);
+        const score = document.getElementById(sid);
+        if (cont) cont.querySelectorAll('.rating-star').forEach(st => st.classList.remove('active'));
+        if (score) score.textContent = '0.0';
+      });
+      const comentEl = document.getElementById('ent-coment'); if (comentEl) comentEl.value = '';
+      if (currentIdCandidato) carregarHistoricoAvaliacoes(currentIdCandidato);
+    } catch (e) {
+      console.error('Falha ao enviar avaliação de entrevista:', e);
+      Swal.fire({
+        icon: 'error',
+        title: 'Erro ao enviar',
+        text: 'Não foi possível enviar a avaliação agora.',
+        confirmButtonText: 'Tentar novamente'
+      });
+    }
+  });
+
+  // Binding estrelas por critério na Entrevista
+  function bindStarGroup(containerId, hiddenId, scoreId) {
+    const cont = document.getElementById(containerId);
+    const hidden = document.getElementById(hiddenId);
+    const score = document.getElementById(scoreId);
+    if (!cont || !hidden) return;
+    cont.addEventListener('click', (e) => {
+      const btn = e.target.closest('.rating-star');
+      if (!btn) return;
+      const val = Number(btn.dataset.value);
+      hidden.value = val.toFixed(1);
+      if (score) score.textContent = hidden.value;
+      cont.querySelectorAll('.rating-star').forEach(st => {
+        st.classList.toggle('active', Number(st.dataset.value) <= val);
+      });
+    });
+  }
+  bindStarGroup('ent-hard-stars','ent-hard-val','ent-hard-score');
+  bindStarGroup('ent-soft-stars','ent-soft-val','ent-soft-score');
+  bindStarGroup('ent-exp-stars','ent-exp-val','ent-exp-score');
+  bindStarGroup('ent-cultura-stars','ent-cultura-val','ent-cultura-score');
 </script>
 <script src="../js/sessoes.js"></script>

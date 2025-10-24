@@ -8,6 +8,7 @@
     <title>Vagas Abertas - Optimiza</title>
     <link rel="stylesheet" href="../css/vagasAbertas.css">
     <link rel="stylesheet" href="../css/menu.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
@@ -455,7 +456,12 @@
             document.getElementById('modal-vaga').style.display = 'flex';
         } catch (e) {
             console.error('Erro ao abrir modal da vaga:', e);
-            alert('Não foi possível carregar os detalhes da vaga.');
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro ao carregar',
+                text: 'Não foi possível carregar os detalhes da vaga.',
+                confirmButtonText: 'Ok'
+            });
         }
     }
 
@@ -509,15 +515,36 @@
     // Handler do botão Aprovar (chama backend e atualiza UI)
     document.querySelector('.modal-actions .aprovar')?.addEventListener('click', async function () {
         if (!currentVagaId) {
-            alert('ID da vaga não identificado.');
+            Swal.fire({
+                icon: 'info',
+                title: 'Sem ID da vaga',
+                text: 'ID da vaga não identificado.',
+                confirmButtonText: 'Ok'
+            });
             return;
         }
+        const confirmar = await Swal.fire({
+            icon: 'question',
+            title: 'Aprovar vaga?',
+            text: 'Esta ação moverá a vaga para Entrevistando Candidatos.',
+            showCancelButton: true,
+            confirmButtonText: 'Aprovar',
+            cancelButtonText: 'Cancelar'
+        });
+        if (!confirmar.isConfirmed) return;
         try {
             const resp = await fetch(`http://localhost:8080/optimiza/vagas/aprovacao-rh/${currentVagaId}?aprovado=true`, {
                 method: 'PUT'
             });
             if (!resp.ok) throw new Error('Falha ao aprovar a vaga');
-            alert('Vaga aprovada com sucesso.');
+            // Sucesso visual
+            await Swal.fire({
+                icon: 'success',
+                title: 'Vaga aprovada',
+                text: 'A vaga foi aprovada com sucesso.',
+                timer: 1600,
+                showConfirmButton: false
+            });
             // Após aprovação, avançamos para "Entrevistando Candidatos"
             setText('modal-status-display', 'Entrevistando Candidatos');
             atualizarProgresso('entrevistando candidatos');
@@ -525,7 +552,12 @@
             try { carregarVagas(); } catch { }
         } catch (err) {
             console.error(err);
-            alert('Erro ao aprovar vaga. Verifique o console.');
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro ao aprovar',
+                text: 'Não foi possível aprovar a vaga. Verifique o console.',
+                confirmButtonText: 'Ok'
+            });
         }
     });
 

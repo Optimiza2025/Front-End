@@ -47,8 +47,9 @@ body {
   margin-bottom: 1.5vh;
   /* font-family: Arial, sans-serif; */
   /* background: #fff; */
-  width: 80%;
-  height: 10vh;
+    width: 80%;
+    min-height: 10vh;
+    height: auto;
 }
 
 .candidate-card.success {
@@ -78,6 +79,23 @@ body {
   font-size: 0.9rem;
   margin: 0;
   color: #555;
+}
+
+/* Link "Ver Mais" dentro do card */
+.candidate-info .cand-vermais {
+    display: inline-block;
+    margin-top: 0.35rem;
+    color: #6C63FF;
+    font-weight: 600;
+    text-decoration: none;
+    padding: 0.25rem 0.6rem;
+    border-radius: 0.4rem;
+    transition: background .15s ease, color .15s ease, transform .1s ease;
+}
+.candidate-info .cand-vermais:hover {
+    background: rgba(108, 99, 255, 0.12);
+    color: #4f47e6;
+    transform: translateY(-1px);
 }
 
 .candidate-score {
@@ -267,6 +285,26 @@ body {
     display: flex;
     justify-content: flex-end;
     margin-top: 0.5rem;
+}
+
+/* Botões comuns usados nas ações */
+.talentos-btn {
+    border: none;
+    border-radius: 0.45rem;
+    padding: 0.6rem 1.2rem;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background .2s ease, transform .1s ease, opacity .2s ease;
+}
+.talentos-btn-search {
+    background: #6C63FF;
+    color: #fff;
+}
+.talentos-btn-search:hover {
+    background: #5548d9;
+    transform: translateY(-1px);
 }
 
 @media (max-width: 900px) {
