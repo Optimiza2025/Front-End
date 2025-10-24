@@ -168,7 +168,7 @@
 
                     <div class="details-right">
                         <div class="detail-block">
-                            <div class="detail-label">Palavras-Chave</div>
+                            <div class="detail-label right">Palavras-Chave</div>
                             <div class="keywords-box" id="palavras-vaga-display"></div>
                         </div>
                     </div>
@@ -177,9 +177,10 @@
 
                 <!-- Buttons: alinhamento central com espaçamento -->
                 <footer class="modal-actions">
-                    <button class="btn action ver-candidatos">Ver Candidatos</button>
+                    <button class="btn action ver-candidatos" onclick="window.location.href='match.html'">Ver Candidatos</button>
                     <button class="btn action editar">Editar Vaga</button>
-                    <button class="btn action aprovar">Aprovar Vaga</button>
+                    <!-- botão de ação que muda conforme status: Aprovar Vaga ou Concluir Vaga -->
+                    <button id="btn-acao-vaga" class="btn action aprovar">Aprovar Vaga</button>
                     <button class="btn action apagar vermelho">Apagar Vaga</button>
                 </footer>
             </div>
@@ -426,6 +427,8 @@
         // palavras-chave (manter quebras de linha)
         const palavras = vaga.palavrasChave ? (Array.isArray(vaga.palavrasChave) ? vaga.palavrasChave.join('\n') : String(vaga.palavrasChave)) : '';
         document.getElementById('palavras-vaga-display').textContent = palavras;
+        // configura o botão de ação (aprovar ou concluir) de acordo com o status recebido
+        setupActionButton(vaga);
     }
 
     // Atualize abrirModal para usar preencherModalDisplay e depois mostrar modal
@@ -433,16 +436,69 @@
     // Exemplo de uso dentro de abrirModal:
     // preencherModalDisplay(vaga); atualizarProgresso(vaga.status.toLowerCase()); document.getElementById('modal-vaga').style.display = 'flex';
 
-    // Handler do botão Aprovar (exemplo - troca de status local e atualiza visual)
-    document.querySelector('.modal-actions .aprovar')?.addEventListener('click', function () {
-        // placeholder: aqui você faria fetch para aprovar no backend
-        const titulo = document.getElementById('modal-titulo').textContent;
-        // exemplo simples de feedback
-        alert(`Vaga "${titulo}" aprovada (simulação).`);
-        // se quiser, atualize o status na UI:
-        document.getElementById('modal-status-display').textContent = 'Aprovação RH';
-        atualizarProgresso('Aprovação RH');
-    });
+    // Configura o botão de ação do modal conforme status da vaga
+    function setupActionButton(vaga) {
+        const btn = document.getElementById('btn-acao-vaga');
+        if (!btn) return;
+        // limpa handler anterior
+        btn.onclick = null;
+        const status = (vaga.status || '').toLowerCase();
+        if (status.includes('vaga aberta') || status.includes('aprovação rh')) {
+            btn.textContent = 'Aprovar Vaga';
+            btn.dataset.action = 'aprovar';
+            btn.onclick = async function () {
+                await enviarAcaoVaga(vaga, 'aprovar');
+            };
+        } else if (status.includes('entrevistando candidatos') || status.includes('admissão concluída')) {
+            btn.textContent = 'Concluir Vaga';
+            btn.dataset.action = 'concluir';
+            btn.onclick = async function () {
+                await enviarAcaoVaga(vaga, 'concluir');
+            };
+        } else {
+            btn.textContent = 'Ação';
+            delete btn.dataset.action;
+            btn.onclick = null;
+        }
+    }
+
+    // Envia a ação ao backend; existem dois caminhos distintos: aprovar e concluir
+    async function enviarAcaoVaga(vaga, tipo) {
+        try {
+            // endpoint base (ajuste caso seu backend use outro caminho)
+            const base = 'http://localhost:8080/optimiza/vagas';
+            const path = tipo === 'aprovar' ? '/aprovar' : '/concluir';
+            const url = base + path;
+            // payload mínimo; prefira enviar `id` se existir no objeto vaga
+            const payload = { id: vaga.id || null, titulo: vaga.titulo };
+            const resp = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if (!resp.ok) {
+                const text = await resp.text();
+                console.error('Erro no backend:', resp.status, text);
+                alert('Erro ao executar ação no servidor.');
+                return;
+            }
+            // resposta OK — atualizar visual localmente
+            if (tipo === 'aprovar') {
+                document.getElementById('modal-status-display').textContent = 'Aprovação RH';
+                atualizarProgresso('Aprovação RH');
+                alert(`Vaga "${vaga.titulo}" aprovada.`);
+            } else {
+                document.getElementById('modal-status-display').textContent = 'Admissão Concluída';
+                atualizarProgresso('Admissão Concluída');
+                alert(`Vaga "${vaga.titulo}" concluída.`);
+            }
+            // opcional: recarregar lista de vagas
+            // carregarVagas();
+        } catch (err) {
+            console.error(err);
+            alert('Erro ao executar ação (ver console).');
+        }
+    }
 
 
 </script>
@@ -455,7 +511,8 @@
             cargo: "Analista de Sistemas",
             nivelFormacao: "Superior Completo",
             idiomas: { "Inglês": "B2", "Espanhol": "A2" },
-            status: "Vaga Aberta"
+            status: "Vaga Aberta",
+            palavrasChave: ["JavaScript", "React", "CSS"]  
         },
         {
             titulo: "Analista de Dados Júnior",
