@@ -163,7 +163,7 @@
 
                     <div class="details-right">
                         <div class="detail-block">
-                            <div class="detail-label">Palavras-Chave</div>
+                            <div class="detail-label right">Palavras-Chave</div>
                             <div class="keywords-box" id="palavras-vaga-display"></div>
                         </div>
                     </div>
@@ -174,7 +174,8 @@
                 <footer class="modal-actions">
                     <button class="btn action ver-candidatos">Ver Candidatos</button>
                     <button class="btn action editar">Editar Vaga</button>
-                    <button class="btn action aprovar">Aprovar Vaga</button>
+                    <!-- botão de ação que muda conforme status: Aprovar Vaga ou Concluir Vaga -->
+                    <button id="btn-acao-vaga" class="btn action aprovar">Aprovar Vaga</button>
                     <button class="btn action apagar vermelho">Apagar Vaga</button>
                 </footer>
             </div>
@@ -539,7 +540,7 @@
             localStorage.setItem('idVaga', String(currentVagaId));
             localStorage.setItem('idVagaSelecionada', String(currentVagaId));
             if (titulo) localStorage.setItem('nomeVaga', titulo);
-        } catch { }
+        } catch {}
         window.location.href = `match.html?idVaga=${encodeURIComponent(currentVagaId)}`;
     });
 

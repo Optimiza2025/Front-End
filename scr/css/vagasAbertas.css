@@ -446,106 +446,187 @@ body {
     background-color: #5555FF;
 }
 
+
 .vaga-etapa.ativa p {
-    color: #5555FF;
+    color: #032656
 }
 
 
 /* detalhe principal: duas colunas */
 .modal-details {
-  display: flex;
-  gap: 2.5rem;
-  align-items: flex-start;
-  margin-top: 1rem;
-  margin-bottom: 1.5rem;
+    display: flex;
+    gap: 2.5rem;
+    align-items: flex-start;
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 /* esquerda com lista vertical de campos */
 .details-left {
-  flex: 1 1 60%;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+    flex: 1 1 50%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
 }
 
 /* direita menor para palavras-chave */
 .details-right {
-  flex: 0 0 35%;
-  display: flex;
-  flex-direction: column;
+    flex: 0 0 50%;
+    display: flex;
+    flex-direction: column;
 }
 
 /* linha de cada campo (label + valor) */
 .detail-row {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+/* bloco usado na coluna direita (label + caixa de palavras-chave) */
+.detail-block {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+.detail-block .detail-label {
+    /* menor largura quando está na coluna direita */
+    flex: 0 0 9rem;
+    width: auto;
+    /* manter a borda visual que já aplicamos globalmente */
+    border-right: 0.0625rem solid #5555FF;
+    padding-right: 0.75rem;
+}
+
+.detail-block .keywords-box {
+    flex: 1 1 auto;
+    min-width: 0; /* permite que a caixa quebre corretamente em contêineres estreitos */
 }
 
 .detail-label {
-  width: 12rem; /* alinha labels */
-  color: #6b6b6b;
-  font-weight: 600;
-  font-size: 0.95rem;
+    width: 12rem;
+    /* alinha labels */
+    color: #6b6b6b;
+    font-weight: 600;
+    font-size: 0.95rem;
+    /* borda fina à direita para separar label/valor (usar rem em vez de px) */
+    border-right: 0.0625rem solid #5555FF; /* 1px ≈ 0.0625rem */
+    padding-right: 0.75rem;
+}
+
+.right{
+    height: 15rem;
+    /* borda fina à direita para separar label/valor (usar rem em vez de px) */
+    border-right: 1rem solid #01018d; /* 1px ≈ 0.0625rem */
+    padding-right: 0.75rem;
 }
 
 .detail-value {
-  color: #032656;
-  font-size: 1rem;
-  background: transparent;
-  padding: 0.25rem 0;
-  border-radius: 0.25rem;
-  word-break: break-word;
+    color: #032656;
+    font-size: 1rem;
+    background: transparent;
+    padding: 0.25rem 0;
+    border-radius: 0.25rem;
+    word-break: break-word;
 }
 
 /* caixa visual para palavras-chave (read-only look) */
 .keywords-box {
-  min-height: 9rem;
-  border: 1px solid #dfe3f6;
-  background: #fbfbff;
-  padding: 0.75rem;
-  border-radius: 0.5rem;
-  color: #223;
-  overflow-wrap: break-word;
-  white-space: pre-wrap;
+    min-height: 9rem;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    color: #223;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
 }
 
 /* Ações / botões */
 .modal-actions {
-  display: flex;
-  justify-content: center; /* centraliza todos */
-  gap: 1rem;
-  margin-top: 1.25rem;
-  flex-wrap: wrap;
+    display: flex;
+    justify-content: center;
+    /* centraliza todos */
+    gap: 1rem;
+    margin-top: 1.25rem;
+    flex-wrap: wrap;
 }
 
 /* botões do modal (estética) */
 .modal-actions .btn {
-  padding: 0.6rem 1.25rem;
-  border-radius: 0.5rem;
-  border: none;
-  cursor: pointer;
-  font-weight: 700;
-  min-width: 140px;
+    padding: 0.6rem 1.25rem;
+    border-radius: 0.5rem;
+    border: none;
+    cursor: pointer;
+    font-weight: 700;
+    min-width: 140px;
 }
 
 /* cores específicas */
-.modal-actions .ver-candidatos { background: #6C63FF; color: #fff; }
-.modal-actions .editar { background: #4b44d6; color: #fff; }
-.modal-actions .aprovar { background: #22a55a; color: #fff; }
-.modal-actions .apagar { background: #ff2b2b; color: #fff; }
+.modal-actions .ver-candidatos {
+    background: #6C63FF;
+    color: #fff;
+}
+
+.modal-actions .editar {
+    background: #4b44d6;
+    color: #fff;
+}
+
+.modal-actions .aprovar {
+    background: #22a55a;
+    color: #fff;
+}
+
+.modal-actions .apagar {
+    background: #ff2b2b;
+    color: #fff;
+}
 
 /* botão vermelho já tinha, mantive a classe vermelho para consistência */
-.modal-actions .vermelho { background: #ff2b2b; color: #fff; }
+.modal-actions .vermelho {
+    background: #ff2b2b;
+    color: #fff;
+}
 
 /* hover states */
-.modal-actions .btn:hover { opacity: 0.92; transform: translateY(-1px); transition: .12s ease; }
+.modal-actions .btn:hover {
+    opacity: 0.92;
+    transform: translateY(-1px);
+    transition: .12s ease;
+}
 
 /* cursor e hover para linhas clicáveis da tabela */
-.talentos-table tr { cursor: pointer; }
+.talentos-table tr {
+    cursor: pointer;
+}
 
 /* responsividade: empilha colunas em telas pequenas */
 @media (max-width: 900px) {
-  .modal-details { flex-direction: column; }
-  .detail-label { width: 35%; }
+    .modal-details {
+        flex-direction: column;
+    }
+
+    .detail-label {
+        width: 35%;
+        /* em telas pequenas empilhadas, remover borda para evitar linhas desnecessárias */
+        border-right: none;
+        padding-right: 0;
+    }
+
+    /* para a detail-block em telas pequenas: empilhar label e caixa */
+    .detail-block {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .detail-block .detail-label {
+        flex: none;
+        width: 100%;
+        border-right: none;
+        padding-right: 0;
+    }
+
+    .detail-block .keywords-box {
+        width: 100%;
+    }
 }
