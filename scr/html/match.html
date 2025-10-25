@@ -39,7 +39,7 @@
           <a href="painel.html">Analítico</a>
         </div>
         <div class="menu-text">
-          <a href="http://34.195.148.77/chamado/">Ajuda</a>
+          <a href="/chamado/">Ajuda</a>
         </div>
       </div>
       <div class="header-right">
@@ -272,7 +272,7 @@
     const container = document.getElementById('all-candidates');
     container.innerHTML = `<p style="text-align:center; color:#888; margin-top:2vh;">Carregando...</p>`;
     try {
-      const resp = await fetch(`http://localhost:8080/optimiza/candidaturas/vaga?idVaga=${encodeURIComponent(idVaga)}`);
+      const resp = await fetch(`/optimiza/candidaturas/vaga?idVaga=${encodeURIComponent(idVaga)}`);
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
       const data = await resp.json();
       const lista = Array.isArray(data) ? data : (data?.content || []);
@@ -404,7 +404,7 @@
   async function carregarHistoricoAvaliacoes(idCandidato) {
     if (!idCandidato) { limparHistorico(); return; }
     try {
-      const r = await fetch(`http://localhost:8080/optimiza/avaliacao/historico?idCandidato=${encodeURIComponent(idCandidato)}`);
+      const r = await fetch(`/optimiza/avaliacao/historico?idCandidato=${encodeURIComponent(idCandidato)}`);
       // Caso específico: endpoint retorna 404 quando não há avaliações
       if (r.status === 404) {
         const list = document.getElementById('comentarios-list');
@@ -451,7 +451,7 @@
         carregarHistoricoAvaliacoes(null);
         return;
       }
-      const resp = await fetch(`http://localhost:8080/optimiza/candidatos/${idCandidato}`);
+      const resp = await fetch(`/optimiza/candidatos/${idCandidato}`);
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
       const d = await resp.json();
       document.getElementById('cand-nome').textContent = formatarTexto(d.nome || fallbackNome || 'Candidato');
@@ -532,7 +532,7 @@
       comentario: coment
     };
     try {
-      const resp = await fetch('http://localhost:8080/optimiza/avaliacao/avaliar?aprovado=true', {
+      const resp = await fetch('/optimiza/avaliacao/avaliar?aprovado=true', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

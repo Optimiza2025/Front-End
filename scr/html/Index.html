@@ -63,8 +63,7 @@
             const password = document.getElementById('password').value;
 
             try {
-                //const endPointLogin = '/optimiza/usuarios/login';
-                const endPointLogin = 'http://localhost:8080/optimiza/usuarios/login';
+               const endPointLogin = '/optimiza/usuarios/login';
 
                 const respostaLogin = await fetch(endPointLogin, {
                     method: 'POST',

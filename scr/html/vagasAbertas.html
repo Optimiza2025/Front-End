@@ -40,7 +40,7 @@
                     <a href="painel.html">Analítico</a>
                 </div>
                 <div class="menu-text">
-                    <a href="http://34.195.148.77/chamado/">Ajuda</a>
+                    <a href="/chamado/">Ajuda</a>
                 </div>
             </div>
             <div class="header-right">
@@ -295,7 +295,7 @@
     async function carregarVagas() {
         try {
             var idArea = localStorage.getItem('idAreaUsuario');
-            let url = `http://localhost:8080/optimiza/vagas?idArea=${idArea}`;
+            let url = `/optimiza/vagas?idArea=${idArea}`;
             let params = [];
             Object.keys(filtrosExtras).forEach(key => {
                 if (filtrosExtras[key]) params.push(`${key}=${encodeURIComponent(filtrosExtras[key])}`);
@@ -425,7 +425,7 @@
             currentVagaId = id;
             let dados = vaga;
             if (id != null) {
-                const resp = await fetch(`http://localhost:8080/optimiza/vagas/${id}`);
+                const resp = await fetch(`/optimiza/vagas/${id}`);
                 if (resp.ok) {
                     dados = await resp.json();
                     // se a API devolver o id, confirma no estado atual
@@ -533,7 +533,7 @@
         });
         if (!confirmar.isConfirmed) return;
         try {
-            const resp = await fetch(`http://localhost:8080/optimiza/vagas/aprovacao-rh/${currentVagaId}?aprovado=true`, {
+            const resp = await fetch(`/optimiza/vagas/aprovacao-rh/${currentVagaId}?aprovado=true`, {
                 method: 'PUT'
             });
             if (!resp.ok) throw new Error('Falha ao aprovar a vaga');

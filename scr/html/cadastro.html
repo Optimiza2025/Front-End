@@ -96,8 +96,7 @@
             const idArea = document.getElementById('area').value;
 
             try {
-                const endPointCadastro = 'http://localhost:8080/optimiza/usuarios/cadastro';
-                //const endPointCadastro = '/optimiza/usuarios/cadastro';
+                const endPointCadastro = '/optimiza/usuarios/cadastro';
 
                 const resposta = await fetch(endPointCadastro, {
                     method: 'POST',
