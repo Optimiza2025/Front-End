@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,15 +9,16 @@
     <link rel="stylesheet" href="../css/cadastro.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
+
 <body>
     <div class="register-header">
-            <div class="register-header-left">
-                <img src="../Assets/Logo fundo branco.png" alt="Optimiza" class="register-logo">
-            </div>
-            <div class="register-header-right">
-                <a href="Index.html" class="register-login-link">Entrar</a>
-            </div>
+        <div class="register-header-left">
+            <img src="../Assets/Logo fundo branco.png" alt="Optimiza" class="register-logo">
         </div>
+        <div class="register-header-right">
+            <a href="Index.html" class="register-login-link">Entrar</a>
+        </div>
+    </div>
     <div class="register-wrapper">
         <h2 class="register-title">Cadastre-se</h2>
         <form class="register-form">
@@ -69,8 +71,8 @@
         // Buscar áreas do backend e preencher o select
         async function carregarAreas() {
             try {
-                //const resposta = await fetch('http://localhost:8080/optimiza/usuarios/areas');
-                const resposta = await fetch('/optimiza/usuarios/areas');
+                //const resposta = await fetch('http://localhost:8080/optimiza /usuarios/areas');
+                const resposta = await fetch('/optimiza /usuarios/areas');
                 if (resposta.ok) {
                     const areas = await resposta.json();
                     const selectArea = document.getElementById('area');
@@ -86,7 +88,7 @@
         carregarAreas();
 
         // Cadastro do usuário
-        document.querySelector('.register-form').addEventListener('submit', async function(e) {
+        document.querySelector('.register-form').addEventListener('submit', async function (e) {
             e.preventDefault();
             const nome = document.getElementById('nome').value;
             const email = document.getElementById('email').value;
@@ -96,7 +98,7 @@
             const idArea = document.getElementById('area').value;
 
             try {
-                const endPointCadastro = '/optimiza/usuarios/cadastro';
+                const endPointCadastro = '/optimiza /usuarios/cadastro';
 
                 const resposta = await fetch(endPointCadastro, {
                     method: 'POST',
@@ -141,4 +143,5 @@
     </script>
     <script src="js/sessoes.js"></script>
 </body>
+
 </html>

@@ -60,6 +60,37 @@
 		document.querySelectorAll('[data-feature="banco-de-talentos"]').forEach(el => el.remove());
 	}
 
+	// Oculta/remover botão de Aprovar Vaga para quem não é do RH
+	function ocultarBotoesAprovacaoVaga() {
+		// Cobre diferentes seletores/variações possíveis do botão de ação
+		const selectors = [
+			'#btn-acao-vaga',
+			'.modal-actions .aprovar',
+			'button.aprovar',
+			'[data-role="aprovar-vaga"]'
+		];
+		const nodes = document.querySelectorAll(selectors.join(','));
+		nodes.forEach(el => {
+			// Esconde sem remover para evitar nulidade em event listeners já ligados
+			try {
+				el.style.display = 'none';
+				el.setAttribute('aria-hidden', 'true');
+				if ('disabled' in el) { el.disabled = true; }
+				el.classList && el.classList.add('oculto-nao-rh');
+			} catch { }
+		});
+	}
+
+	// Observa mutações para ocultar o botão caso ele seja inserido depois (ex.: modais)
+	function observarAprovacaoQuandoNecessario() {
+		try {
+			const observer = new MutationObserver(() => ocultarBotoesAprovacaoVaga());
+			observer.observe(document.body, { childList: true, subtree: true });
+			// Guarda para possível reuso externo
+			window.Sessoes = Object.assign(window.Sessoes || {}, { _observerAprovacao: observer });
+		} catch { }
+	}
+
 	function aplicarRegrasDeAcesso() {
 		const areaNome = getAreaNomeDoUsuario();
 		const areaId = getAreaIdDoUsuario();
@@ -76,8 +107,11 @@
 
 		if (!(permitidoPorNome || permitidoPorId)) {
 			// Log leve para depuração (silencioso na maioria dos casos)
-			try { console.debug('Sessoes: ocultando Banco de Talentos', { areaId, areaNome, rhIdConfig }); } catch {}
+			try { console.debug('Sessoes: ocultando Banco de Talentos', { areaId, areaNome, rhIdConfig }); } catch { }
 			removerBancoDeTalentosDoDOM();
+			// Esconde também a ação de Aprovar Vaga (ex.: em vagasAbertas.html)
+			ocultarBotoesAprovacaoVaga();
+			observarAprovacaoQuandoNecessario();
 		}
 	}
 

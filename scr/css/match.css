@@ -307,6 +307,49 @@ body {
     transform: translateY(-1px);
 }
 
+/* Toggle switch (Aprovar) */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 46px;
+    height: 26px;
+}
+.switch input { display:none; }
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #cfd3de;
+    transition: .2s;
+    border-radius: 26px;
+}
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .2s;
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+input:checked + .slider {
+    background-color: #22a55a;
+}
+input:focus + .slider {
+    box-shadow: 0 0 1px #22a55a;
+}
+input:checked + .slider:before {
+    transform: translateX(20px);
+}
+.slider.round { border-radius: 26px; }
+.slider.round:before { border-radius: 50%; }
+
 @media (max-width: 900px) {
     .cand-wrapper {
         grid-template-columns: 1fr;

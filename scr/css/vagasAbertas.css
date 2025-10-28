@@ -451,6 +451,23 @@ body {
     color: #032656
 }
 
+/* etapas já concluídas (passadas) */
+.vaga-etapa.concluida .bolinha {
+    background-color: #6C63FF;
+}
+.vaga-etapa.concluida p {
+    color: #032656;
+    opacity: 0.9;
+}
+
+/* estado visual das linhas entre etapas */
+.linha.concluida {
+    background-color: #6C63FF;
+}
+.linha.pendente {
+    background-color: #cfd3de;
+}
+
 
 /* detalhe principal: duas colunas */
 .modal-details {
@@ -593,6 +610,14 @@ body {
     opacity: 0.92;
     transform: translateY(-1px);
     transition: .12s ease;
+}
+
+/* estado desabilitado para botões de ação */
+.modal-actions .btn:disabled,
+.modal-actions .btn[aria-disabled="true"] {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
 }
 
 /* cursor e hover para linhas clicáveis da tabela */
