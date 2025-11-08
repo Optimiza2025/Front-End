@@ -55,6 +55,14 @@ function etapaParaLabel(etapa, status) {
     // fallback amigável
     return 'Aguardando Aprovação RH';
 }
+// Retorna um índice de ordenação para cada etapa (menor = mais prioridade na listagem)
+function etapaOrder(label) {
+    const l = (label || '').toLowerCase();
+    if (l.includes('aprovacao rh') || l.includes('aprovação rh') || l.includes('aguard')) return 0;
+    if (l.includes('entrevista') || l.includes('entrevistando')) return 1;
+    if (l.includes('admiss')) return 2;
+    return 3;
+}
 function renderizarVagas(vagas) {
     const tbody = document.getElementById('talentos-list');
     tbody.innerHTML = '';
@@ -97,7 +105,7 @@ function renderizarVagas(vagas) {
 async function carregarVagas() {
     try {
         var idArea = localStorage.getItem('idAreaUsuario');
-        let url = `/optimiza /vagas?idArea=${idArea}`;
+    let url = api(`/optimiza/vagas?idArea=${idArea}`);
         let params = [];
         Object.keys(filtrosExtras).forEach(key => {
             if (filtrosExtras[key]) params.push(`${key}=${encodeURIComponent(filtrosExtras[key])}`);
@@ -193,6 +201,19 @@ function filtrarEVizualizarVagas() {
             return vaga[key] && formatarTexto(vaga[key]).toLowerCase().includes(valor);
         });
     });
+    // Ordena por etapa (aguardando aprovação do RH primeiro), depois por título
+    vagasFiltradas.sort((a, b) => {
+        const la = etapaParaLabel(a.etapaVaga, a.status);
+        const lb = etapaParaLabel(b.etapaVaga, b.status);
+        const oa = etapaOrder(la);
+        const ob = etapaOrder(lb);
+        if (oa !== ob) return oa - ob;
+        // fallback por título
+        const ta = (a.titulo || '').toLowerCase();
+        const tb = (b.titulo || '').toLowerCase();
+        return ta < tb ? -1 : (ta > tb ? 1 : 0);
+    });
+
     renderizarVagas(vagasFiltradas);
 }
 window.onload = function () {
@@ -227,7 +248,7 @@ async function abrirModal(vaga) {
         currentVagaId = id;
         let dados = vaga;
         if (id != null) {
-            const resp = await fetch(`/optimiza /vagas/${id}`);
+            const resp = await fetch(api(`/optimiza/vagas/${id}`));
             if (resp.ok) {
                 dados = await resp.json();
                 // se a API devolver o id, confirma no estado atual
@@ -256,6 +277,23 @@ async function abrirModal(vaga) {
 
         atualizarProgresso((labelEtapa || '').toLowerCase());
         atualizarBotaoAcao(labelEtapa);
+        // Desabilita o botão "Ver Candidatos" se a vaga ainda estiver aguardando aprovação do RH
+        try {
+            const verBtn = document.querySelector('.modal-actions .ver-candidatos');
+            if (verBtn) {
+                if (etapaOrder(labelEtapa) === 0) {
+                    verBtn.disabled = true;
+                    verBtn.setAttribute('aria-disabled', 'true');
+                    verBtn.title = 'Aguardando aprovação do RH — não é possível ver candidatos.';
+                    verBtn.classList.add('disabled');
+                } else {
+                    verBtn.disabled = false;
+                    verBtn.setAttribute('aria-disabled', 'false');
+                    verBtn.title = 'Ver candidatos';
+                    verBtn.classList.remove('disabled');
+                }
+            }
+        } catch (e) { /* ignore DOM errors */ }
         document.getElementById('modal-vaga').style.display = 'flex';
     } catch (e) {
         console.error('Erro ao abrir modal da vaga:', e);
@@ -381,7 +419,7 @@ document.querySelector('.modal-actions .aprovar')?.addEventListener('click', asy
     });
     if (!confirmar.isConfirmed) return;
     try {
-        const resp = await fetch(`/optimiza /vagas/aprovacao-rh/${currentVagaId}?aprovado=true`, {
+        const resp = await fetch(api(`/optimiza/vagas/aprovacao-rh/${currentVagaId}?aprovado=true`), {
             method: 'PUT'
         });
         if (!resp.ok) throw new Error('Falha ao aprovar a vaga');
@@ -411,9 +449,26 @@ document.querySelector('.modal-actions .aprovar')?.addEventListener('click', asy
 });
 
 // Navega para tela de match levando o id da vaga
-document.querySelector('.modal-actions .ver-candidatos')?.addEventListener('click', function () {
+document.querySelector('.modal-actions .ver-candidatos')?.addEventListener('click', function (e) {
+    const btn = this;
+    // Bloqueia acesso se o botão estiver desabilitado (vaga aguardando aprovação RH)
+    if (btn.disabled || btn.getAttribute('aria-disabled') === 'true') {
+        e.preventDefault();
+        Swal.fire({
+            icon: 'info',
+            title: 'Aguardando aprovação',
+            text: 'Esta vaga ainda está aguardando aprovação do RH. Você não pode ver os candidatos agora.',
+            confirmButtonText: 'Ok'
+        });
+        return;
+    }
     if (!currentVagaId) {
-        alert('ID da vaga não identificado.');
+        Swal.fire({
+            icon: 'info',
+            title: 'Sem ID da vaga',
+            text: 'ID da vaga não identificado.',
+            confirmButtonText: 'Ok'
+        });
         return;
     }
     const titulo = document.getElementById('modal-titulo')?.textContent || '';

@@ -192,11 +192,23 @@
             if (nomeUsuario) {
                 document.getElementById('profile-name').textContent = nomeUsuario;
             }
+            const logoutBtn = document.getElementById('btn-logout');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', function () {
+          try {
+            // Limpa chaves de sessão mais comuns
+            ['nomeUsuario', 'idAreaUsuario', 'nomeAreaUsuario', 'idVaga', 'idVagaSelecionada', 'nomeVaga', 'token']
+              .forEach(k => localStorage.removeItem(k));
+          } catch (e) { /* ignore */ }
+          window.location.href = 'Index.html';
+        });
+      }
         });
     </script>
 </body>
 
 </html>
 
+<script src="../js/api.js"></script>
 <script src="../js/vagasAbertas.js"></script>
 <script src="../js/sessoes.js"></script>

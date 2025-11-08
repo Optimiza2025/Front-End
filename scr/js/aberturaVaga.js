@@ -334,7 +334,7 @@ document.querySelector('form').addEventListener('submit', async function (e) {
         idArea: parseInt(idAreaUsuario)
     };
     try {
-        const response = await fetch('/optimiza /vagas', {
+    const response = await fetch(api('/optimiza/vagas'), {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -371,7 +371,7 @@ document.getElementById('btn-sugestao-vaga').onclick = async function () {
     lista.innerHTML = '<li style="color:#888;">Carregando...</li>';
     modal.style.display = 'flex';
     try {
-        const response = await fetch('/optimiza /vagas/layout-vagas');
+    const response = await fetch(api('/optimiza/vagas/layout-vagas'));
         if (response.ok) {
             const vagas = await response.json();
             lista.innerHTML = '';
@@ -399,7 +399,7 @@ document.getElementById('btn-sugestao-vaga').onclick = async function () {
                     btnAplicar.disabled = true;
                     btnAplicar.textContent = 'Aplicando...';
                     try {
-                        const res = await fetch(`/optimiza /vagas/layout-vagas?idLayoutVaga=${vaga.id}`);
+                        const res = await fetch(api(`/optimiza/vagas/layout-vagas?idLayoutVaga=${vaga.id}`));
                         if (res.ok) {
                             const dados = await res.json();
                             document.getElementById('jobTitle').value = dados.titulo || '';

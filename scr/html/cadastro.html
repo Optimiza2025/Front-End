@@ -67,12 +67,13 @@
     <div class="brand-footer">
         <h1 class="brand-name">Optimiza</h1>
     </div>
+    <script src="../js/api.js"></script>
     <script>
         // Buscar áreas do backend e preencher o select
         async function carregarAreas() {
             try {
-                //const resposta = await fetch('http://localhost:8080/optimiza /usuarios/areas');
-                const resposta = await fetch('/optimiza /usuarios/areas');
+                // usando helper api() para funcionar em dev (localhost) e produção
+                const resposta = await fetch(api('/optimiza/usuarios/areas'));
                 if (resposta.ok) {
                     const areas = await resposta.json();
                     const selectArea = document.getElementById('area');
@@ -98,7 +99,7 @@
             const idArea = document.getElementById('area').value;
 
             try {
-                const endPointCadastro = '/optimiza /usuarios/cadastro';
+                const endPointCadastro = api('/optimiza/usuarios/cadastro');
 
                 const resposta = await fetch(endPointCadastro, {
                     method: 'POST',

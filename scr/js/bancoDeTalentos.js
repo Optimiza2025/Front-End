@@ -66,7 +66,7 @@ function renderHistoricoAvaliacoes(data) {
 async function carregarHistoricoAvaliacoes(idCandidato) {
     if (!idCandidato) { limparHistorico(); return; }
     try {
-        const r = await fetch(`/optimiza /avaliacao/historico?idCandidato=${encodeURIComponent(idCandidato)}`);
+    const r = await fetch(api(`/optimiza/avaliacao/historico?idCandidato=${encodeURIComponent(idCandidato)}`));
         // Caso específico: API 404 = sem avaliações para o candidato
         if (r.status === 404) {
             const list = document.getElementById('comentarios-list');
@@ -116,7 +116,7 @@ async function carregarCandidatos() {
     try {
         // Monta query parameters para filtros
         const nome = document.getElementById('filtro-nome') ? document.getElementById('filtro-nome').value.trim().toLowerCase() : '';
-        let url = '/optimiza /candidatos';
+    let url = api('/optimiza/candidatos');
         let params = [];
         if (typeof filtrosExtras !== 'undefined') {
             Object.keys(filtrosExtras).forEach(key => {
@@ -267,7 +267,7 @@ window.onload = function () {
                 carregarHistoricoAvaliacoes(null);
                 return;
             }
-            fetch(`/optimiza /candidatos/${idCandidato}`)
+            fetch(api(`/optimiza/candidatos/${idCandidato}`))
                 .then(r => r.json())
                 .then(d => {
                     // ID não exibido no layout, mantido apenas internamente via data-id

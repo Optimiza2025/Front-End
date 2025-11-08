@@ -62,7 +62,7 @@ async function carregarCandidaturas(idVaga) {
   const container = document.getElementById('all-candidates');
   container.innerHTML = `<p style="text-align:center; color:#888; margin-top:2vh;">Carregando...</p>`;
   try {
-    const resp = await fetch(`/optimiza /candidaturas/vaga?idVaga=${encodeURIComponent(idVaga)}`);
+  const resp = await fetch(api(`/optimiza/candidaturas/vaga?idVaga=${encodeURIComponent(idVaga)}`));
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
     const data = await resp.json();
     const lista = Array.isArray(data) ? data : (data?.content || []);
@@ -192,7 +192,7 @@ function renderHistoricoAvaliacoes(data) {
 async function carregarHistoricoAvaliacoes(idCandidato) {
   if (!idCandidato) { limparHistorico(); return; }
   try {
-    const r = await fetch(`/optimiza /avaliacao/historico?idCandidato=${encodeURIComponent(idCandidato)}`);
+  const r = await fetch(api(`/optimiza/avaliacao/historico?idCandidato=${encodeURIComponent(idCandidato)}`));
     // Caso específico: endpoint retorna 404 quando não há avaliações
     if (r.status === 404) {
       const list = document.getElementById('comentarios-list');
@@ -239,7 +239,7 @@ async function abrirModalCandidato(idCandidato, fallbackNome) {
       carregarHistoricoAvaliacoes(null);
       return;
     }
-    const resp = await fetch(`/optimiza /candidatos/${idCandidato}`);
+  const resp = await fetch(api(`/optimiza/candidatos/${idCandidato}`));
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
     const d = await resp.json();
     document.getElementById('cand-nome').textContent = formatarTexto(d.nome || fallbackNome || 'Candidato');
@@ -322,7 +322,7 @@ document.getElementById('btn-agendar-entrevista')?.addEventListener('click', asy
 
   const aprovadoSwitch = document.getElementById('aprovado-switch');
   const aprovado = !!(aprovadoSwitch && aprovadoSwitch.checked);
-  const url = `/optimiza /avaliacao/avaliar?aprovado=${aprovado ? 'true' : 'false'}`;
+  const url = api(`/optimiza/avaliacao/avaliar?aprovado=${aprovado ? 'true' : 'false'}`);
 
   try {
     const resp = await fetch(url, {

@@ -55,6 +55,7 @@
         <h1 class="brand-name">Optimiza</h1>
     </div>
 
+    <script src="../js/api.js"></script>
     <script>
         document.getElementById('loginForm').addEventListener('submit', async function (e) {
             e.preventDefault();
@@ -63,7 +64,7 @@
             const password = document.getElementById('password').value;
 
             try {
-                const endPointLogin = '/optimiza /usuarios/login';
+                const endPointLogin = api('/optimiza/usuarios/login');
 
                 const respostaLogin = await fetch(endPointLogin, {
                     method: 'POST',
