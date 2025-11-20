@@ -72,30 +72,53 @@
   <div class="indicadores-section">
     <h2 class="start-title">Indicadores Gerais</h2>
     <div class="indicadores-cards">
-      <div class="indicador-card indicador-card-large"></div>
-      <div class="indicador-card indicador-card-small"></div>
+      <!-- Chart card (middle) -->
+      <div class="indicador-card indicador-card-large">
+        <!-- Gráfico de volume por mês -->
+        <div id="chart" style="width:100%; height:100%;"></div>
+      </div>
+      <!-- Small card (right) - now holds KPIs -->
+      <div class="indicador-card indicador-card-small">
+        <div class="kpi-filter" style="display:flex; justify-content:flex-end;">
+          <button id="kpi-filter-btn" class="kpi-filter-btn">Filtrar</button>
+          <div id="kpi-filter-popup" class="kpi-filter-popup" aria-hidden="true">
+            <div class="kpi-filter-row">
+              <label>De <input type="date" id="kpi-inicio"></label>
+            </div>
+            <div class="kpi-filter-row">
+              <label>Até <input type="date" id="kpi-fim"></label>
+            </div>
+            <div class="kpi-filter-actions">
+              <button id="kpi-filter-apply" class="kpi-filter-apply">Aplicar</button>
+              <button id="kpi-filter-cancel" class="kpi-filter-cancel">Cancelar</button>
+            </div>
+          </div>
+        </div>
+        <div class="kpi-panel">
+          <div class="kpi-top">
+            <div class="kpi-item kpi-small">
+              <div class="kpi-value" id="kpi-matching">--</div>
+              <div class="kpi-label">Média Matching</div>
+            </div>
+            <div class="kpi-item kpi-small">
+              <div class="kpi-value" id="kpi-reprovacao">--</div>
+              <div class="kpi-label">Média Reprovação</div>
+            </div>
+          </div>
+          <div class="kpi-bottom">
+            <div class="kpi-item kpi-large">
+              <div class="kpi-value" id="kpi-fracassadas">--</div>
+              <div class="kpi-label">Vagas fracassadas</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-  <script>
-    // Exibe o nome do usuário salvo no localStorage ao lado da foto de perfil
-    window.addEventListener('DOMContentLoaded', function () {
-      var nomeUsuario = localStorage.getItem('nomeUsuario');
-      if (nomeUsuario) {
-        document.getElementById('profile-name').textContent = nomeUsuario;
-      }
-      const logoutBtn = document.getElementById('btn-logout');
-      if (logoutBtn) {
-        logoutBtn.addEventListener('click', function () {
-          try {
-            // Limpa chaves de sessão mais comuns
-            ['nomeUsuario', 'idAreaUsuario', 'nomeAreaUsuario', 'idVaga', 'idVagaSelecionada', 'nomeVaga', 'token']
-              .forEach(k => localStorage.removeItem(k));
-          } catch (e) { /* ignore */ }
-          window.location.href = 'Index.html';
-        });
-      }
-    });
-  </script>
+  <!-- ApexCharts -->
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/home.js"></script>
   <script src="../js/sessoes.js"></script>
 </body>
 

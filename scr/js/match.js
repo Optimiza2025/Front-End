@@ -62,7 +62,7 @@ async function carregarCandidaturas(idVaga) {
   const container = document.getElementById('all-candidates');
   container.innerHTML = `<p style="text-align:center; color:#888; margin-top:2vh;">Carregando...</p>`;
   try {
-  const resp = await fetch(api(`/optimiza/candidaturas/vaga?idVaga=${encodeURIComponent(idVaga)}`));
+    const resp = await fetch(api(`/optimiza/candidaturas/vaga?idVaga=${encodeURIComponent(idVaga)}`));
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
     const data = await resp.json();
     const lista = Array.isArray(data) ? data : (data?.content || []);
@@ -147,8 +147,25 @@ function limparHistorico() {
   if (list) list.innerHTML = '<div style="color:#777; font-size:0.95rem;">Não há avaliações registradas.</div>';
   updateRatingUI(0);
 }
+// cache for fetched user names by id to avoid repeated requests
+const _userNameCache = {};
+async function fetchUserNameById(id) {
+  if (!id) return 'Avaliador';
+  if (_userNameCache[id]) return _userNameCache[id];
+  try {
+    const r = await fetch(api(`/optimiza/usuarios/${encodeURIComponent(id)}`));
+    if (!r.ok) return 'Avaliador';
+    const d = await r.json();
+    const name = d?.nome || d?.nomeUsuario || d?.nomeCompleto || d?.nomeAvaliador || 'Avaliador';
+    _userNameCache[id] = name;
+    return name;
+  } catch (e) {
+    console.debug('Não foi possível resolver nome do usuário', id, e);
+    return 'Avaliador';
+  }
+}
 
-function renderHistoricoAvaliacoes(data) {
+async function renderHistoricoAvaliacoes(data) {
   const list = document.getElementById('comentarios-list');
   if (!list) return;
   list.innerHTML = '';
@@ -162,37 +179,39 @@ function renderHistoricoAvaliacoes(data) {
   const ultima = avals[avals.length - 1];
   const mediaUlt = ((Number(ultima.hardSkills) || 0) + (Number(ultima.softSkills) || 0) + (Number(ultima.experiencia) || 0) + (Number(ultima.cultura) || 0)) / 4;
   updateRatingUI(mediaUlt);
-  // Renderiza histórico
-  avals.forEach(a => {
+  // Renderiza histórico; resolve nomes quando necessário
+  for (const a of avals) {
     const media = ((Number(a.hardSkills) || 0) + (Number(a.softSkills) || 0) + (Number(a.experiencia) || 0) + (Number(a.cultura) || 0)) / 4;
+    const nomeAvaliador = a.nomeAvaliador || (a.idAvaliador ? await fetchUserNameById(a.idAvaliador) : 'Avaliador');
     const item = document.createElement('div');
     item.className = 'comentario-item';
     item.style.border = '1px solid #eee';
     item.style.borderRadius = '8px';
     item.style.padding = '0.75rem';
     item.style.marginBottom = '0.6rem';
+    const dataFormatada = a.dataAvaliacao ? formatarDataISO(a.dataAvaliacao) : '';
     item.innerHTML = `
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
-          <strong>${a.nomeAvaliador || 'Avaliador'}</strong>
-          <span style="color:#666; font-size:0.9rem;">${a.dataAvaliacao || ''}</span>
+          <strong>${nomeAvaliador}</strong>
+          <span style="color:#666; font-size:0.9rem;">${dataFormatada}</span>
         </div>
         <div style="display:grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap:0.4rem; font-size:0.9rem; margin-bottom:0.4rem;">
-          <span>Hard: <strong>${Number(a.hardSkills).toFixed(1)}</strong></span>
-          <span>Soft: <strong>${Number(a.softSkills).toFixed(1)}</strong></span>
-          <span>Exp.: <strong>${Number(a.experiencia).toFixed(1)}</strong></span>
-          <span>Cultura: <strong>${Number(a.cultura).toFixed(1)}</strong></span>
+          <span>Hard: <strong>${(Number(a.hardSkills) || 0).toFixed(1)}</strong></span>
+          <span>Soft: <strong>${(Number(a.softSkills) || 0).toFixed(1)}</strong></span>
+          <span>Exp.: <strong>${(Number(a.experiencia) || 0).toFixed(1)}</strong></span>
+          <span>Cultura: <strong>${(Number(a.cultura) || 0).toFixed(1)}</strong></span>
         </div>
         <div style="color:#333; margin-bottom:0.3rem;">Média: <strong>${media.toFixed(1)}</strong></div>
         <div style="white-space:pre-wrap; color:#444;">${a.comentario ? a.comentario : ''}</div>
       `;
     list.appendChild(item);
-  });
+  }
 }
 
 async function carregarHistoricoAvaliacoes(idCandidato) {
   if (!idCandidato) { limparHistorico(); return; }
   try {
-  const r = await fetch(api(`/optimiza/avaliacao/historico?idCandidato=${encodeURIComponent(idCandidato)}`));
+    const r = await fetch(api(`/optimiza/avaliacao/historico?idCandidato=${encodeURIComponent(idCandidato)}`));
     // Caso específico: endpoint retorna 404 quando não há avaliações
     if (r.status === 404) {
       const list = document.getElementById('comentarios-list');
@@ -202,7 +221,7 @@ async function carregarHistoricoAvaliacoes(idCandidato) {
     }
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
     const data = await r.json();
-    renderHistoricoAvaliacoes(data);
+    await renderHistoricoAvaliacoes(data);
   } catch (e) {
     console.error('Erro ao carregar histórico de avaliações:', e);
     limparHistorico();
@@ -239,7 +258,7 @@ async function abrirModalCandidato(idCandidato, fallbackNome) {
       carregarHistoricoAvaliacoes(null);
       return;
     }
-  const resp = await fetch(api(`/optimiza/candidatos/${idCandidato}`));
+    const resp = await fetch(api(`/optimiza/candidatos/${idCandidato}`));
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
     const d = await resp.json();
     document.getElementById('cand-nome').textContent = formatarTexto(d.nome || fallbackNome || 'Candidato');

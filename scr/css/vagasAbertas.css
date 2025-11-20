@@ -266,6 +266,7 @@ body {
 .vaga-pendente-aprovacao {
     opacity: 0.6;
 }
+
 .vaga-pendente-aprovacao:hover {
     opacity: 0.8;
 }
@@ -455,6 +456,7 @@ body {
 .vaga-etapa.concluida .bolinha {
     background-color: #6C63FF;
 }
+
 .vaga-etapa.concluida p {
     color: #032656;
     opacity: 0.9;
@@ -464,6 +466,7 @@ body {
 .linha.concluida {
     background-color: #6C63FF;
 }
+
 .linha.pendente {
     background-color: #cfd3de;
 }
@@ -518,7 +521,8 @@ body {
 
 .detail-block .keywords-box {
     flex: 1 1 auto;
-    min-width: 0; /* permite que a caixa quebre corretamente em contêineres estreitos */
+    min-width: 0;
+    /* permite que a caixa quebre corretamente em contêineres estreitos */
 }
 
 .detail-label {
@@ -528,14 +532,16 @@ body {
     font-weight: 600;
     font-size: 0.95rem;
     /* borda fina à direita para separar label/valor (usar rem em vez de px) */
-    border-right: 0.0625rem solid #5555FF; /* 1px ≈ 0.0625rem */
+    border-right: 0.0625rem solid #5555FF;
+    /* 1px ≈ 0.0625rem */
     padding-right: 0.75rem;
 }
 
-.right{
+.right {
     height: 15rem;
     /* borda fina à direita para separar label/valor (usar rem em vez de px) */
-    border-right: 1rem solid #01018d; /* 1px ≈ 0.0625rem */
+    border-right: 1rem solid #01018d;
+    /* 1px ≈ 0.0625rem */
     padding-right: 0.75rem;
 }
 

@@ -2,83 +2,87 @@
 
 /* Container principal */
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  background: #f8f9fa;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .start-title {
-  display: flex;
-  justify-content: center;
-  text-align: center;
-  font-size: 2rem;
-  font-weight: 700;
-  color: #0d2345;
-  margin-bottom: 2rem;
-  column-gap: 0.5rem;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #0d2345;
+    margin-bottom: 2rem;
+    column-gap: 0.5rem;
 }
 
 .start-section {
-  width: 90%;
-  margin: 2.5rem auto;
-  text-align: center;
+    width: 90%;
+    margin: 2.5rem auto;
+    text-align: center;
 }
 
 .all-candidates {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 1rem;
-  width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    width: 100%;
 }
 
 .candidate-card {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border: 0.15rem solid;
-  border-radius: 0.5rem;
-  padding: 2vh 2vw;
-  margin-bottom: 1.5vh;
-  /* font-family: Arial, sans-serif; */
-  /* background: #fff; */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 0.15rem solid;
+    border-radius: 0.5rem;
+    padding: 2vh 2vw;
+    margin-bottom: 1.5vh;
+    /* font-family: Arial, sans-serif; */
+    /* background: #fff; */
     width: 80%;
     min-height: 10vh;
     height: auto;
 }
 
 .candidate-card.success {
-  border-color: #28a745; /* Verde */
+    border-color: #28a745;
+    /* Verde */
 }
 
 .candidate-card.warning {
-  border-color: #ffc107; /* Amarelo */
+    border-color: #ffc107;
+    /* Amarelo */
 }
 
 .candidate-card.danger {
-  border-color: #ff0707; /* vermelho */
+    border-color: #ff0707;
+    /* vermelho */
 }
 
 .candidate-info {
-  display: flex;
-  flex-direction: column;
+    display: flex;
+    flex-direction: column;
 }
 
 .candidate-info strong {
-  color: #002855; /* Azul escuro */
-  font-size: 1rem;
-  margin-bottom: 0.5vh;
+    color: #002855;
+    /* Azul escuro */
+    font-size: 1rem;
+    margin-bottom: 0.5vh;
 }
 
 .candidate-info p {
-  font-size: 0.9rem;
-  margin: 0;
-  color: #555;
+    font-size: 0.9rem;
+    margin: 0;
+    color: #555;
 }
 
 /* Link "Ver Mais" dentro do card */
@@ -92,6 +96,7 @@ body {
     border-radius: 0.4rem;
     transition: background .15s ease, color .15s ease, transform .1s ease;
 }
+
 .candidate-info .cand-vermais:hover {
     background: rgba(108, 99, 255, 0.12);
     color: #4f47e6;
@@ -99,13 +104,13 @@ body {
 }
 
 .candidate-score {
-  display: flex;
-  align-items: center;
-  font-weight: bold;
-  font-size: 1.2rem;
-  color: #002855;
-  border-left: 0.15rem solid #ccc;
-  padding-left: 1vw;
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #002855;
+    border-left: 0.15rem solid #ccc;
+    padding-left: 1vw;
 }
 
 .modal-candidato {
@@ -298,10 +303,12 @@ body {
     cursor: pointer;
     transition: background .2s ease, transform .1s ease, opacity .2s ease;
 }
+
 .talentos-btn-search {
     background: #6C63FF;
     color: #fff;
 }
+
 .talentos-btn-search:hover {
     background: #5548d9;
     transform: translateY(-1px);
@@ -314,7 +321,11 @@ body {
     width: 46px;
     height: 26px;
 }
-.switch input { display:none; }
+
+.switch input {
+    display: none;
+}
+
 .slider {
     position: absolute;
     cursor: pointer;
@@ -326,6 +337,7 @@ body {
     transition: .2s;
     border-radius: 26px;
 }
+
 .slider:before {
     position: absolute;
     content: "";
@@ -336,19 +348,28 @@ body {
     background-color: white;
     transition: .2s;
     border-radius: 50%;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
-input:checked + .slider {
+
+input:checked+.slider {
     background-color: #22a55a;
 }
-input:focus + .slider {
+
+input:focus+.slider {
     box-shadow: 0 0 1px #22a55a;
 }
-input:checked + .slider:before {
+
+input:checked+.slider:before {
     transform: translateX(20px);
 }
-.slider.round { border-radius: 26px; }
-.slider.round:before { border-radius: 50%; }
+
+.slider.round {
+    border-radius: 26px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
 
 @media (max-width: 900px) {
     .cand-wrapper {

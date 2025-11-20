@@ -2,28 +2,28 @@
 
 /* Container principal */
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background: #f8f9fa;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f8f9fa;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .start-title {
-    text-align: start;
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #0d2345;
-    margin-bottom: 2rem;
+  text-align: start;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #0d2345;
+  margin-bottom: 2rem;
 }
 
 .start-section {
-    width: 90%;
-    margin: 2.5rem auto;
-    text-align: center;
+  width: 90%;
+  margin: 2.5rem auto;
+  text-align: center;
 }
 
 .start-cards {
@@ -47,12 +47,12 @@ body {
 }
 
 .start-card:hover {
-  box-shadow: 0 4px 64px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 64px rgba(0, 0, 0, 0.08);
   border-color: #5C5CFF;
 }
 
 .start-card:active {
-  box-shadow: 0 8px 8px rgba(0,0,0,0.10);
+  box-shadow: 0 8px 8px rgba(0, 0, 0, 0.10);
   border-color: #0A2342;
 }
 
@@ -81,8 +81,11 @@ body {
 
 .indicadores-section {
   width: 90%;
-  height: 60vh;
+  height: 48vh;
+  position: relative;
+  /* allow absolutely positioned filter button */
 }
+
 .indicadores-title {
   text-align: start;
   font-size: 1.5rem;
@@ -90,21 +93,274 @@ body {
   color: #0d2345;
   margin-bottom: 1.5rem;
 }
+
 .indicadores-cards {
   display: flex;
-  gap: 3rem;
+  gap: 1.5rem;
+  /* tightened gap */
+  align-items: flex-start;
+  /* align cards to top to reduce vertical offset */
 }
+
 .indicador-card {
   background: #dbdbdb;
   border-radius: 0.5rem;
-  height: 35vh;
+  height: 51vh;
   display: block;
 }
+
 .indicador-card-large {
   flex: 2;
+  /* Clean white background for charts */
+  background: #ffffff;
+  box-shadow: 0 6px 18px rgba(10, 35, 66, 0.06);
+  padding: 0.5rem 0.75rem;
+  /* reduced padding to tighten spacing */
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
 }
+
 .indicador-card-small {
-  flex: 1;
+  flex: 0 0 360px;
+  /* fixed width for KPI card on the right */
+  background: #ffffff;
+  box-shadow: 0 6px 18px rgba(10, 35, 66, 0.06);
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
+.indicador-card-small .kpi-panel {
+  width: 100%;
+}
 
+.indicador-card-small .kpi-item {
+  margin-bottom: 0.6rem;
+}
+
+/* Layout for KPI rows inside right card */
+.kpi-top {
+  display: flex;
+  gap: 0.75rem;
+  width: 100%;
+  margin-bottom: 0.6rem;
+}
+
+.kpi-bottom {
+  display: flex;
+  width: 100%;
+  align-items: center;
+}
+
+/* KPI card base style (matches attached design) */
+.kpi-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  background: #ffffff;
+  border: 1px solid rgba(10, 35, 66, 0.12);
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 4px 12px rgba(10, 35, 66, 0.04);
+  box-sizing: border-box;
+}
+
+.kpi-item.kpi-small {
+  padding: 0.8rem;
+  width: 100%;
+  height: 20vh;
+}
+
+.kpi-item.kpi-large {
+  padding: 1.25rem;
+  width: 100%;
+}
+
+.kpi-value {
+  font-size: 2.75rem;
+  /* large numeric value */
+  font-weight: 800;
+  color: #5C5CFF;
+  /* purple tone for the number */
+  line-height: 1;
+  text-align: center;
+}
+
+.kpi-item.kpi-small .kpi-value {
+  font-size: 1.75rem;
+}
+
+.kpi-item.kpi-large .kpi-value {
+  font-size: 3.5rem;
+}
+
+.kpi-label {
+  font-size: 0.95rem;
+  color: #0d2345;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Ensure chart container sits cleanly inside the card */
+#chart {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  box-sizing: border-box;
+  padding: 0.25rem 0.5rem;
+  /* small inner padding so axis labels don't touch edges */
+}
+
+/* ApexCharts specific small tweak: remove extra top margin the chart may add */
+.indicador-card-large .apexcharts-canvas {
+  margin-top: 0 !important;
+}
+
+/* KPI panel (left side of the chart) */
+.kpi-panel {
+  width: 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding-right: 0.75rem;
+  border-right: 1px solid #eef2f6;
+  box-sizing: border-box;
+  align-items: stretch;
+  justify-content: center;
+}
+
+.kpi-item {
+  display: flex;
+  flex-direction: column-reverse;
+  /* show label above the large number visually */
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+/* Final numeric style adjustments (override earlier defaults) */
+.kpi-value {
+  font-weight: 800;
+  color: #5C5CFF;
+  /* purple */
+  text-align: center;
+}
+
+.kpi-item.kpi-small .kpi-value {
+  font-size: 22px;
+}
+
+.kpi-item.kpi-large .kpi-value {
+  font-size: 56px;
+}
+
+.kpi-label {
+  font-size: 14px;
+  color: #0d2345;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* Filter button + popup styles */
+.kpi-filter {
+  position: absolute;
+  top: 50px;
+  right: 0.5rem;
+  z-index: 60;
+}
+
+.kpi-filter-btn {
+  background: #5C5CFF;
+  /* purple */
+  color: #ffffff;
+  padding: 8px 16px;
+  border-radius: 20px;
+  /* pill */
+  cursor: pointer;
+  font-weight: 700;
+  border: none;
+  box-shadow: 0 6px 18px rgba(92, 92, 255, 0.18);
+  font-size: 14px;
+}
+
+.kpi-filter-btn:hover {
+  filter: brightness(0.95);
+}
+
+.kpi-filter-popup {
+  position: absolute;
+  top: 44px;
+  right: 0;
+  min-width: 240px;
+  background: #fff;
+  border: 1px solid rgba(10, 35, 66, 0.12);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(10, 35, 66, 0.08);
+  padding: 10px;
+  display: none;
+  z-index: 70;
+}
+
+.kpi-filter-popup.open {
+  display: block;
+}
+
+.kpi-filter-row {
+  margin-bottom: 8px;
+  font-size: 13px;
+  color: #0d2345;
+}
+
+.kpi-filter-row input[type="date"] {
+  width: 90%;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid #e6e9ef;
+}
+
+.kpi-filter-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.kpi-filter-apply {
+  background: #5C5CFF;
+  color: #fff;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.kpi-filter-cancel {
+  background: transparent;
+  border: 1px solid rgba(10, 35, 66, 0.08);
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+@media (max-width: 900px) {
+  .indicadores-cards {
+    flex-direction: column;
+  }
+
+  .kpi-panel {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #eef2f6;
+    padding-bottom: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  #chart {
+    height: 320px;
+  }
+}
