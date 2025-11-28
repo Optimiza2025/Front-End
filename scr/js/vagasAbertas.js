@@ -295,6 +295,70 @@ async function abrirModal(vaga) {
             }
         } catch (e) { /* ignore DOM errors */ }
         document.getElementById('modal-vaga').style.display = 'flex';
+        // configurar botão de editar para abrir a tela de abertura com dados para edição
+        try {
+            const btnEditar = document.querySelector('.modal-actions .editar');
+            if (btnEditar) {
+                const order = etapaOrder(labelEtapa);
+                // Se a vaga já está em etapa >= 1 (entrevistas/admissão), bloqueia edição
+                if (order >= 1) {
+                    btnEditar.disabled = true;
+                    btnEditar.setAttribute('aria-disabled', 'true');
+                    btnEditar.title = 'Vaga aprovada — edição desabilitada';
+                    btnEditar.classList.add('disabled');
+                    btnEditar.onclick = function (ev) {
+                        ev.preventDefault();
+                        Swal.fire({ icon: 'info', title: 'Edição não permitida', text: 'Esta vaga já foi aprovada e não pode ser editada.' });
+                    };
+                } else {
+                    btnEditar.disabled = false;
+                    btnEditar.setAttribute('aria-disabled', 'false');
+                    btnEditar.title = 'Editar Vaga';
+                    btnEditar.classList.remove('disabled');
+                    btnEditar.onclick = function (ev) {
+                        ev.preventDefault();
+                        // salva id da vaga para edição e redireciona
+                        try { localStorage.setItem('idVagaSelecionada', String(currentVagaId)); } catch (_) { }
+                        window.location.href = 'aberturaVaga.html';
+                    };
+                }
+            }
+        } catch (e) { /* ignore */ }
+            // configurar comportamento do botão de aprovar/concluir conforme etapa
+            try {
+                const aprovarBtn = document.querySelector('.modal-actions .aprovar');
+                if (aprovarBtn) {
+                    const order = etapaOrder(labelEtapa);
+                    if (order >= 1) {
+                        aprovarBtn.textContent = 'Concluir Vaga';
+                        aprovarBtn.dataset.action = 'concluir';
+                        aprovarBtn.title = 'Concluir vaga (mover para Admissão Concluída)';
+                        aprovarBtn.disabled = false;
+                        aprovarBtn.setAttribute('aria-disabled', 'false');
+                        aprovarBtn.classList.remove('disabled');
+                        aprovarBtn.style.opacity = '';
+                    } else {
+                        aprovarBtn.textContent = 'Aprovar Vaga';
+                        aprovarBtn.dataset.action = 'aprovar';
+                        aprovarBtn.title = 'Enviar a vaga para Entrevistando Candidatos';
+                    }
+                    // Somente desabilita se estiver explicitamente marcada como concluída ou encerrada
+                    const disabledIf = /(admissao\s*concluida|admissao_concluida|concluida|encerrada|encerr)/i;
+                    if (disabledIf.test((labelEtapa || '').toLowerCase())) {
+                        aprovarBtn.disabled = true;
+                        aprovarBtn.classList.add('disabled');
+                        aprovarBtn.setAttribute('aria-disabled', 'true');
+                        aprovarBtn.style.opacity = '0.5';
+                    } else {
+                        aprovarBtn.disabled = false;
+                        aprovarBtn.classList.remove('disabled');
+                        aprovarBtn.setAttribute('aria-disabled', 'false');
+                        aprovarBtn.style.opacity = '';
+                    }
+                }
+            } catch (_) { }
+
+            // (Removidos: botões extras 'Concluir' e 'Encerrar' — o modal usa agora o botão .aprovar para concluir quando aplicável)
     } catch (e) {
         console.error('Erro ao abrir modal da vaga:', e);
         Swal.fire({
@@ -400,51 +464,69 @@ function preencherModalDisplay(vaga) {
 
 // Handler do botão Aprovar (chama backend e atualiza UI)
 document.querySelector('.modal-actions .aprovar')?.addEventListener('click', async function () {
+    const btn = this;
     if (!currentVagaId) {
-        Swal.fire({
-            icon: 'info',
-            title: 'Sem ID da vaga',
-            text: 'ID da vaga não identificado.',
-            confirmButtonText: 'Ok'
-        });
+        Swal.fire({ icon: 'info', title: 'Sem ID da vaga', text: 'ID da vaga não identificado.', confirmButtonText: 'Ok' });
         return;
     }
-    const confirmar = await Swal.fire({
-        icon: 'question',
-        title: 'Aprovar vaga?',
-        text: 'Esta ação moverá a vaga para Entrevistando Candidatos.',
-        showCancelButton: true,
-        confirmButtonText: 'Aprovar',
-        cancelButtonText: 'Cancelar'
-    });
+    // se o botão estiver marcado para concluir, chamamos o endpoint de concluir
+    if (btn.dataset && btn.dataset.action === 'concluir') {
+        const confirmar = await Swal.fire({ icon: 'question', title: 'Concluir vaga?', text: 'Esta ação marcará a vaga como "Admissão Concluída".', showCancelButton: true, confirmButtonText: 'Concluir', cancelButtonText: 'Cancelar' });
+        if (!confirmar.isConfirmed) return;
+        try {
+            const resp = await fetch(api(`/optimiza/vagas/${currentVagaId}/concluir`), { method: 'PUT' });
+            if (!resp.ok) throw new Error('Falha ao concluir a vaga');
+            await Swal.fire({ icon: 'success', title: 'Vaga concluída', text: 'Status atualizado para Admissão Concluída.', timer: 1400, showConfirmButton: false });
+            setText('modal-status-display', 'Admissão Concluída');
+            atualizarProgresso('admissao concluida');
+            atualizarBotaoAcao('Admissão Concluída');
+            try { carregarVagas(); } catch { }
+            // Atualiza o botão do modal para estado final (desabilitado/visualmente fechado)
+            try {
+                const aprovarBtnAfter = document.querySelector('.modal-actions .aprovar');
+                if (aprovarBtnAfter) {
+                    aprovarBtnAfter.textContent = 'Concluída';
+                    aprovarBtnAfter.dataset.action = '';
+                    aprovarBtnAfter.disabled = true;
+                    aprovarBtnAfter.setAttribute('aria-disabled', 'true');
+                    aprovarBtnAfter.classList.add('disabled');
+                    aprovarBtnAfter.style.opacity = '0.5';
+                    aprovarBtnAfter.title = 'Vaga concluída';
+                }
+            } catch (_) { }
+        } catch (err) {
+            console.error(err);
+            Swal.fire({ icon: 'error', title: 'Erro ao concluir', text: 'Não foi possível concluir a vaga. Verifique o console.', confirmButtonText: 'Ok' });
+        }
+        return;
+    }
+    // caso contrário segue o fluxo de aprovação existente
+    const confirmar = await Swal.fire({ icon: 'question', title: 'Aprovar vaga?', text: 'Esta ação moverá a vaga para Entrevistando Candidatos.', showCancelButton: true, confirmButtonText: 'Aprovar', cancelButtonText: 'Cancelar' });
     if (!confirmar.isConfirmed) return;
     try {
-        const resp = await fetch(api(`/optimiza/vagas/aprovacao-rh/${currentVagaId}?aprovado=true`), {
-            method: 'PUT'
-        });
+        const resp = await fetch(api(`/optimiza/vagas/aprovacao-rh/${currentVagaId}?aprovado=true`), { method: 'PUT' });
         if (!resp.ok) throw new Error('Falha ao aprovar a vaga');
-        // Sucesso visual
-        await Swal.fire({
-            icon: 'success',
-            title: 'Vaga aprovada',
-            text: 'A vaga foi aprovada com sucesso.',
-            timer: 1600,
-            showConfirmButton: false
-        });
-        // Após aprovação, avançamos para "Entrevistando Candidatos"
+        await Swal.fire({ icon: 'success', title: 'Vaga aprovada', text: 'A vaga foi aprovada com sucesso.', timer: 1600, showConfirmButton: false });
         setText('modal-status-display', 'Entrevistando Candidatos');
         atualizarProgresso('entrevistando candidatos');
         atualizarBotaoAcao('Entrevistando Candidatos');
-        // Recarrega lista para refletir possíveis mudanças
         try { carregarVagas(); } catch { }
+        // Atualiza o botão do modal para virar Concluir Vaga e ficar com opacidade normal
+        try {
+            const aprovarBtnAfter = document.querySelector('.modal-actions .aprovar');
+            if (aprovarBtnAfter) {
+                aprovarBtnAfter.textContent = 'Concluir Vaga';
+                aprovarBtnAfter.dataset.action = 'concluir';
+                aprovarBtnAfter.title = 'Concluir vaga (mover para Admissão Concluída)';
+                aprovarBtnAfter.disabled = false;
+                aprovarBtnAfter.setAttribute('aria-disabled', 'false');
+                aprovarBtnAfter.classList.remove('disabled');
+                aprovarBtnAfter.style.opacity = '';
+            }
+        } catch (_) { }
     } catch (err) {
         console.error(err);
-        Swal.fire({
-            icon: 'error',
-            title: 'Erro ao aprovar',
-            text: 'Não foi possível aprovar a vaga. Verifique o console.',
-            confirmButtonText: 'Ok'
-        });
+        Swal.fire({ icon: 'error', title: 'Erro ao aprovar', text: 'Não foi possível aprovar a vaga. Verifique o console.', confirmButtonText: 'Ok' });
     }
 });
 
