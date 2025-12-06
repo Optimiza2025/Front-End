@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="../Assets/Logo fundo branco.png" type="image/x-icon">
+    <title>Banco de Talentos - Optimiza</title>
+    <link rel="stylesheet" href="../css/painelAnalitico.css">
+    <link rel="stylesheet" href="../css/menu.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body>
+
+    <!-- Menu -->
+    <div class="header">
+        <div class="container">
+            <div class="header-left">
+                <img src="../Assets/Logo fundo branco.png" alt="Optimiza" class="register-logo">
+                <div class="optimiza-inicial">
+                    Optimiza
+                </div>
+            </div>
+            <div class="header-center">
+                <div class="menu-text">
+                    <a href="home.html">Home</a>
+                </div>
+                <div class="menu-container">
+                    <button class="menu-btn menu-text">Vagas</button>
+                    <div class="dropdown-content">
+                        <a href="aberturaVaga.html">Abrir Vaga</a>
+                        <a href="vagasAbertas.html">Vagas Abertas</a>
+                    </div>
+                </div>
+                <div class="menu-text">
+                    <a href="bancoDeTalentos.html">Banco de Talentos</a>
+                </div>
+                <div class="menu-text pag">
+                    <a href="painelAnalitico.html">Analítico</a>
+                </div>
+                <div class="menu-text">
+                    <a href="/chamado/">Ajuda</a>
+                </div>
+            </div>
+            <div class="header-right">
+                <img src="../Assets/profile.png" class="icon-profile" alt="">
+                <div class="menu-profile" id="profile-name">
+                    Perfil
+                </div>
+                <button id="btn-logout" class="logout-btn">Sair</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Conteúdo Principal -->
+    <main class="painel-container">
+        <h1 class="painel-titulo">Painel Analítico</h1>
+        
+        <!-- Controles de Filtro e Exportação -->
+        <div class="painel-controles">
+            <div class="filtro-datas">
+                <label for="data-inicio">De:</label>
+                <input type="date" id="data-inicio" class="input-data">
+                <label for="data-fim">Até:</label>
+                <input type="date" id="data-fim" class="input-data">
+                <button id="btn-filtrar" class="btn-filtrar">Filtrar</button>
+            </div>
+            <button id="btn-exportar" class="btn-exportar">Exportar</button>
+        </div>
+
+        <!-- Grid de Gráficos e KPIs -->
+        <div class="painel-grid">
+            <!-- Gráfico: Visão Vagas Por Área -->
+            <div class="card-grafico card-grande">
+                <h3 class="card-titulo">Visão Vagas Por Área</h3>
+                <div id="chart-vagas-area"></div>
+            </div>
+
+            <!-- KPIs agrupadas (fora do grid interno, mas o wrapper ocupa a área de KPIs) -->
+            <div class="kpis-wrapper">
+                <!-- KPI: Tempo Médio de Conclusão Vaga -->
+                <div class="card-kpi">
+                    <h3 class="card-titulo">Tempo Médio<br>de Conclusão Vaga</h3>
+                    <div class="kpi-valor" id="kpi-tempo-conclusao">--</div>
+                    <div class="kpi-unidade">(Em Dias)</div>
+                </div>
+
+                <!-- KPI: Vagas Encerradas Sem Contratação -->
+                <div class="card-kpi">
+                    <h3 class="card-titulo">Vagas Encerradas<br>Sem Contratação</h3>
+                    <div class="kpi-valor" id="kpi-vagas-fracassadas">--</div>
+                </div>
+
+                <!-- KPI: Currículos Avaliados -->
+                <div class="card-kpi">
+                    <h3 class="card-titulo">Currículos<br>Avaliados</h3>
+                    <div class="kpi-valor" id="kpi-curriculos-avaliados">--</div>
+                </div>
+
+                <!-- KPI: Tempo Médio Aproveitamento BT -->
+                <div class="card-kpi">
+                    <h3 class="card-titulo">Tempo Médio<br>Aproveitamento BT</h3>
+                    <div class="kpi-valor" id="kpi-recencia-banco">--</div>
+                    <div class="kpi-unidade">(Em Dias)</div>
+                </div>
+            </div>
+
+            <!-- Gráfico: Causa Reprovação Candidato -->
+            <div class="card-grafico card-grande">
+                <h3 class="card-titulo">Causa Reprovação Candidato</h3>
+                <div id="chart-reprovacao"></div>
+            </div>
+
+            <!-- Gráfico: Qualificação Banco de Talentos -->
+            <div class="card-grafico card-grande">
+                <h3 class="card-titulo">Qualificação Banco<br>de Talentos</h3>
+                <div id="chart-qualificacao"></div>
+            </div>
+        </div>
+    </main>
+
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/painelAnalitico.js"></script>
+  <script src="../js/sessoes.js"></script>

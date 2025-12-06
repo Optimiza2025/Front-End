@@ -60,6 +60,33 @@
 		document.querySelectorAll('[data-feature="banco-de-talentos"]').forEach(el => el.remove());
 	}
 
+	// Remove/oculta a aba Painel Analítico para quem não é do RH
+	function removerAbaAnaliticoDoDOM() {
+		// Links que levam ao painel analítico (ajuste se o nome do arquivo/página variar)
+		const anchors = document.querySelectorAll([
+			'a[href*="painelAnalitico.html"]',
+			'a[href*="analitico"]',
+			'a[href*="PainelAnalitico"]'
+		].join(','));
+		anchors.forEach(a => {
+			const simpleMenuItem = a.closest('.menu-text');
+			if (simpleMenuItem && !simpleMenuItem.closest('.menu-container')) {
+				simpleMenuItem.remove();
+				return;
+			}
+			a.remove();
+		});
+
+		// Qualquer item marcado com data-feature="analitico"
+		document.querySelectorAll('[data-feature="analitico"]').forEach(el => {
+			try {
+				el.style.display = 'none';
+				el.setAttribute('aria-hidden', 'true');
+				el.classList && el.classList.add('oculto-nao-rh');
+			} catch {}
+		});
+	}
+
 	// Oculta/remover botão de Aprovar Vaga para quem não é do RH
 	function ocultarBotoesAprovacaoVaga() {
 		// Cobre diferentes seletores/variações possíveis do botão de ação
@@ -107,8 +134,9 @@
 
 		if (!(permitidoPorNome || permitidoPorId)) {
 			// Log leve para depuração (silencioso na maioria dos casos)
-			try { console.debug('Sessoes: ocultando Banco de Talentos', { areaId, areaNome, rhIdConfig }); } catch { }
+			try { console.debug('Sessoes: ocultando Banco de Talentos e Analítico', { areaId, areaNome, rhIdConfig }); } catch { }
 			removerBancoDeTalentosDoDOM();
+			removerAbaAnaliticoDoDOM();
 			// Esconde também a ação de Aprovar Vaga (ex.: em vagasAbertas.html)
 			ocultarBotoesAprovacaoVaga();
 			observarAprovacaoQuandoNecessario();
