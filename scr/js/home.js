@@ -85,9 +85,9 @@ async function renderKPIs() {
   const fim = window.kpiFilter.fim;
 
   const urls = {
-    fracassadas: api(`/optimiza/vagas/fracassadas?userId=${encodeURIComponent(userId)}&inicio=${encodeURIComponent(inicio)}&fim=${encodeURIComponent(fim)}`),
-    mediaMatching: api(`/optimiza/candidaturas/media-matching?userId=${encodeURIComponent(userId)}&inicio=${encodeURIComponent(inicio)}&fim=${encodeURIComponent(fim)}`),
-    mediaReprovacao: api(`/optimiza/avaliacoes/media-reprovacao?userId=${encodeURIComponent(userId)}&inicio=${encodeURIComponent(inicio)}&fim=${encodeURIComponent(fim)}`)
+    fracassadas: api(`/optimiza/data/vagas/fracassadas?userId=${encodeURIComponent(userId)}&inicio=${encodeURIComponent(inicio)}&fim=${encodeURIComponent(fim)}`),
+    mediaMatching: api(`/optimiza/data/candidaturas/media-matching?userId=${encodeURIComponent(userId)}&inicio=${encodeURIComponent(inicio)}&fim=${encodeURIComponent(fim)}`),
+    mediaReprovacao: api(`/optimiza/data/avaliacoes/media-reprovacao?userId=${encodeURIComponent(userId)}&inicio=${encodeURIComponent(inicio)}&fim=${encodeURIComponent(fim)}`)
   };
 
   try {
