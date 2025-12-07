@@ -130,7 +130,7 @@ async function renderKPIs() {
     const elReprov = document.getElementById('kpi-reprovacao');
 
     if (elFrac) elFrac.textContent = String(fracassadas);
-    if (elMatch) elMatch.textContent = (Number(mediaMatching) || 0).toFixed(1) + '%';
+    if (elMatch) elMatch.textContent = (Number(mediaMatching)*100 || 0).toFixed(1) + '%';
     if (elReprov) elReprov.textContent = (Number(mediaReprovacao) || 0).toFixed(1) + '%';
 
   } catch (e) {

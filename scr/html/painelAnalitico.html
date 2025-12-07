@@ -56,7 +56,7 @@
     <!-- Conteúdo Principal -->
     <main class="painel-container">
         <h1 class="painel-titulo">Painel Analítico</h1>
-        
+
         <!-- Controles de Filtro e Exportação -->
         <div class="painel-controles">
             <div class="filtro-datas">
@@ -100,9 +100,17 @@
 
                 <!-- KPI: Tempo Médio Aproveitamento BT -->
                 <div class="card-kpi">
-                    <h3 class="card-titulo">Tempo Médio<br>Aproveitamento BT</h3>
+                    <h3 class="card-titulo">Tempo Médio Sem Atualização <br> Banco de Talentos</h3>
+
                     <div class="kpi-valor" id="kpi-recencia-banco">--</div>
                     <div class="kpi-unidade">(Em Dias)</div>
+
+                    <div class="kpi-rodape-atividade"
+                        style="margin-top: 15px; font-size: 0.85rem; color: #666; border-top: 1px solid #eee; padding-top: 8px;">
+                        <span id="kpi-recencia-status">Carregando...</span>
+                        <br>
+                        <small id="kpi-recencia-nome" style="font-style: italic; color: #888;"></small>
+                    </div>
                 </div>
             </div>
 
@@ -123,6 +131,6 @@
 </body>
 
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-  <script src="../js/api.js"></script>
-  <script src="../js/painelAnalitico.js"></script>
-  <script src="../js/sessoes.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/painelAnalitico.js"></script>
+<script src="../js/sessoes.js"></script>

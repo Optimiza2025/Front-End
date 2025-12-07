@@ -1,3 +1,22 @@
+ // Exibe o nome do usuário salvo no localStorage ao lado da foto de perfil
+    window.addEventListener('DOMContentLoaded', function () {
+      var nomeUsuario = localStorage.getItem('nomeUsuario');
+      if (nomeUsuario) {
+        document.getElementById('profile-name').textContent = nomeUsuario;
+      }
+      const logoutBtn = document.getElementById('btn-logout');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', function () {
+          try {
+            // Limpa chaves de sessão mais comuns
+            ['nomeUsuario', 'idAreaUsuario', 'nomeAreaUsuario', 'idVaga', 'idVagaSelecionada', 'nomeVaga', 'token']
+              .forEach(k => localStorage.removeItem(k));
+          } catch (e) { /* ignore */ }
+          window.location.href = 'Index.html';
+        });
+      }
+    });
+
 // Painel Analítico - Script principal
 // Fallback api() helper caso api.js não carregue
 if (typeof api === 'undefined') {
@@ -51,23 +70,23 @@ async function carregarVagasPorArea() {
         const url = api(`/optimiza/data/rh/vagas/volume-global?inicio=${inicio}&fim=${fim}`);
         const resp = await fetch(url);
         if (!resp.ok) throw new Error('Falha ao buscar vagas por área');
-        
+
         const dados = await resp.json();
-        
+
         // Formato real: [{"Mes":"2025-11","Area":"Recursos Humanos","Status":"ativa","Total":1}]
         // Agrupa por área e status
         const areaMap = {};
-        
+
         if (Array.isArray(dados)) {
             dados.forEach(item => {
                 const area = item.Area || 'Sem Nome';
                 const status = (item.Status || '').toLowerCase();
                 const total = item.Total || 0;
-                
+
                 if (!areaMap[area]) {
                     areaMap[area] = { abertas: 0, encerradas: 0 };
                 }
-                
+
                 if (status === 'ativa' || status === 'aberta') {
                     areaMap[area].abertas += total;
                 } else if (status === 'encerrada' || status === 'concluida' || status === 'concluída') {
@@ -75,11 +94,11 @@ async function carregarVagasPorArea() {
                 }
             });
         }
-        
+
         const categorias = Object.keys(areaMap);
         const vagasEncerradas = categorias.map(area => areaMap[area].encerradas);
         const vagasAbertas = categorias.map(area => areaMap[area].abertas);
-        
+
         const options = {
             series: [
                 { name: 'Vagas Encerradas', data: vagasEncerradas },
@@ -122,7 +141,7 @@ async function carregarVagasPorArea() {
                 labels: { colors: '#032656' }
             }
         };
-        
+
         if (chartVagasArea) chartVagasArea.destroy();
         chartVagasArea = new ApexCharts(document.querySelector('#chart-vagas-area'), options);
         chartVagasArea.render();
@@ -142,13 +161,13 @@ async function carregarCausaReprovacao() {
         const url = api(`/optimiza/data/rh/avaliacoes/media-reprovacao-global?inicio=${inicio}&fim=${fim}`);
         const resp = await fetch(url);
         if (!resp.ok) throw new Error('Falha ao buscar causas de reprovação');
-        
+
         const dados = await resp.json();
-        
+
         // Formato real: [{"HardSkills":0.0,"SoftSkills":0.0,"Experiencia":0.0,"Cultura":0.0}]
         let labels = ['Hard Skills', 'Soft Skills', 'Experiência', 'Cultura'];
         let valores = [0, 0, 0, 0];
-        
+
         if (Array.isArray(dados) && dados.length > 0) {
             const item = dados[0];
             valores = [
@@ -166,7 +185,7 @@ async function carregarCausaReprovacao() {
                 dados.Cultura || 0
             ];
         }
-        
+
         const options = {
             series: [{ name: 'Média Reprovação', data: valores }],
             chart: {
@@ -189,7 +208,7 @@ async function carregarCausaReprovacao() {
                 categories: labels,
                 labels: {
                     style: { colors: '#032656', fontSize: '11px' },
-                    formatter: function(val) {
+                    formatter: function (val) {
                         // Para rótulos compostos, quebrar em duas linhas na primeira ocorrência de espaço
                         if (typeof val === 'string' && val.includes(' ')) {
                             const idx = val.indexOf(' ');
@@ -201,9 +220,9 @@ async function carregarCausaReprovacao() {
             },
             yaxis: {
                 title: { text: 'Média de Reprovação', style: { color: '#032656', fontSize: '13px', fontWeight: 600 } },
-                labels: { 
+                labels: {
                     style: { colors: '#032656' },
-                    formatter: function(val) {
+                    formatter: function (val) {
                         return val.toFixed(1);
                     }
                 }
@@ -221,7 +240,7 @@ async function carregarCausaReprovacao() {
                 }
             }
         };
-        
+
         if (chartReprovacao) chartReprovacao.destroy();
         chartReprovacao = new ApexCharts(document.querySelector('#chart-reprovacao'), options);
         chartReprovacao.render();
@@ -241,9 +260,9 @@ async function carregarQualificacaoBT() {
         const url = api(`/optimiza/data/rh/candidatos/perfil-academico?inicio=${inicio}&fim=${fim}`);
         const resp = await fetch(url);
         if (!resp.ok) throw new Error('Falha ao buscar qualificação do banco de talentos');
-        
+
         const dados = await resp.json();
-        
+
         // Formato real: [] (array vazio ou com estrutura similar ao de vagas)
         // Se vier vazio, mostra gráfico sem dados
         let labels = [];
@@ -323,22 +342,22 @@ async function carregarQualificacaoBT() {
             // Abrevia heurística: encurta palavras maiores que 10 caracteres
             return nomeFmt.split(' ').map(p => p.length > 10 ? p.slice(0, 10) + '.' : p).join(' ');
         }
-        
+
         if (Array.isArray(dados) && dados.length > 0) {
             // Tenta extrair informações se houver estrutura
             // Pode ter campos como: Formacao, NivelFormacao, Total, etc.
             const nivelMap = {};
-            
+
             dados.forEach(item => {
                 const nivel = item.NivelFormacao || item.Formacao || item.Nivel || 'Não Informado';
                 const total = item.Total || item.Quantidade || 1;
-                
+
                 if (!nivelMap[nivel]) {
                     nivelMap[nivel] = 0;
                 }
                 nivelMap[nivel] += total;
             });
-            
+
             labels = Object.keys(nivelMap).map(formatNivel);
             // Recalcular valores após formatação agregando por label formatado
             const agg = {};
@@ -350,13 +369,13 @@ async function carregarQualificacaoBT() {
             // Aplicar abreviação nas labels para exibição
             labels = labels.map(abreviarNivel);
         }
-        
+
         // Se não houver dados, mostra labels padrão com zeros
         if (labels.length === 0) {
             labels = ['Grad.', 'Cert.', 'Licenc.', 'Bilíng.', 'Pós-grad.', 'Mestr.'];
             valores = [0, 0, 0, 0, 0, 0];
         }
-        
+
         const options = {
             series: [{ name: 'Candidatos', data: valores }],
             chart: {
@@ -396,7 +415,7 @@ async function carregarQualificacaoBT() {
                 }
             }
         };
-        
+
         if (chartQualificacao) chartQualificacao.destroy();
         chartQualificacao = new ApexCharts(document.querySelector('#chart-qualificacao'), options);
         chartQualificacao.render();
@@ -410,7 +429,7 @@ async function carregarQualificacaoBT() {
 // ====================
 async function carregarKPIs() {
     const { inicio, fim } = getDateRange();
-    
+
     // KPI 1: Tempo Médio de Conclusão Vaga
     // Formato real: [] (array vazio)
     try {
@@ -419,20 +438,20 @@ async function carregarKPIs() {
         if (resp.ok) {
             const dados = await resp.json();
             let valor = 0;
-            
+
             if (Array.isArray(dados) && dados.length > 0) {
                 valor = dados[0].MediaDias || dados[0].Valor || dados[0].Total || 0;
             } else if (dados.MediaDias !== undefined) {
                 valor = dados.MediaDias;
             }
-            
+
             document.getElementById('kpi-tempo-conclusao').textContent = Math.round(valor);
         }
     } catch (err) {
         console.error('Erro ao buscar tempo médio contratação:', err);
         document.getElementById('kpi-tempo-conclusao').textContent = '--';
     }
-    
+
     // KPI 2: Vagas Encerradas Sem Contratação (Fracassadas)
     // Formato real: {"TotalFracassadas":0}
     try {
@@ -447,7 +466,7 @@ async function carregarKPIs() {
         console.error('Erro ao buscar vagas fracassadas:', err);
         document.getElementById('kpi-vagas-fracassadas').textContent = '--';
     }
-    
+
     // KPI 3: Currículos Avaliados
     // Formato real: [] (array vazio)
     try {
@@ -456,34 +475,64 @@ async function carregarKPIs() {
         if (resp.ok) {
             const dados = await resp.json();
             let valor = 0;
-            
+
             if (Array.isArray(dados)) {
                 // Soma todos os totais do array
                 valor = dados.reduce((acc, item) => acc + (item.Total || item.Quantidade || 0), 0);
             } else if (dados.total !== undefined || dados.Total !== undefined) {
                 valor = dados.total || dados.Total;
             }
-            
+
             document.getElementById('kpi-curriculos-avaliados').textContent = valor;
         }
     } catch (err) {
         console.error('Erro ao buscar currículos avaliados:', err);
         document.getElementById('kpi-curriculos-avaliados').textContent = '--';
     }
-    
-    // KPI 4: Tempo Médio Aproveitamento BT (Recência Banco)
-    // Formato real: {"MediaDiasSemAtualizar":105.0}
+
+    // KPI 4: Tempo Médio Aproveitamento BT + Última Atividade
     try {
         const url = api(`/optimiza/data/rh/kpi/recencia-banco`);
         const resp = await fetch(url);
+
         if (resp.ok) {
             const dados = await resp.json();
-            const valor = dados.MediaDiasSemAtualizar ?? dados.MediaDias ?? dados.Recencia ?? 0;
-            document.getElementById('kpi-recencia-banco').textContent = Math.round(valor);
+            const media = dados.mediaDias ?? dados.MediaDiasSemAtualizar ?? 0;
+            const elValor = document.getElementById('kpi-recencia-banco');
+            elValor.textContent = Math.round(media);
+
+            const diasUltima = dados.diasDesdeUltimaAtividade ?? 999;
+            const nomeCandidato = dados.nomeUltimoCandidato ?? "";
+
+            const elStatus = document.getElementById('kpi-recencia-status');
+            const elNome = document.getElementById('kpi-recencia-nome');
+
+            let textoAtividade = "";
+            let icone = "";
+
+            if (diasUltima === 0) {
+                textoAtividade = "Última adição: Hoje";
+            } else if (diasUltima === 1) {
+                textoAtividade = "Última adição: Ontem";
+            } else if (diasUltima <= 7) {
+                textoAtividade = `Última adição: Há ${diasUltima} dias`;
+            } else {
+                textoAtividade = `Última adição: Há ${diasUltima} dias`;
+            }
+
+            elStatus.innerHTML = `${icone} <strong>${textoAtividade}</strong>`;
+
+            // Mostra o nome se existir
+            if (nomeCandidato) {
+                elNome.textContent = `(${nomeCandidato})`;
+            } else {
+                elNome.textContent = "";
+            }
         }
     } catch (err) {
         console.error('Erro ao buscar recência banco:', err);
         document.getElementById('kpi-recencia-banco').textContent = '--';
+        document.getElementById('kpi-recencia-status').textContent = '';
     }
 }
 
@@ -536,7 +585,7 @@ async function exportarDados() {
             linhas.push(toCSVRow(['Currículos Avaliados', curriculosAvaliados]).split('\n'));
             linhas.push(toCSVRow(['Tempo Médio Aproveitamento BT (Dias)', recenciaBanco]).split('\n'));
             linhas.push(['']);
-        } catch {}
+        } catch { }
 
         // Gráfico: Vagas por Área
         if (chartVagasArea) {
@@ -587,7 +636,7 @@ async function exportarDados() {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         const hoje = new Date();
-        const nomeArquivo = `painel_analitico_${hoje.getFullYear()}-${String(hoje.getMonth()+1).padStart(2,'0')}-${String(hoje.getDate()).padStart(2,'0')}.csv`;
+        const nomeArquivo = `painel_analitico_${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}-${String(hoje.getDate()).padStart(2, '0')}.csv`;
         a.href = url;
         a.download = nomeArquivo;
         document.body.appendChild(a);
@@ -623,15 +672,15 @@ async function carregarTodosPaineis() {
 // ====================
 // INICIALIZAÇÃO
 // ====================
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     setDefaultDates();
     carregarTodosPaineis();
-    
+
     // Botão de filtrar
-    document.getElementById('btn-filtrar').addEventListener('click', function() {
+    document.getElementById('btn-filtrar').addEventListener('click', function () {
         carregarTodosPaineis();
     });
-    
+
     // Botão de exportar
     document.getElementById('btn-exportar').addEventListener('click', exportarDados);
 });
