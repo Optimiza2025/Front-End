@@ -156,11 +156,12 @@ async function renderKPIs() {
     if (elMatch) elMatch.textContent = (Number(mediaMatching)*100 || 0).toFixed(1) + '%';
     if (elReprov) {
       if (menorMediaLabel) {
+        // Mostra a nota e atualiza o título com a skill
         elReprov.textContent = `${Number(menorMediaValor).toFixed(1)}`;
-        if (elReprovLabel) elReprovLabel.textContent = menorMediaLabel;
+        if (elReprovLabel) elReprovLabel.textContent = `Principal reprovação: ${menorMediaLabel}`;
       } else {
         elReprov.textContent = '--';
-        if (elReprovLabel) elReprovLabel.textContent = 'Média Reprovação';
+        if (elReprovLabel) elReprovLabel.textContent = 'Principal reprovação';
       }
     }
 
