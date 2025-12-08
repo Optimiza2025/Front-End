@@ -40,28 +40,46 @@ function obterNomeArea(infoArea) {
 
 // Converte etapa do backend para label amigável usado na barra
 function etapaParaLabel(etapa, status) {
-    const raw = ((etapa || status || '') + '').toLowerCase().replace(/[_-]/g, ' ');
-    // Default para novas vagas: Aguardando Aprovação RH
-    if (!raw) return 'Aguardando Aprovação RH';
-    if (
-        raw.includes('aprovacao rh') ||
-        raw.includes('aprovação rh') ||
-        raw.includes('aguardando') ||
-        raw.includes('vaga aberta') ||
-        raw.includes('aberta')
-    ) return 'Aguardando Aprovação RH';
-    if (raw.includes('entrevista') || raw.includes('entrevistando')) return 'Entrevistando Candidatos';
-    if (raw.includes('admiss')) return 'Admissão Concluída';
-    // fallback amigável
+    const rawStatus = String(status || '').toLowerCase().replace(/[_-]/g, ' ');
+    const rawEtapa = String(etapa || '').toLowerCase().replace(/[_-]/g, ' ');
+
+    // Prioridade: status explícito vence sobre etapa
+    if (rawStatus) {
+        if (rawStatus.includes('encerrada') || rawStatus.includes('encerrado')) return 'Encerrada sem contratação';
+        if (rawStatus.includes('concluida') || rawStatus.includes('concluído') || rawStatus.includes('concluido')) return 'Admissão Concluída';
+        if (rawStatus.includes('negada') || rawStatus.includes('reprovada')) return 'Negada pelo RH';
+        if (rawStatus.includes('aberta') || rawStatus.includes('aguard')) return 'Aguardando Aprovação RH';
+    }
+
+    // Etapa como fallback quando status não informa estado terminal
+    if (rawEtapa) {
+        if (rawEtapa.includes('negada') || rawEtapa.includes('reprovada')) return 'Negada pelo RH';
+        if (rawEtapa.includes('encerrada') || rawEtapa.includes('encerrado') || rawEtapa.includes('encerrar')) return 'Encerrada sem contratação';
+        if (rawEtapa.includes('admiss') || rawEtapa.includes('conclu')) return 'Admissão Concluída';
+        if (
+            rawEtapa.includes('aprovacao rh') ||
+            rawEtapa.includes('aprovação rh') ||
+            rawEtapa.includes('aguardando') ||
+            rawEtapa.includes('vaga aberta') ||
+            rawEtapa.includes('aberta')
+        ) return 'Aguardando Aprovação RH';
+        if (rawEtapa.includes('entrevista') || rawEtapa.includes('entrevistando')) return 'Entrevistando Candidatos';
+    }
+
+    // Default para novas vagas
     return 'Aguardando Aprovação RH';
 }
 // Retorna um índice de ordenação para cada etapa (menor = mais prioridade na listagem)
 function etapaOrder(label) {
     const l = (label || '').toLowerCase();
+    // Menor número = aparece primeiro na listagem
     if (l.includes('aprovacao rh') || l.includes('aprovação rh') || l.includes('aguard')) return 0;
     if (l.includes('entrevista') || l.includes('entrevistando')) return 1;
     if (l.includes('admiss')) return 2;
-    return 3;
+    // Estados finais devem ir ao fim da lista
+    if (l.includes('encerrada') || l.includes('encerrado')) return 99;
+    if (l.includes('negada') || l.includes('reprovada')) return 98;
+    return 50;
 }
 function renderizarVagas(vagas) {
     const tbody = document.getElementById('talentos-list');
@@ -241,6 +259,8 @@ window.onload = function () {
 // Abre o modal com as informações da vaga
 async function abrirModal(vaga) {
     try {
+    // Reseta UI do modal antes de preencher (evita estado "reprovada" persistente)
+    resetEstadoModal();
         // tenta várias chaves comuns para ID
         const id = (vaga && (
             vaga.id ?? vaga.idVaga ?? vaga.vagaId ?? vaga.codigo ?? vaga.ID ?? vaga.Id
@@ -419,26 +439,92 @@ function atualizarProgresso(status) {
 // Ativa/desativa o botão de ação conforme a etapa atual
 function atualizarBotaoAcao(labelEtapa) {
     const btn = document.getElementById('btn-acao-vaga');
+    const btnReprovar = document.getElementById('btn-reprovar-vaga');
+    const btnEncerrar = document.getElementById('btn-encerrar-vaga');
     if (!btn) return;
     const s = (labelEtapa || '').toLowerCase();
+    // Se já reprovada, desabilita ambos e ajusta UI
+    if (s.includes('negada') || s.includes('reprovada')) {
+        btn.disabled = true;
+        btn.setAttribute('aria-disabled', 'true');
+        btn.textContent = 'Reprovada';
+        btn.title = 'A vaga foi reprovada pelo RH.';
+        btn.style.display = 'none';
+        if (btnReprovar) {
+            btnReprovar.disabled = true;
+            btnReprovar.setAttribute('aria-disabled', 'true');
+            btnReprovar.textContent = 'Reprovada';
+            btnReprovar.title = 'A vaga foi reprovada pelo RH.';
+            btnReprovar.style.display = 'none';
+        }
+        if (btnEncerrar) {
+            btnEncerrar.disabled = true;
+            btnEncerrar.setAttribute('aria-disabled', 'true');
+            btnEncerrar.style.display = 'none';
+        }
+        // Oculta steps e mostra aviso
+        mostrarEstadoReprovada();
+        return;
+    }
+    // Se encerrada sem contratação, oculta todos os botões e ajusta título
+    if (s.includes('encerrada')) {
+        btn.disabled = true;
+        btn.setAttribute('aria-disabled', 'true');
+        btn.style.display = 'none';
+        if (btnReprovar) {
+            btnReprovar.disabled = true;
+            btnReprovar.setAttribute('aria-disabled', 'true');
+            btnReprovar.style.display = 'none';
+        }
+        if (btnEncerrar) {
+            btnEncerrar.disabled = true;
+            btnEncerrar.setAttribute('aria-disabled', 'true');
+            btnEncerrar.style.display = 'none';
+        }
+        mostrarEstadoEncerrada();
+        return;
+    }
     if (s.includes('admiss')) {
         // Vaga concluída: nada a aprovar
         btn.disabled = true;
         btn.setAttribute('aria-disabled', 'true');
         btn.textContent = 'Concluída';
         btn.title = 'A vaga já foi concluída.';
+        btn.style.display = 'none';
+        if (btnReprovar) {
+            btnReprovar.disabled = true;
+            btnReprovar.setAttribute('aria-disabled', 'true');
+            btnReprovar.title = 'A vaga já foi concluída.';
+            btnReprovar.style.display = 'none';
+        }
     } else if (s.includes('entrevista')) {
-        // Já aprovada: não permitir nova aprovação
-        btn.disabled = true;
-        btn.setAttribute('aria-disabled', 'true');
-        btn.textContent = 'Aprovada';
-        btn.title = 'A vaga já foi aprovada.';
+        // Entrevistando: mostrar botão para Concluir Vaga; ocultar Reprovar
+        btn.disabled = false;
+        btn.setAttribute('aria-disabled', 'false');
+        btn.textContent = 'Concluir Vaga';
+        btn.title = 'Marcar como Admissão Concluída';
+        btn.style.display = 'inline-block';
+        // marca ação para fluxo de concluir
+        try { btn.dataset.action = 'concluir'; } catch (_) {}
+        if (btnReprovar) {
+            btnReprovar.disabled = true;
+            btnReprovar.setAttribute('aria-disabled', 'true');
+            btnReprovar.style.display = 'none';
+        }
     } else {
         // Aguardando aprovação
         btn.disabled = false;
         btn.setAttribute('aria-disabled', 'false');
         btn.textContent = 'Aprovar Vaga';
         btn.title = 'Enviar a vaga para Entrevistando Candidatos';
+        btn.style.display = 'inline-block';
+        if (btnReprovar) {
+            btnReprovar.disabled = false;
+            btnReprovar.setAttribute('aria-disabled', 'false');
+            btnReprovar.textContent = 'Reprovar Vaga';
+            btnReprovar.title = 'Marcar como Negada pelo RH';
+            btnReprovar.style.display = 'inline-block';
+        }
     }
 }
 
@@ -561,3 +647,133 @@ document.querySelector('.modal-actions .ver-candidatos')?.addEventListener('clic
     } catch { }
     window.location.href = `match.html?idVaga=${encodeURIComponent(currentVagaId)}`;
 });
+
+// Botão Reprovar Vaga (aprovado=false)
+document.getElementById('btn-reprovar-vaga')?.addEventListener('click', async function () {
+    if (!currentVagaId) {
+        Swal.fire({ icon: 'info', title: 'Sem ID da vaga', text: 'ID da vaga não identificado.', confirmButtonText: 'Ok' });
+        return;
+    }
+    const confirmar = await Swal.fire({ icon: 'question', title: 'Reprovar vaga?', text: 'Esta ação marcará a vaga como Negada pelo RH.', showCancelButton: true, confirmButtonText: 'Reprovar', cancelButtonText: 'Cancelar' });
+    if (!confirmar.isConfirmed) return;
+    try {
+        const resp = await fetch(api(`/optimiza/vagas/aprovacao-rh/${currentVagaId}?aprovado=false`), { method: 'PUT' });
+        if (!resp.ok) throw new Error('Falha ao reprovar');
+        await Swal.fire({ icon: 'success', title: 'Vaga reprovada', text: 'Status atualizado para Negada pelo RH.', timer: 1400, showConfirmButton: false });
+        setText('modal-status-display', 'Negada pelo RH');
+        mostrarEstadoReprovada();
+        atualizarBotaoAcao('Negada pelo RH');
+    } catch (err) {
+        console.error(err);
+        Swal.fire({ icon: 'error', title: 'Erro ao reprovar', text: 'Não foi possível reprovar a vaga. Verifique o console.', confirmButtonText: 'Ok' });
+    }
+});
+
+// Botão Encerrar Vaga
+document.getElementById('btn-encerrar-vaga')?.addEventListener('click', async function () {
+    if (!currentVagaId) {
+        Swal.fire({ icon: 'info', title: 'Sem ID da vaga', text: 'ID da vaga não identificado.', confirmButtonText: 'Ok' });
+        return;
+    }
+    const confirmar = await Swal.fire({ icon: 'question', title: 'Encerrar vaga?', text: 'Esta ação encerrará a vaga definitivamente.', showCancelButton: true, confirmButtonText: 'Encerrar', cancelButtonText: 'Cancelar' });
+    if (!confirmar.isConfirmed) return;
+    try {
+        const resp = await fetch(api(`/optimiza/vagas/${currentVagaId}/encerrar`), { method: 'PUT' });
+        if (!resp.ok) throw new Error('Falha ao encerrar');
+        await Swal.fire({ icon: 'success', title: 'Vaga encerrada', text: 'Status atualizado para Encerrada.', timer: 1400, showConfirmButton: false });
+        setText('modal-status-display', 'Encerrada');
+        atualizarBotaoAcao('Encerrada');
+        try { carregarVagas(); } catch { }
+    } catch (err) {
+        console.error(err);
+        Swal.fire({ icon: 'error', title: 'Erro ao encerrar', text: 'Não foi possível encerrar a vaga. Verifique o console.', confirmButtonText: 'Ok' });
+    }
+});
+
+// UI: mostra estado de vaga reprovada (oculta steps e exibe aviso)
+function mostrarEstadoReprovada() {
+    try {
+        const statusEl = document.querySelector('.vaga-status');
+        if (statusEl) statusEl.style.display = 'none';
+        const titleEl = document.querySelector('.modal-title');
+        const tituloSpan = document.getElementById('modal-titulo');
+        const base = tituloSpan?.textContent || '';
+        if (titleEl) {
+            titleEl.textContent = 'Vaga Reprovada pelo RH';
+            if (base) {
+                const existing = document.getElementById('badge-reprovada');
+                if (existing) existing.remove();
+                const badge = document.createElement('div');
+                badge.id = 'badge-reprovada';
+                badge.style.marginTop = '0.5rem';
+                badge.style.textAlign = 'center';
+                badge.style.color = '#ff2b2b';
+                badge.style.fontWeight = '700';
+                badge.textContent = `Título: ${base}`;
+                titleEl.parentNode.insertBefore(badge, titleEl.nextSibling);
+            }
+        }
+    } catch (e) { /* ignore */ }
+}
+
+// Reseta elementos visuais do modal para o padrão
+function resetEstadoModal() {
+    try {
+        // Reexibe steps
+        const statusEl = document.querySelector('.vaga-status');
+        if (statusEl) statusEl.style.display = 'flex';
+        // Restaura título padrão
+        const titleEl = document.querySelector('.modal-title');
+        const tituloSpan = document.getElementById('modal-titulo');
+        if (titleEl) {
+            titleEl.innerHTML = 'Vaga <span id="modal-titulo"></span>';
+        }
+        // Remove badge de reprovada se existir
+        const existing = document.getElementById('badge-reprovada');
+        if (existing && existing.parentNode) existing.parentNode.removeChild(existing);
+        // Restaura botões por padrão
+        const btn = document.getElementById('btn-acao-vaga');
+        const btnReprovar = document.getElementById('btn-reprovar-vaga');
+        if (btn) {
+            btn.disabled = false;
+            btn.setAttribute('aria-disabled', 'false');
+            btn.textContent = 'Aprovar Vaga';
+            btn.title = 'Enviar a vaga para Entrevistando Candidatos';
+            btn.style.display = 'inline-block';
+            try { delete btn.dataset.action; } catch (_) {}
+        }
+        if (btnReprovar) {
+            btnReprovar.disabled = false;
+            btnReprovar.setAttribute('aria-disabled', 'false');
+            btnReprovar.textContent = 'Reprovar Vaga';
+            btnReprovar.title = 'Marcar como Negada pelo RH';
+            btnReprovar.style.display = 'inline-block';
+        }
+    } catch (e) { /* ignore */ }
+}
+
+// UI: mostra estado de vaga encerrada (oculta steps e título informativo)
+function mostrarEstadoEncerrada() {
+    try {
+        const statusEl = document.querySelector('.vaga-status');
+        if (statusEl) statusEl.style.display = 'none';
+        const titleEl = document.querySelector('.modal-title');
+        const tituloSpan = document.getElementById('modal-titulo');
+        const base = tituloSpan?.textContent || '';
+        if (titleEl) {
+            titleEl.textContent = 'Vaga Encerrada sem Contratação';
+            if (base) {
+                const existing = document.getElementById('badge-encerrada');
+                if (existing) existing.remove();
+                const badge = document.createElement('div');
+                badge.id = 'badge-encerrada';
+                badge.style.marginTop = '0.5rem';
+                badge.style.textAlign = 'center';
+                badge.style.color = '#777';
+                badge.style.fontWeight = '700';
+                badge.textContent = `Título: ${base}`;
+                titleEl.parentNode.insertBefore(badge, titleEl.nextSibling);
+            }
+        }
+    } catch (e) { /* ignore */ }
+}

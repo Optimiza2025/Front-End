@@ -396,7 +396,13 @@ async function carregarQualificacaoBT() {
             stroke: { show: true, width: 2, colors: ['transparent'] },
             xaxis: {
                 categories: labels,
-                labels: { style: { colors: '#032656', fontSize: '11px' } }
+                labels: {
+                    style: { colors: '#032656', fontSize: '11px' },
+                    formatter: function (val) {
+                        if (!val) return '';
+                        return val.length > 12 ? (val.slice(0, 10) + '…') : val;
+                    }
+                }
             },
             yaxis: {
                 title: { text: 'Quantidade', style: { color: '#032656', fontSize: '13px', fontWeight: 600 } },
@@ -412,6 +418,15 @@ async function carregarQualificacaoBT() {
                     formatter: function (val) {
                         return val + ' candidatos';
                     }
+                }
+            },
+            legend: {
+                position: 'top',
+                horizontalAlign: 'center',
+                labels: { colors: '#032656' },
+                formatter: function (seriesName) {
+                    // Abrevia nome da série para evitar cortes
+                    return seriesName === 'Candidatos' ? 'Cand.' : seriesName;
                 }
             }
         };

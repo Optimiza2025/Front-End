@@ -123,15 +123,46 @@ async function renderKPIs() {
 
     const fracassadas = extractNumber(dFrac);
     const mediaMatching = extractNumber(dMatch);
-    const mediaReprovacao = extractNumber(dReprov);
+
+    // Calcula menor média entre HardSkills, SoftSkills, Experiência, Cultura
+    let menorMediaValor = 0;
+    let menorMediaLabel = '';
+    try {
+      const arr = Array.isArray(dReprov) ? dReprov : (dReprov?.content || []);
+      const fonte = Array.isArray(arr) && arr.length > 0 ? arr[0] : (typeof dReprov === 'object' ? dReprov : null);
+      if (fonte) {
+        const mapa = {
+          'Hard Skills': Number(fonte.HardSkills ?? fonte.hardSkills ?? NaN),
+          'Soft Skills': Number(fonte.SoftSkills ?? fonte.softSkills ?? NaN),
+          'Experiência': Number(fonte.Experiencia ?? fonte.experiencia ?? NaN),
+          'Cultura': Number(fonte.Cultura ?? fonte.cultura ?? NaN)
+        };
+        // Filtra apenas valores numéricos válidos
+        const entradas = Object.entries(mapa).filter(([,v]) => Number.isFinite(v));
+        if (entradas.length) {
+          entradas.sort((a,b) => a[1] - b[1]);
+          menorMediaLabel = entradas[0][0];
+          menorMediaValor = entradas[0][1];
+        }
+      }
+    } catch { }
 
     const elFrac = document.getElementById('kpi-fracassadas');
     const elMatch = document.getElementById('kpi-matching');
     const elReprov = document.getElementById('kpi-reprovacao');
+    const elReprovLabel = document.getElementById('kpi-reprovacao-label');
 
     if (elFrac) elFrac.textContent = String(fracassadas);
     if (elMatch) elMatch.textContent = (Number(mediaMatching)*100 || 0).toFixed(1) + '%';
-    if (elReprov) elReprov.textContent = (Number(mediaReprovacao) || 0).toFixed(1) + '%';
+    if (elReprov) {
+      if (menorMediaLabel) {
+        elReprov.textContent = `${Number(menorMediaValor).toFixed(1)}`;
+        if (elReprovLabel) elReprovLabel.textContent = menorMediaLabel;
+      } else {
+        elReprov.textContent = '--';
+        if (elReprovLabel) elReprovLabel.textContent = 'Média Reprovação';
+      }
+    }
 
   } catch (e) {
     console.error('Erro ao carregar KPIs:', e);
